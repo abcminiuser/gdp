@@ -1,0 +1,3 @@
+*.pyc
+*.xml
+devices/atmelstudio/devicefiles/*.xml
