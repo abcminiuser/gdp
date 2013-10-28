@@ -4,11 +4,11 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
-import transports.usb
-
+from tools.tool_avrispmkii import *
 
 def main():
-	pass
+	currtool = ToolAVRISPMKII()
+	currtool.open()
 
 
 if __name__ == "__main__":

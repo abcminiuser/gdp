@@ -4,4 +4,9 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
-import usb
+class Transport(object):
+	def open(self):
+		raise NotImplementedError
+
+	def close(self):
+		raise NotImplementedError
