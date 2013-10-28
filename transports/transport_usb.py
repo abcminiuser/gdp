@@ -22,12 +22,18 @@ class TransportUSB(Transport):
 		if (self.vid is None or self.pid is None):
 			raise ValueError("Tool VID or PID are not set.")
 
-		dev_handle = usb.core.find(idVendor=self.vid, idProduct=self.pid)
-		if dev_handle is None:
+		self.dev_handle = usb.core.find(idVendor=self.vid, idProduct=self.pid)
+		if self.dev_handle is None:
 			return False
 
-		dev_handle.set_configuration()
+		self.dev_handle.set_configuration()
 		return True
 
 	def close(self):
 		pass
+
+	def read(self, endpoint, length, timeout):
+		return self.dev_handle.read(usb.util.ENDPOINT_IN | endpoint, length, 0, timeout)
+
+	def write(self, endpoint, data, timeout):
+		self.dev_handle.write(usb.util.ENDPOINT_OUT | endpoint, data, 0, timeout)
