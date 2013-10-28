@@ -11,3 +11,11 @@ class Transport(object):
 
 	def close(self):
 		raise NotImplementedError
+
+
+	def read(self, length, timeout):
+		raise NotImplementedError
+
+
+	def write(self, data, timeout):
+		raise NotImplementedError

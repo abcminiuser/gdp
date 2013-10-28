@@ -31,11 +31,13 @@ V2_CMD_XPROG              = 0x50
 V2_CMD_XPROG_SETMODE      = 0x51
 
 class ProtocolAtmelV2(Protocol):
-	tool = None
+	tool   = None
+	device = None
 
 
-	def __init__(self, tool):
+	def __init__(self, tool, device):
 		self.tool = tool
+		self.device = device
 
 
 	def open(self):

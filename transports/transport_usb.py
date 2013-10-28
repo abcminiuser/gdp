@@ -12,16 +12,23 @@ class TransportUSB(Transport):
 	dev_handle = None
 	vid = None
 	pid = None
+	read_ep = None
+	write_ep = None
 
 
-	def __init__(self, vid, pid):
+	def __init__(self, vid, pid, read_ep, write_ep):
 		self.vid = vid
 		self.pid = pid
+		self.read_ep = read_ep
+		self.write_ep = write_ep
 
 
 	def open(self):
 		if (self.vid is None or self.pid is None):
 			raise ValueError("Tool VID or PID are not set.")
+
+		if (self.read_ep is None or self.write_ep is None):
+			raise ValueError("Tool Read or Write Endpoint indexes are not set.")
 
 		self.dev_handle = usb.core.find(idVendor=self.vid, idProduct=self.pid)
 		if self.dev_handle is None:
@@ -35,9 +42,9 @@ class TransportUSB(Transport):
 		pass
 
 
-	def read(self, endpoint, length, timeout):
-		return self.dev_handle.read(usb.util.ENDPOINT_IN | endpoint, length, 0, timeout)
+	def read(self, length, timeout):
+		return self.dev_handle.read(usb.util.ENDPOINT_IN | self.read_ep, length, 0, timeout)
 
 
-	def write(self, endpoint, data, timeout):
-		self.dev_handle.write(usb.util.ENDPOINT_OUT | endpoint, data, 0, timeout)
+	def write(self, data, timeout):
+		self.dev_handle.write(usb.util.ENDPOINT_OUT | self.write_ep, data, 0, timeout)
