@@ -7,6 +7,7 @@
 import lxml
 from devices.device import *
 
+
 class DeviceAtmelStudio(Device):
 	def __init__(self, part=None):
 		if part is None:

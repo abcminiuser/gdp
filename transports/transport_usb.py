@@ -8,6 +8,7 @@ import usb.core
 import usb.util
 from transports.transport import *
 
+
 class TransportUSB(Transport):
 	dev_handle = None
 	vid = None

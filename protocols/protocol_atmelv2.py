@@ -6,6 +6,7 @@
 
 from protocols.protocol import *
 
+
 V2_CMD_SIGN_OFF           = 0x00
 V2_CMD_SIGN_ON            = 0x01
 V2_CMD_SET_PARAMETER      = 0x02
@@ -31,6 +32,7 @@ V2_CMD_SPI_MULTI          = 0x1D
 V2_CMD_XPROG              = 0x50
 V2_CMD_XPROG_SETMODE      = 0x51
 
+
 class ProtocolAtmelV2(Protocol):
 	tool   = None
 	device = None
@@ -45,8 +47,7 @@ class ProtocolAtmelV2(Protocol):
 		self.tool.open()
 
 		self.tool.write([V2_CMD_SIGN_ON])
-		rsp = self.tool.read(64)
-		print(''.join([chr(x) for x in rsp]))
+		print(''.join([chr(x) for x in self.tool.read(64)]))
 
 
 	def close(self):
