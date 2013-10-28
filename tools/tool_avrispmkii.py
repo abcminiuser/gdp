@@ -4,8 +4,8 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
-from tools.tool import *
-from transports.transport_usb import *
+from tools import *
+from transports import *
 
 
 class ToolAVRISPMKII(Tool):

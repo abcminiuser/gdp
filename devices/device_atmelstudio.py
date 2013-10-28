@@ -5,7 +5,7 @@
 '''
 
 import lxml
-from devices.device import *
+from devices import *
 
 
 class DeviceAtmelStudio(Device):

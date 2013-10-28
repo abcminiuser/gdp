@@ -6,7 +6,7 @@
 
 import usb.core
 import usb.util
-from transports.transport import *
+from transports import *
 
 
 class TransportUSB(Transport):

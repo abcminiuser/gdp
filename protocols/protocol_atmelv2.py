@@ -4,7 +4,7 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
-from protocols.protocol import *
+from protocols import *
 
 
 V2_CMD_SIGN_OFF           = 0x00
