@@ -5,12 +5,13 @@
 '''
 
 from tools.tool_avrispmkii import *
+from protocols.protocol_atmelv2 import *
 
 def main():
-	currtool = ToolAVRISPMKII()
-	currtool.open()
-	currtool.close()
+	tool     = ToolAVRISPMKII()
+	protocol = ProtocolAtmelV2(tool)
 
+	protocol.open()
 
 if __name__ == "__main__":
     main()

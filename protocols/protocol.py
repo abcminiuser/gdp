@@ -5,5 +5,8 @@
 '''
 
 class Protocol(object):
-	def init(self):
+	def open(self):
+		raise NotImplementedError
+
+	def close(self):
 		raise NotImplementedError
