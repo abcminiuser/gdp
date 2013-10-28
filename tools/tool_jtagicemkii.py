@@ -82,34 +82,28 @@ class ToolJTAGICEMKII(Tool):
 		if packet[0] != JTAG_ICE_MKII_PACKET_START:
 			return None
 
-		if packet[3] != JTAG_ICE_MKII_PACKET_TOKEN:
+		if packet[7] != JTAG_ICE_MKII_PACKET_TOKEN:
 			return None
 
-		packet_length = packet[2] | (packet[3] << 8)
-		data = packet[4 : 4+packet_length]
-		crc = packet[-1] | (packet[-2] << 8)
-		crc_expected = self._calc_crc16(data)
-
+		crc = packet[-2] | (packet[-1] << 8)
+		crc_expected = self._calc_crc16(packet[0 : -2])
 		if (crc != crc_expected):
 			return None
 
-		return data
+		return packet[8 : len(packet)-2]
 
 
 	def write(self, data):
-		crc = self._calc_crc16(data)
-
 		packet = []
 		packet.extend([JTAG_ICE_MKII_PACKET_START])
 		packet.extend(self._toarray(self.sequence, 2))
 		packet.extend(self._toarray(len(data), 4))
 		packet.extend([JTAG_ICE_MKII_PACKET_TOKEN])
 		packet.extend(data)
-		packet.extend(self._toarray(crc, 2))
+		packet.extend(self._toarray(self._calc_crc16(packet), 2))
 
 		self.sequence += 1
 		if (self.sequence == 0xFFFF):
 			self.sequence = 0x0000;
 
-		print packet
 		self.transport.write(packet, 100)
