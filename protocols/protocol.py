@@ -4,10 +4,6 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
-class Transport(object):
-	def open(self):
-		raise NotImplementedError
-
-
-	def close(self):
+class Protocol(object):
+	def init(self):
 		raise NotImplementedError

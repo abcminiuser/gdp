@@ -8,6 +8,14 @@ class Tool(object):
 	def open(self):
 		raise NotImplementedError
 
+
 	def close(self):
 		raise NotImplementedError
 
+
+	def read(self, length):
+		raise NotImplementedError
+
+
+	def write(self, data):
+		raise NotImplementedError
