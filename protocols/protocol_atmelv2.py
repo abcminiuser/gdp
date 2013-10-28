@@ -6,6 +6,7 @@
 
 from protocols.protocol import *
 
+V2_CMD_SIGN_OFF           = 0x00
 V2_CMD_SIGN_ON            = 0x01
 V2_CMD_SET_PARAMETER      = 0x02
 V2_CMD_GET_PARAMETER      = 0x03
@@ -46,6 +47,7 @@ class ProtocolAtmelV2(Protocol):
 		self.tool.write([V2_CMD_SIGN_ON])
 		rsp = self.tool.read(64)
 		print(''.join([chr(x) for x in rsp]))
+
 
 	def close(self):
 		self.tool.close()
