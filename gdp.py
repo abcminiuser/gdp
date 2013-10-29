@@ -13,7 +13,7 @@ from transports import *
 
 def main():
 	device   = DeviceAtmelStudio(part="atxmega256a3bu")
-	tool     = ToolJTAGICEMKII()
+	tool     = ToolJTAGICEMKII(port=None)
 	protocol = ProtocolAtmelV2(tool, device)
 
 	protocol.open()

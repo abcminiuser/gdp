@@ -9,12 +9,18 @@ from transports import *
 
 
 class ToolAVRISPMKII(Tool):
-	transport = TransportJungoUSB(vid=0x03EB, pid=0x2104, read_ep=2, write_ep=2)
+	transport = None
+
+
+	def __init__(self, port=None):
+		if port is not None:
+			self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2104, read_ep=2, write_ep=2)
+		else:
+			raise LookupError
 
 
 	def open(self):
-		if self.transport.open() == False:
-			return False
+		return self.transport.open()
 
 
 	def close(self):

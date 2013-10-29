@@ -47,10 +47,8 @@ JTAG_ICE_MKII_PACKET_TOKEN = 0x0E
 
 
 class ToolJTAGICEMKII(Tool):
-	#transport = TransportJungoUSB(vid=0x03EB, pid=0x2103, read_ep=2, write_ep=2)
-	transport = TransportSerial(port="COM14", baud=9600)
-
-	sequence = 0x0000
+	transport = None
+	sequence  = 0x0000
 
 
 	@staticmethod
@@ -68,9 +66,15 @@ class ToolJTAGICEMKII(Tool):
 		return [((data >> (8 * x)) & 0xFF) for x in xrange(length)]
 
 
+	def __init__(self, port=None):
+		if port is not None:
+			self.transport = TransportSerial(port=port, baud=115200)
+		else:
+			self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2103, read_ep=2, write_ep=2)
+
+
 	def open(self):
-		if self.transport.open() == False:
-			return False
+		return self.transport.open()
 
 
 	def close(self):
