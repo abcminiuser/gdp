@@ -9,7 +9,7 @@ import usb.util
 from transports import *
 
 
-class TransportUSB(Transport):
+class TransportJungoUSB(Transport):
 	dev_handle = None
 	vid = None
 	pid = None

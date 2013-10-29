@@ -5,4 +5,4 @@
 '''
 
 from transports.transport import *
-from transports.transport_usb import *
+from transports.transport_jungousb import *

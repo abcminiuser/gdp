@@ -47,7 +47,7 @@ JTAG_ICE_MKII_PACKET_TOKEN = 0x0E
 
 
 class ToolJTAGICEMKII(Tool):
-	transport = TransportUSB(vid=0x03EB, pid=0x2103, read_ep=2, write_ep=2)
+	transport = TransportJungoUSB(vid=0x03EB, pid=0x2103, read_ep=2, write_ep=2)
 
 	sequence = 0x0000
 

@@ -9,7 +9,7 @@ from transports import *
 
 
 class ToolAVRISPMKII(Tool):
-	transport = TransportUSB(vid=0x03EB, pid=0x2104, read_ep=2, write_ep=2)
+	transport = TransportJungoUSB(vid=0x03EB, pid=0x2104, read_ep=2, write_ep=2)
 
 
 	def open(self):
