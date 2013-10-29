@@ -81,8 +81,8 @@ class ToolJTAGICEMKII(Tool):
 		return self.transport.close()
 
 
-	def read(self, length):
-		packet = self.transport.read(length, 100)
+	def read(self):
+		packet = self.transport.read()
 
 		if packet[0] != JTAG_ICE_MKII_PACKET_START:
 			return None
@@ -111,4 +111,4 @@ class ToolJTAGICEMKII(Tool):
 		if (self.sequence == 0xFFFF):
 			self.sequence = 0x0000;
 
-		self.transport.write(packet, 100)
+		self.transport.write(packet)

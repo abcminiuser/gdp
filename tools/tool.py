@@ -13,7 +13,7 @@ class Tool(object):
 		raise NotImplementedError
 
 
-	def read(self, length):
+	def read(self):
 		raise NotImplementedError
 
 

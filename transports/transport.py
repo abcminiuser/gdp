@@ -13,9 +13,9 @@ class Transport(object):
 		raise NotImplementedError
 
 
-	def read(self, length, timeout):
+	def read(self):
 		raise NotImplementedError
 
 
-	def write(self, data, timeout):
+	def write(self, data):
 		raise NotImplementedError

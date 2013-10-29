@@ -20,7 +20,7 @@ class TransportSerial(Transport):
 
 
 	def open(self):
-		self.dev_handle = serial.Serial(port=self.port, baudrate=self.baud, timeout=100)
+		self.dev_handle = serial.Serial(port=self.port, baudrate=self.baud, timeout=.5, interCharTimeout=.05)
 		return True
 
 
@@ -30,9 +30,9 @@ class TransportSerial(Transport):
 			dev_handle.close()
 
 
-	def read(self, length, timeout):
-		return self.dev_handle.read(length)
+	def read(self):
+		return self.dev_handle.read(1000)
 
 
-	def write(self, data, timeout):
+	def write(self, data):
 		self.dev_handle.write(data)

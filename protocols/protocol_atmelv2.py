@@ -47,7 +47,7 @@ class ProtocolAtmelV2(Protocol):
 		self.tool.open()
 
 		self.tool.write([V2_CMD_SIGN_ON])
-		print(''.join([chr(x) for x in self.tool.read(64)]))
+		print(''.join([chr(x) for x in self.tool.read()]))
 
 
 	def close(self):

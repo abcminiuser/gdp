@@ -43,9 +43,14 @@ class TransportJungoUSB(Transport):
 		pass
 
 
-	def read(self, length, timeout):
-		return self.dev_handle.read(usb.util.ENDPOINT_IN | self.read_ep, length, 0, timeout)
+	def read(self):
+		data = []
+
+		while len(data) % 64 == 0:
+			data.extend(self.dev_handle.read(usb.util.ENDPOINT_IN | self.read_ep, 64, 0, 1000))
+
+		return data
 
 
-	def write(self, data, timeout):
-		self.dev_handle.write(usb.util.ENDPOINT_OUT | self.write_ep, data, 0, timeout)
+	def write(self, data):
+		self.dev_handle.write(usb.util.ENDPOINT_OUT | self.write_ep, data, 0, 1000)
