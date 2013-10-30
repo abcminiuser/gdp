@@ -98,7 +98,12 @@ class ProtocolAtmelV2(Protocol):
 
 	def _protocol_verify_vtarget(self):
 		resp = self._trancieve([V2_CMD_GET_PARAMETER, V2_PARAM_VTARGET])
-		print "VTAGET: %02fV" % (float(resp[2]) / 10)
+
+		measured_vtarget = (float(resp[2]) / 10)
+		dev_vccrange = self.device.vtarget_range
+
+		if not dev_vccrange[0] <= measured_vtarget <= dev_vccrange[1]:
+			raise ValueError("Device VCC range of (%0.2fV-%0.2fV) is outside measured VTARGET of %0.2fV." % (dev_vccrange[0], dev_vccrange[1], measured_vtarget))
 
 
 	def open(self):

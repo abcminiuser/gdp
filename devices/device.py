@@ -5,4 +5,7 @@
 '''
 
 class Device(object):
+	name = None
+	vtarget_range = (None, None)
+
 	pass
