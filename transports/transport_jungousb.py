@@ -13,11 +13,11 @@ class TransportJungoUSB(Transport):
 	dev_handle = None
 	vid = None
 	pid = None
-	read_ep = None
+	read_ep  = None
 	write_ep = None
 
 
-	def __init__(self, vid, pid, read_ep, write_ep):
+	def __init__(self, vid=0x03eb, pid=None, read_ep=2, write_ep=2):
 		self.vid = vid
 		self.pid = pid
 		self.read_ep = read_ep
@@ -25,11 +25,11 @@ class TransportJungoUSB(Transport):
 
 
 	def open(self):
-		if (self.vid is None or self.pid is None):
-			raise ValueError("Tool VID or PID are not set.")
+		if self.vid is None or self.pid is None:
+			raise ValueError("Transport VID or PID are not set.")
 
-		if (self.read_ep is None or self.write_ep is None):
-			raise ValueError("Tool Read or Write Endpoint indexes are not set.")
+		if self.read_ep is None or self.write_ep is None:
+			raise ValueError("Transport Read or Write Endpoint indexes are not set.")
 
 		self.dev_handle = usb.core.find(idVendor=self.vid, idProduct=self.pid)
 		if self.dev_handle is None:
