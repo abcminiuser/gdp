@@ -45,6 +45,17 @@ V2_STATUS_CONN_FAIL_SCK        = 0x04
 V2_STATUS_TGT_NOT_DETECTED     = 0x10
 V2_STATUS_TGT_REVERSE_INSERTED = 0x20
 
+V2_PARAM_BUILD_NUMBER_LOW      = 0x80
+V2_PARAM_BUILD_NUMBER_HIGH     = 0x81
+V2_PARAM_HW_VER                = 0x90
+V2_PARAM_SW_MAJOR              = 0x91
+V2_PARAM_SW_MINOR              = 0x92
+V2_PARAM_VTARGET               = 0x94
+V2_PARAM_SCK_DURATION          = 0x98
+V2_PARAM_RESET_POLARITY        = 0x9E
+V2_PARAM_STATUS_TGT_CONN       = 0xA1
+V2_PARAM_DISCHARGEDELAY        = 0xA4
+
 
 class ProtocolAtmelV2(Protocol):
 	tool   = None
@@ -81,10 +92,21 @@ class ProtocolAtmelV2(Protocol):
 		self._trancieve([V2_CMD_RESET_PROTECTION])
 
 
+	def _protocol_set_reset_polarity(self, idle_level):
+		self._trancieve([V2_CMD_SET_PARAMETER, V2_PARAM_RESET_POLARITY, idle_level])
+
+
+	def _protocol_verify_vtarget(self):
+		resp = self._trancieve([V2_CMD_GET_PARAMETER, V2_PARAM_VTARGET])
+		print "VTAGET: %02fV" % (float(resp[2]) / 10)
+
+
 	def open(self):
 		self.tool.open()
 		self._protocol_sign_on()
+		self._protocol_set_reset_polarity(1)
 		self._protocol_reset_protection()
+		self._protocol_verify_vtarget()
 
 
 	def close(self):
