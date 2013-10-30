@@ -75,7 +75,7 @@ class ProtocolAtmelV2(Protocol):
 			raise ValueError("Invalid response received from tool.")
 
 		if packet_in[1] != V2_STATUS_CMD_OK:
-			raise ValueError("Command failed with status %d." % packet[1])
+			raise ValueError("Command failed with status %d." % packet_in[1])
 
 		return packet_in
 
@@ -103,7 +103,9 @@ class ProtocolAtmelV2(Protocol):
 		dev_vccrange = self.device.vtarget_range
 
 		if not dev_vccrange[0] <= measured_vtarget <= dev_vccrange[1]:
-			raise ValueError("Device VCC range of (%0.2fV-%0.2fV) is outside measured VTARGET of %0.2fV." % (dev_vccrange[0], dev_vccrange[1], measured_vtarget))
+			raise ValueError("Device VCC range of (%0.2fV-%0.2fV) is outside"
+			                 "the measured VTARGET of %0.2fV." %
+			                 (dev_vccrange[0], dev_vccrange[1], measured_vtarget))
 
 
 	def open(self):

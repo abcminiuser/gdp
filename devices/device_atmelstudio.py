@@ -17,13 +17,12 @@ class DeviceAtmelStudio(Device):
 		self._parse_studio_device_file(part)
 
 
-	def _find_vtarget(self, device_tree):
+	def _find_vtarget_range(self, device_tree):
 		dev_variant = device_tree.find("variants/variant[1]")
-
 		return (float(dev_variant.get("vccmin")), float(dev_variant.get("vccmax")))
 
 
 	def _parse_studio_device_file(self, name):
 		device_tree = etree.parse("devices/devicefiles/%s.xml" % name)
 
-		self.vtarget_range = self._find_vtarget(device_tree)
+		self.vtarget_range = self._find_vtarget_range(device_tree)

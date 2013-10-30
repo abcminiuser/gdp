@@ -66,6 +66,16 @@ class ToolJTAGICEMKII(Tool):
 		return [((data >> (8 * x)) & 0xFF) for x in xrange(length)]
 
 
+	@staticmethod
+	def _fromarray(data):
+		value = 0
+
+		for x in xrange(len(data)):
+			value |= data[x] << (8 * x)
+
+		return value
+
+
 	def __init__(self, port=None):
 		if port is not None:
 			self.transport = TransportSerial(port=port, baud=115200)
@@ -87,18 +97,27 @@ class ToolJTAGICEMKII(Tool):
 		if packet[0] != JTAG_ICE_MKII_PACKET_START:
 			return None
 
+		rec_sequence = self._fromarray(packet[1 : 2])
+		if rec_sequence != self.sequence:
+			self.sequence = rec_sequence
+			return None
+
 		if packet[7] != JTAG_ICE_MKII_PACKET_TOKEN:
 			return None
 
-		crc = packet[-2] | (packet[-1] << 8)
+		crc = self._fromarray(packet[-2 : ])
 		crc_expected = self._calc_crc16(packet[0 : -2])
 		if (crc != crc_expected):
 			return None
 
-		return packet[8 : len(packet)-2]
+		return packet[8 : -2]
 
 
 	def write(self, data):
+		self.sequence += 1
+		if (self.sequence == 0xFFFF):
+			self.sequence = 0x0000;
+
 		packet = []
 		packet.extend([JTAG_ICE_MKII_PACKET_START])
 		packet.extend(self._toarray(self.sequence, 2))
@@ -106,9 +125,5 @@ class ToolJTAGICEMKII(Tool):
 		packet.extend([JTAG_ICE_MKII_PACKET_TOKEN])
 		packet.extend(data)
 		packet.extend(self._toarray(self._calc_crc16(packet), 2))
-
-		self.sequence += 1
-		if (self.sequence == 0xFFFF):
-			self.sequence = 0x0000;
 
 		self.transport.write(packet)
