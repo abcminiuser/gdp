@@ -23,8 +23,10 @@ class TransportSerial(Transport):
 		if self.port is None or self.baud is None:
 			raise ValueError("Transport serial port or baudrate are not set.")
 
-		self.dev_handle = serial.Serial(port=self.port, baudrate=self.baud, timeout=.5, interCharTimeout=.05)
-		return True
+		try:
+			self.dev_handle = serial.Serial(port=self.port, baudrate=self.baud, timeout=.5, interCharTimeout=.05)
+		except:
+			raise IOError("Specified serial port could not be opened.")
 
 
 	def close(self):
