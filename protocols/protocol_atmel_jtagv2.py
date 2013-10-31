@@ -35,7 +35,7 @@ class ProtocolAtmelJTAGV2(Protocol):
 		raise NotImplementedError()
 
 
-	def _protocol_set_reset_polarity(self, idle_level):
+	def _protocol_set_reset_polarity(self):
 		raise NotImplementedError()
 
 

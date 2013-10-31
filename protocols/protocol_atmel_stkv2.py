@@ -7,7 +7,6 @@
 from protocols import *
 
 
-V2_CMD_SIGN_OFF                = 0x00
 V2_CMD_SIGN_ON                 = 0x01
 V2_CMD_SET_PARAMETER           = 0x02
 V2_CMD_GET_PARAMETER           = 0x03
@@ -85,77 +84,72 @@ class ProtocolAtmelSTKV2(Protocol):
 		return packet_in
 
 
-	def _protocol_sign_off(self):
+	def _sign_off(self):
 		self._trancieve([V2_CMD_SIGN_OFF])
 
 
-	def _protocol_sign_on(self):
+	def _sign_on(self):
 		resp = self._trancieve([V2_CMD_SIGN_ON])
 		self.tool_sign_on_string = ''.join([chr(c) for c in resp[3 : ]])
 
 
-	def _protocol_reset_protection(self):
+	def _reset_protection(self):
 		self._trancieve([V2_CMD_RESET_PROTECTION])
 
 
-	def _protocol_set_reset_polarity(self, idle_level):
+	def _set_reset_polarity(self, idle_level):
 		self._trancieve([V2_CMD_SET_PARAMETER, V2_PARAM_RESET_POLARITY, idle_level])
 
 
-	def _protocol_verify_vtarget(self):
+	def get_vtarget(self):
 		resp = self._trancieve([V2_CMD_GET_PARAMETER, V2_PARAM_VTARGET])
 
 		measured_vtarget = (float(resp[2]) / 10)
-		dev_vccrange = self.device.get_vcc_range()
-
-		if not dev_vccrange[0] <= measured_vtarget <= dev_vccrange[1]:
-			raise ValueError("Device VCC range of (%0.2fV-%0.2fV) is outside "
-			                 "the measured VTARGET of %0.2fV." %
-			                 (dev_vccrange[0], dev_vccrange[1], measured_vtarget))
+		return measured_vtarget
 
 
-	def _protocol_set_sck_frequency(self, target_frequency):
-		sck_dur = 0;
-
-		if self.tool_sign_on_string == "AVRISP_MK2":
-			if target_frequency >= 921600:
-				sck_dur = 0;
-			elif target_frequency >= 230400:
-				sck_dur = 1;
-			elif target_frequency >= 57600:
-				sck_dur = 2;
-			elif target_frequency >= 28800:
-				sck_dur = 3;
-			else:
-				sck_dur = ceil(1 / (2 * B * target_frequency * 271.27e-9) - 10 / 12);
-		else:
-			if target_frequency >= 1843200:
-				sck_dur = 0;
-			elif target_frequency >= 460800:
-				sck_dur = 1;
-			elif target_frequency >= 115200:
-				sck_dur = 2;
-			elif target_frequency >= 57600:
-				sck_dur = 3;
-			else:
-				sck_dur = ceil(1 / (2 * B * target_frequency * 135.63e-9) - 10 / 12);
-
-		self._trancieve([V2_CMD_SET_PARAMETER, V2_PARAM_SCK_DURATION, sck_dur])
-
-
-	def open(self, target_frequency):
-		self._protocol_sign_on()
-		self._protocol_set_reset_polarity(1)
-		self._protocol_reset_protection()
-		self._protocol_verify_vtarget()
+	def set_interface_frequency(self, target_frequency):
+		if not target_frequency:
+			raise ValueError("Target communication frequency not specified.")
 
 		if self.interface == "isp":
-			self._protocol_set_sck_frequency(target_frequency)
+			sck_dur = 0;
+
+			if self.tool_sign_on_string == "AVRISP_MK2":
+				if target_frequency >= 921600:
+					sck_dur = 0;
+				elif target_frequency >= 230400:
+					sck_dur = 1;
+				elif target_frequency >= 57600:
+					sck_dur = 2;
+				elif target_frequency >= 28800:
+					sck_dur = 3;
+				else:
+					sck_dur = ceil(1 / (2 * B * target_frequency * 271.27e-9) - 10 / 12);
+			else:
+				if target_frequency >= 1843200:
+					sck_dur = 0;
+				elif target_frequency >= 460800:
+					sck_dur = 1;
+				elif target_frequency >= 115200:
+					sck_dur = 2;
+				elif target_frequency >= 57600:
+					sck_dur = 3;
+				else:
+					sck_dur = ceil(1 / (2 * B * target_frequency * 135.63e-9) - 10 / 12);
+
+			self._trancieve([V2_CMD_SET_PARAMETER, V2_PARAM_SCK_DURATION, sck_dur])
 		elif self.interface == "pdi":
 			raise NotImplementedError()
-		else:
-			raise ValueError("Target communication frequency not specified.")
+		elif self.interface == "tpi":
+			raise NotImplementedError()
+
+
+	def open(self):
+		self._sign_on()
+		self._set_reset_polarity(1)
+		self._reset_protection()
 
 
 	def close(self):
-		self._protocol_sign_off()
+		pass

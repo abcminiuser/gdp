@@ -17,7 +17,7 @@ class Tool(object):
 		raise NotImplementedError
 
 
-	def open(self, target_frequency):
+	def open(self):
 		raise NotImplementedError
 
 
