@@ -43,7 +43,7 @@ class ProtocolAtmelJTAGV2(Protocol):
 		raise NotImplementedError()
 
 
-	def open(self):
+	def open(self, target_frequency):
 		raise NotImplementedError()
 
 

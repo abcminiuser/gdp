@@ -102,9 +102,9 @@ class ToolAtmelJTAGICEMKII(Tool):
 		return ["jtag", "isp", "pdi", "debugwire", "awire"]
 
 
-	def open(self):
+	def open(self, target_frequency):
 		self.transport.open()
-		self.protocol.open()
+		self.protocol.open(target_frequency)
 
 
 	def close(self):

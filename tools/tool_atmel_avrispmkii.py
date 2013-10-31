@@ -36,9 +36,9 @@ class ToolAtmelAVRISPMKII(Tool):
 		return ["isp", "pdi", "tpi"]
 
 
-	def open(self):
+	def open(self, target_frequency):
 		self.transport.open()
-		self.protocol.open()
+		self.protocol.open(target_frequency)
 
 
 	def close(self):

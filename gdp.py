@@ -10,10 +10,10 @@ from tools import *
 
 
 def main():
-	device   = DeviceAtmelStudio(part="atxmega256a3bu")
+	device   = DeviceAtmelStudio(part="atmega32u4")
 	tool     = ToolAtmelAVRISPMKII(device, port=None, interface="isp")
 
-	tool.open()
+	tool.open(250000)
 
 
 if __name__ == "__main__":
