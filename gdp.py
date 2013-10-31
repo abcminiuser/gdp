@@ -6,17 +6,14 @@
 
 from devices import *
 from formats import *
-from protocols import *
 from tools import *
-from transports import *
 
 
 def main():
 	device   = DeviceAtmelStudio(part="atxmega256a3bu")
-	tool     = ToolAtmelAVRISPMKII(port=None)
-	protocol = ProtocolAtmelSTKV2(tool, device)
+	tool     = ToolAtmelAVRISPMKII(device, port=None, interface="isp")
 
-	protocol.open()
+	tool.open()
 
 
 if __name__ == "__main__":

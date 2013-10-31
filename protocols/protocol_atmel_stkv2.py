@@ -58,13 +58,15 @@ V2_PARAM_DISCHARGEDELAY        = 0xA4
 
 
 class ProtocolAtmelSTKV2(Protocol):
-	tool   = None
-	device = None
+	tool      = None
+	device    = None
+	interface = None
 
 
-	def __init__(self, tool, device):
-		self.tool = tool
-		self.device = device
+	def __init__(self, tool, device, interface):
+		self.tool      = tool
+		self.device    = device
+		self.interface = interface
 
 
 	def _trancieve(self, packet_out):
@@ -103,13 +105,12 @@ class ProtocolAtmelSTKV2(Protocol):
 		dev_vccrange = self.device.vtarget_range
 
 		if not dev_vccrange[0] <= measured_vtarget <= dev_vccrange[1]:
-			raise ValueError("Device VCC range of (%0.2fV-%0.2fV) is outside"
+			raise ValueError("Device VCC range of (%0.2fV-%0.2fV) is outside "
 			                 "the measured VTARGET of %0.2fV." %
 			                 (dev_vccrange[0], dev_vccrange[1], measured_vtarget))
 
 
 	def open(self):
-		self.tool.open()
 		self._protocol_sign_on()
 		self._protocol_set_reset_polarity(1)
 		self._protocol_reset_protection()
@@ -118,4 +119,3 @@ class ProtocolAtmelSTKV2(Protocol):
 
 	def close(self):
 		self._protocol_sign_off()
-		self.tool.close()

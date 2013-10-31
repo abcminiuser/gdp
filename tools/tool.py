@@ -5,6 +5,10 @@
 '''
 
 class Tool(object):
+	transport = None
+	protocol  = None
+	interface = None
+
 	def open(self):
 		raise NotImplementedError
 

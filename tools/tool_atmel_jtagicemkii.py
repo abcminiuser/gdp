@@ -6,6 +6,7 @@
 
 from tools import *
 from transports import *
+from protocols import *
 
 
 JTAG_ICE_MKII_CRC_TABLE = \
@@ -48,6 +49,9 @@ JTAG_ICE_MKII_PACKET_TOKEN = 0x0E
 
 class ToolAtmelJTAGICEMKII(Tool):
 	transport = None
+	protocol  = None
+	interface = None
+
 	sequence  = 0x0000
 
 
@@ -76,19 +80,28 @@ class ToolAtmelJTAGICEMKII(Tool):
 		return value
 
 
-	def __init__(self, port=None):
+	def __init__(self, device, port=None, interface="isp"):
 		if port is not None:
 			self.transport = TransportSerial(port=port, baud=115200)
 		else:
 			self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2103, read_ep=2, write_ep=2)
 
+		if interface in ["jtag"]:
+			self.interface = interface
+		else:
+			raise LookupError("Unsupported interface for the specified tool.")
+
+		self.protocol = ProtocolAtmelJTAGV2(self, device, interface)
+
 
 	def open(self):
-		return self.transport.open()
+		self.transport.open()
+		self.protocol.open()
 
 
 	def close(self):
-		return self.transport.close()
+		self.transport.close()
+		self.protocol.close()
 
 
 	def read(self):
