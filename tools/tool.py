@@ -9,11 +9,13 @@ class Tool(object):
 		raise NotImplementedError
 
 
-	def get_name(self):
+	@staticmethod
+	def get_name():
 		raise NotImplementedError
 
 
-	def get_supported_interfaces(self):
+	@staticmethod
+	def get_supported_interfaces():
 		raise NotImplementedError
 
 

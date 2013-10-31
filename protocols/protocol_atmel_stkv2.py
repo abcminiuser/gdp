@@ -84,10 +84,6 @@ class ProtocolAtmelSTKV2(Protocol):
 		return packet_in
 
 
-	def _sign_off(self):
-		self._trancieve([V2_CMD_SIGN_OFF])
-
-
 	def _sign_on(self):
 		resp = self._trancieve([V2_CMD_SIGN_ON])
 		self.tool_sign_on_string = ''.join([chr(c) for c in resp[3 : ]])
