@@ -19,28 +19,12 @@ class ProtocolAtmelJTAGV2(Protocol):
 		self.interface = interface
 
 
-	def _trancieve(self, packet_out):
-		raise NotImplementedError()
+	def get_vtarget(self):
+		raise NotImplementedError
 
 
-	def _protocol_sign_off(self):
-		raise NotImplementedError()
-
-
-	def _protocol_sign_on(self):
-		raise NotImplementedError()
-
-
-	def _protocol_reset_protection(self):
-		raise NotImplementedError()
-
-
-	def _protocol_set_reset_polarity(self):
-		raise NotImplementedError()
-
-
-	def _protocol_verify_vtarget(self):
-		raise NotImplementedError()
+	def set_interface_frequency(self, target_frequency):
+		raise NotImplementedError
 
 
 	def open(self, target_frequency):

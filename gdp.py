@@ -30,8 +30,8 @@ def test_program(device, tool, verify_vtarget=True):
 
 
 def main():
-	device   = DeviceAtmelStudio(part="atmega32u4")
-	tool     = ToolAtmelAVRISPMKII(device, port=None, interface="isp")
+	device = DeviceAtmelStudio(part="atmega32u4")
+	tool   = ToolAtmelAVRISPMKII(device, port=None, interface="isp")
 
 	try:
 		test_program(device, tool, verify_vtarget=True)
