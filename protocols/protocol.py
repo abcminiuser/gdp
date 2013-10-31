@@ -17,6 +17,14 @@ class Protocol(object):
 		raise NotImplementedError
 
 
+	def enter_session(self):
+		raise NotImplementedError
+
+
+	def exit_session(self):
+		raise NotImplementedError
+
+
 	def open(self):
 		raise NotImplementedError
 

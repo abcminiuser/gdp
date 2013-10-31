@@ -48,7 +48,9 @@ def gdp(options, args):
 				                 (dev_vccrange[0], dev_vccrange[1], device_vtarget))
 
 		protocol.set_interface_frequency(options.frequency)
+		protocol.enter_session()
 
+		protocol.exit_session()
 		tool.close()
 	except (ValueError, LookupError, IOError) as message:
 		print("ERROR: %s" % message)

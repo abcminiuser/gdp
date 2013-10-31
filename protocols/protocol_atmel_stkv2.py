@@ -141,6 +141,32 @@ class ProtocolAtmelSTKV2(Protocol):
 			raise NotImplementedError()
 
 
+	def enter_session(self):
+		if self.interface == "isp":
+			packet = [V2_CMD_ENTER_PROGMODE_ISP]
+			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_timeout"))
+			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_stabDelay"))
+			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_cmdexeDelay"))
+			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_synchLoops"))
+			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_byteDelay"))
+			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_pollValue"))
+			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_pollIndex"))
+			packet.extend([0xAC, 0x53, 0x00, 0x00])
+		else:
+			raise NotImplementedError()
+
+		self._trancieve(packet)
+
+
+	def exit_session(self):
+		if self.interface == "isp":
+			packet = [V2_CMD_LEAVE_PROGMODE_ISP]
+		else:
+			raise NotImplementedError()
+
+		self._trancieve(packet)
+
+
 	def open(self):
 		self._sign_on()
 		self._set_reset_polarity(1)

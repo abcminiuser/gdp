@@ -148,10 +148,10 @@ class ToolAtmelJTAGICEMKII(Tool):
 			self.sequence = 0x0000;
 
 		packet = []
-		packet.extend([JTAG_ICE_MKII_PACKET_START])
+		packet.append(JTAG_ICE_MKII_PACKET_START)
 		packet.extend(self._toarray(self.sequence, 2))
 		packet.extend(self._toarray(len(data), 4))
-		packet.extend([JTAG_ICE_MKII_PACKET_TOKEN])
+		packet.append(JTAG_ICE_MKII_PACKET_TOKEN)
 		packet.extend(data)
 		packet.extend(self._toarray(self._calc_crc16(packet), 2))
 

@@ -27,6 +27,14 @@ class ProtocolAtmelJTAGV2(Protocol):
 		raise NotImplementedError
 
 
+	def enter_session(self):
+		raise NotImplementedError
+
+
+	def exit_session(self):
+		raise NotImplementedError
+
+
 	def open(self, target_frequency):
 		raise NotImplementedError()
 

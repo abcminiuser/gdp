@@ -33,7 +33,7 @@ class TransportJungoUSB(Transport):
 
 		self.dev_handle = usb.core.find(idVendor=self.vid, idProduct=self.pid)
 		if self.dev_handle is None:
-			raise IOError("Specified device was not found on the USB bus.")
+			raise IOError("Specified tool was not found on the USB bus.")
 
 		self.dev_handle.set_configuration()
 

@@ -19,3 +19,8 @@ class Device(object):
 
 	def get_supported_interfaces(self):
 		raise NotImplementedError
+
+
+	def get_interface_param(self, interface, param):
+		raise NotImplementedError
+

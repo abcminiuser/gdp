@@ -31,3 +31,20 @@ class DeviceAtmelStudio(Device):
 	def get_supported_interfaces(self):
 		dev_interfaces = self.device_tree.findall("devices/device[1]/interfaces/interface")
 		return [i.get("type") for i in dev_interfaces]
+
+
+	def get_interface_param(self, interface, param):
+		interface_info = self.device_tree.find("devices/device[1]/property-groups/property-group[@name='%s_INTERFACE']" % interface.upper())
+		if interface_info is None:
+			raise KeyError("Interface \"%s\" is not found in the selected device." % interface)
+
+		param_info = interface_info.find("property[@name='%s']" % param)
+		if param_info is None:
+			raise KeyError("Interface \"%s\" parameter \"%s\" is not found in the selected device." % (interface, param))
+
+		param_value = param_info.get("value")
+
+		if param_value[0 : 2] == "0x":
+			return int(param_value, 16)
+		else:
+			return int(param_value, 10)
