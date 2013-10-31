@@ -8,7 +8,7 @@ from tools import *
 from transports import *
 
 
-class ToolAVRISPMKII(Tool):
+class ToolAtmelAVRISPMKII(Tool):
 	transport = None
 
 

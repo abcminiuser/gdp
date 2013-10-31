@@ -5,5 +5,5 @@
 '''
 
 from tools.tool import *
-from tools.tool_avrispmkii import *
-from tools.tool_jtagicemkii import *
+from tools.tool_atmel_avrispmkii import *
+from tools.tool_atmel_jtagicemkii import *

@@ -46,7 +46,7 @@ JTAG_ICE_MKII_PACKET_START = 0x1B
 JTAG_ICE_MKII_PACKET_TOKEN = 0x0E
 
 
-class ToolJTAGICEMKII(Tool):
+class ToolAtmelJTAGICEMKII(Tool):
 	transport = None
 	sequence  = 0x0000
 

@@ -13,8 +13,8 @@ from transports import *
 
 def main():
 	device   = DeviceAtmelStudio(part="atxmega256a3bu")
-	tool     = ToolAVRISPMKII(port=None)
-	protocol = ProtocolAtmelV2(tool, device)
+	tool     = ToolAtmelAVRISPMKII(port=None)
+	protocol = ProtocolAtmelSTKV2(tool, device)
 
 	protocol.open()
 

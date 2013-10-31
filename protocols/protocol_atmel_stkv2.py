@@ -57,7 +57,7 @@ V2_PARAM_STATUS_TGT_CONN       = 0xA1
 V2_PARAM_DISCHARGEDELAY        = 0xA4
 
 
-class ProtocolAtmelV2(Protocol):
+class ProtocolAtmelSTKV2(Protocol):
 	tool   = None
 	device = None
 

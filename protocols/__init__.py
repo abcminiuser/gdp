@@ -5,4 +5,4 @@
 '''
 
 from protocols.protocol import *
-from protocols.protocol_atmelv2 import *
+from protocols.protocol_atmel_stkv2 import *
