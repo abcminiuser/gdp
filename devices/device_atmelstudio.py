@@ -26,3 +26,8 @@ class DeviceAtmelStudio(Device):
 	def get_vcc_range(self):
 		dev_variant = self.device_tree.find("variants/variant[1]")
 		return (float(dev_variant.get("vccmin")), float(dev_variant.get("vccmax")))
+
+
+	def get_supported_interfaces(self):
+		dev_interfaces = self.device_tree.findall("devices/device[1]/interfaces/interface")
+		return [i.get("type") for i in dev_interfaces]

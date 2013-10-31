@@ -15,3 +15,6 @@ class Device(object):
 
 	def get_vcc_range(self):
 		raise NotImplementedError
+
+	def get_supported_interfaces(self):
+		raise NotImplementedError
