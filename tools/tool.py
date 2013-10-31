@@ -5,9 +5,17 @@
 '''
 
 class Tool(object):
-	transport = None
-	protocol  = None
-	interface = None
+	def __init__(self):
+		raise NotImplementedError
+
+
+	def get_name(self):
+		raise NotImplementedError
+
+
+	def get_supported_interfaces(self):
+		raise NotImplementedError
+
 
 	def open(self):
 		raise NotImplementedError

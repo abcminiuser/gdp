@@ -9,20 +9,20 @@ from devices import *
 
 
 class DeviceAtmelStudio(Device):
+	device_tree = None
+
+
 	def __init__(self, part=None):
 		if part is None:
 			raise ValueError("Device part name must be specified.")
 
-		self.name = part
-		self._parse_studio_device_file(part)
+		self.device_tree = etree.parse("devices/devicefiles/%s.xml" % part)
 
 
-	def _find_vtarget_range(self, device_tree):
-		dev_variant = device_tree.find("variants/variant[1]")
+	def get_name(self):
+		return self.device_tree.find("devices/device[1]").get("name")
+
+
+	def get_vcc_range(self):
+		dev_variant = self.device_tree.find("variants/variant[1]")
 		return (float(dev_variant.get("vccmin")), float(dev_variant.get("vccmax")))
-
-
-	def _parse_studio_device_file(self, name):
-		device_tree = etree.parse("devices/devicefiles/%s.xml" % name)
-
-		self.vtarget_range = self._find_vtarget_range(device_tree)

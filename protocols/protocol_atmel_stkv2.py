@@ -102,7 +102,7 @@ class ProtocolAtmelSTKV2(Protocol):
 		resp = self._trancieve([V2_CMD_GET_PARAMETER, V2_PARAM_VTARGET])
 
 		measured_vtarget = (float(resp[2]) / 10)
-		dev_vccrange = self.device.vtarget_range
+		dev_vccrange = self.device.get_vcc_range()
 
 		if not dev_vccrange[0] <= measured_vtarget <= dev_vccrange[1]:
 			raise ValueError("Device VCC range of (%0.2fV-%0.2fV) is outside "

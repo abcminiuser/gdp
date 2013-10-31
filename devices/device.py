@@ -5,7 +5,13 @@
 '''
 
 class Device(object):
-	name = None
-	vtarget_range = (None, None)
+	def __init__(self):
+		raise NotImplementedError
 
-	pass
+
+	def get_name(self):
+		raise NotImplementedError
+
+
+	def get_vcc_range(self):
+		raise NotImplementedError

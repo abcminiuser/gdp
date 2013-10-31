@@ -20,12 +20,20 @@ class ToolAtmelAVRISPMKII(Tool):
 		else:
 			raise LookupError("Unsupported port for the specified tool.")
 
-		if interface in ["isp", "pdi", "tpi"]:
+		if interface in self.get_supported_interfaces():
 			self.interface = interface
 		else:
 			raise LookupError("Unsupported interface for the specified tool.")
 
 		self.protocol = ProtocolAtmelSTKV2(self, device, interface)
+
+
+	def get_name(self):
+		return "Atmel AVRISP-MKII"
+
+
+	def get_supported_interfaces(self):
+		return ["isp", "pdi", "tpi"]
 
 
 	def open(self):
