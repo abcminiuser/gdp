@@ -4,17 +4,19 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
-import serial
+import sys
+try:
+	import serial
+except ImportError:
+	print("The PySerial library is not installed.")
+	sys.exit(1)
+
 from transports import *
 
 
 class TransportSerial(Transport):
-	dev_handle = None
-	port = None
-	baud = None
-
-
 	def __init__(self, port=None, baud=115200):
+		self.dev_handle = None
 		self.port = port
 		self.baud = baud
 
@@ -36,8 +38,8 @@ class TransportSerial(Transport):
 
 
 	def read(self):
-		return self.dev_handle.read(1000)
+		return [ord(x) for x in self.dev_handle.read(1000)]
 
 
 	def write(self, data):
-		self.dev_handle.write(data)
+		self.dev_handle.write(''.join([chr(c) for c in data]))

@@ -4,20 +4,20 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
-import usb.core
-import usb.util
+import sys
+try:
+	import usb.core
+	import usb.util
+except ImportError:
+	print("The PyUSB library is not installed.")
+	sys.exit(1)
+
 from transports import *
 
 
 class TransportJungoUSB(Transport):
-	dev_handle = None
-	vid = None
-	pid = None
-	read_ep  = None
-	write_ep = None
-
-
 	def __init__(self, vid=0x03eb, pid=None, read_ep=2, write_ep=2):
+		self.dev_handle = None
 		self.vid = vid
 		self.pid = pid
 		self.read_ep = read_ep
