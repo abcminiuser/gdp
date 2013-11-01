@@ -57,29 +57,26 @@ V2_PARAM_DISCHARGEDELAY        = 0xA4
 
 
 class ProtocolAtmelSTKV2(Protocol):
-	tool      = None
-	device    = None
-	interface = None
-
-
-	tool_sign_on_string = None
-
-
 	def __init__(self, tool, device, interface):
 		self.tool      = tool
 		self.device    = device
 		self.interface = interface
+
+		self.tool_sign_on_string = None
 
 
 	def _trancieve(self, packet_out):
 		self.tool.write(packet_out)
 		packet_in = self.tool.read()
 
+		if packet_in is None:
+			raise ValueError("No response received from tool.")
+
 		if packet_in[0] != packet_out[0]:
 			raise ValueError("Invalid response received from tool.")
 
 		if packet_in[1] != V2_STATUS_CMD_OK:
-			raise ValueError("Command failed with status %d." % packet_in[1])
+			raise ValueError("Command 0x%x failed with status 0x%x." % (packet_out[0], packet_in[1]))
 
 		return packet_in
 
@@ -90,7 +87,8 @@ class ProtocolAtmelSTKV2(Protocol):
 
 
 	def _reset_protection(self):
-		self._trancieve([V2_CMD_RESET_PROTECTION])
+		if self.tool_sign_on_string == "AVRISP_MK2":
+			self._trancieve([V2_CMD_RESET_PROTECTION])
 
 
 	def _set_reset_polarity(self, idle_level):
@@ -135,9 +133,7 @@ class ProtocolAtmelSTKV2(Protocol):
 					sck_dur = ceil(1 / (2 * B * target_frequency * 135.63e-9) - 10 / 12);
 
 			self._trancieve([V2_CMD_SET_PARAMETER, V2_PARAM_SCK_DURATION, sck_dur])
-		elif self.interface == "pdi":
-			raise NotImplementedError()
-		elif self.interface == "tpi":
+		else:
 			raise NotImplementedError()
 
 
