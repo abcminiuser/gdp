@@ -4,14 +4,17 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
-from lxml import etree
+import sys
+try:
+	from lxml import etree
+except ImportError:
+	print("The lxml library is not installed.")
+	sys.exit(1)
+
 from devices import *
 
 
 class DeviceAtmelStudio(Device):
-	device_tree = None
-
-
 	def __init__(self, part=None):
 		if part is None:
 			raise ValueError("Device part name must be specified.")
@@ -30,7 +33,7 @@ class DeviceAtmelStudio(Device):
 
 	def get_supported_interfaces(self):
 		dev_interfaces = self.device_tree.findall("devices/device[1]/interfaces/interface")
-		return [i.get("type") for i in dev_interfaces]
+		return [i.get("name").lower() for i in dev_interfaces]
 
 
 	def get_interface_param(self, interface, param):
