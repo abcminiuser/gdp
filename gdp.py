@@ -21,15 +21,15 @@ def gdp(options, args):
 
 	try:
 		tool = gdp_tools[options.tool](device, port=options.port, interface=options.interface)
-	except LookupError as message:
-		print("ERROR: %s" % message)
-		sys.exit(1)
 	except KeyError:
 		print("ERROR: Unknown tool \"%s\". Known tools are:" % options.tool)
 
 		for key, value in gdp_tools.iteritems() :
 		    print("  - %s (%s)" % (key, gdp_tools[key].get_name()))
 
+		sys.exit(1)
+	except LookupError as message:
+		print("ERROR: %s" % message)
 		sys.exit(1)
 
 
