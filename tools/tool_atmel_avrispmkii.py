@@ -10,10 +10,6 @@ from protocols import *
 
 
 class ToolAtmelAVRISPMKII(Tool):
-	transport = None
-	protocol  = None
-	interface = None
-
 	def __init__(self, device, port=None, interface="isp"):
 		if port is None:
 			self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2104, read_ep=2, write_ep=2)
@@ -50,8 +46,8 @@ class ToolAtmelAVRISPMKII(Tool):
 
 
 	def close(self):
-		self.transport.close()
 		self.protocol.close()
+		self.transport.close()
 
 
 	def read(self):

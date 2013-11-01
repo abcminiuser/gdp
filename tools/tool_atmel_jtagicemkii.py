@@ -48,13 +48,6 @@ JTAG_ICE_MKII_PACKET_TOKEN = 0x0E
 
 
 class ToolAtmelJTAGICEMKII(Tool):
-	transport = None
-	protocol  = None
-	interface = None
-
-	sequence  = 0x0000
-
-
 	@staticmethod
 	def _calc_crc16(data):
 		crc = 0xFFFF
@@ -82,7 +75,7 @@ class ToolAtmelJTAGICEMKII(Tool):
 
 	def __init__(self, device, port=None, interface="isp"):
 		if port is not None:
-			self.transport = TransportSerial(port=port, baud=115200)
+			self.transport = TransportSerial(port=port, baud=19200)
 		else:
 			self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2103, read_ep=2, write_ep=2)
 
@@ -94,6 +87,7 @@ class ToolAtmelJTAGICEMKII(Tool):
 			self.interface = interface
 
 		self.protocol = ProtocolAtmelJTAGV2(self, device, interface)
+		self.sequence = 0x0000
 
 
 	@staticmethod
@@ -116,12 +110,15 @@ class ToolAtmelJTAGICEMKII(Tool):
 
 
 	def close(self):
-		self.transport.close()
 		self.protocol.close()
+		self.transport.close()
 
 
 	def read(self):
 		packet = self.transport.read()
+
+		if len(packet) < 8:
+			return None
 
 		if packet[0] != JTAG_ICE_MKII_PACKET_START:
 			return None
