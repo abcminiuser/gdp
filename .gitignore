@@ -1,5 +1,6 @@
 *.pyc
-
 *.xml
-
+*.spec
+build/build
+build/dist
 devices/atmelstudio/devicefiles/*.xml
