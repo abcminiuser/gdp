@@ -202,6 +202,35 @@ class ProtocolAtmelSTKV2(Protocol):
 					mem_contents.append(resp[2])
 			else:
 				raise NotImplementedError()
+		elif memory_space == "lockbits":
+			if self.interface == "isp":
+				packet = [AtmelSTKV2Defs.CMD_READ_LOCK_ISP]
+				packet.append(self.device.get_param("isp_interface", "IspReadLock_pollIndex"))
+				packet.extend([0x58, 0x00, 0x00, 0x00])
+				resp = self._trancieve(packet)
+				mem_contents.append(resp[2])
+			else:
+				raise NotImplementedError()
+		elif memory_space == "fuses":
+			if self.interface == "isp":
+				fuse_commands = {
+					0 : [0x50, 0x00, 0x00, 0x00],
+					1 : [0x50, 0x08, 0x00, 0x00],
+					2 : [0x58, 0x00, 0x00, 0x00]
+					}
+
+				for x in xrange(length):
+					packet = [AtmelSTKV2Defs.CMD_READ_FUSE_ISP]
+					packet.append(self.device.get_param("isp_interface", "IspReadFuse_pollIndex"))
+					packet.extend(fuse_commands[x])
+					resp = self._trancieve(packet)
+					mem_contents.append(resp[2])
+			else:
+				raise NotImplementedError()
+		elif memory_space == "eeprom":
+			raise NotImplementedError()
+		elif memory_space == "flash":
+			raise NotImplementedError()
 		else:
 			raise NotImplementedError()
 

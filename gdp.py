@@ -60,6 +60,8 @@ def gdp(options, args):
 				                  ' '.join('0x%02X' % b for b in expected_signature)))
 
 		# TEST SESSION CODE
+		print("Lockbits: 0x%02X" % protocol.read_memory("lockbits", 0, 1)[0])
+		print("Fusebits: [%s]" % ' '.join('0x%02X' % b for b in protocol.read_memory("fuses", 0, 3)))
 		protocol.erase_memory(None)
 
 		protocol.exit_session()
