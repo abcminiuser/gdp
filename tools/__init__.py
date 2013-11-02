@@ -5,15 +5,17 @@
 '''
 
 from tools.tool import *
+from tools.tool_atmel_avr8dfu import *
 from tools.tool_atmel_avrisp import *
 from tools.tool_atmel_avrispmkii import *
 from tools.tool_atmel_jtagicemkii import *
 from tools.tool_atmel_stk500 import *
 
-gdp_tools = \
-	{
+
+gdp_tools = {
 		'avrisp'		:	ToolAtmelAVRISP,
 		'avrispmkii'	:	ToolAtmelAVRISPMKII,
 		'jtagicemkii'	:	ToolAtmelJTAGICEMKII,
-		'stk500'		:	ToolAtmelSTK500
+		'stk500'		:	ToolAtmelSTK500,
+		'avr8dfu'		:	ToolAtmelAVR8DFU
 	}

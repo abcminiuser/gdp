@@ -41,7 +41,8 @@ def gdp(options, args):
 			device_vtarget = protocol.get_vtarget()
 			dev_vccrange = device.get_vcc_range()
 
-			if not dev_vccrange[0] <= device_vtarget <= dev_vccrange[1]:
+			if device_vtarget is not None and \
+				not dev_vccrange[0] <= device_vtarget <= dev_vccrange[1]:
 				raise ValueError("Device VCC range of (%0.2fV-%0.2fV) is outside "
 				                 "the measured VTARGET of %0.2fV." %
 				                 (dev_vccrange[0], dev_vccrange[1], device_vtarget))
@@ -53,16 +54,24 @@ def gdp(options, args):
 			expected_signature = device.get_signature(options.interface)
 			read_signature = protocol.read_memory("signature", 0, len(expected_signature))
 
-			if expected_signature != read_signature:
+			if expected_signature[0 : len(read_signature)] != read_signature:
 				raise ValueError("Read device signature [%s] does not match the "
 				                 "expected signature [%s]." %
 				                 (' '.join('0x%02X' % b for b in read_signature),
 				                  ' '.join('0x%02X' % b for b in expected_signature)))
 
 		# TEST SESSION CODE
-		print("Lockbits: 0x%02X" % protocol.read_memory("lockbits", 0, 1)[0])
-		print("Fusebits: [%s]" % ' '.join('0x%02X' % b for b in protocol.read_memory("fuses", 0, 3)))
-		protocol.erase_memory(None)
+		lockbits = protocol.read_memory("lockbits", 0, 1)
+		if not lockbits is None:
+			print("Lockbits: 0x%02X" % ' '.join('0x%02X' % b for b in lockbits))
+
+		fusebits = protocol.read_memory("fuses", 0, 3)
+		if not fusebits is None:
+			print("Fusebits: [%s]" % ' '.join('0x%02X' % b for b in fusebits))
+
+		#protocol.erase_memory(None)
+		protocol.write_memory("eeprom", 0, [0xDC] * 128)
+		print(protocol.read_memory("eeprom", 0, 128))
 
 		protocol.exit_session()
 		tool.close()

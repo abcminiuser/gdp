@@ -5,5 +5,6 @@
 '''
 
 from transports.transport import *
+from transports.transport_dfuusb import *
 from transports.transport_jungousb import *
 from transports.transport_serial import *
