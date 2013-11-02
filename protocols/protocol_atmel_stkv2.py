@@ -222,7 +222,7 @@ class ProtocolAtmelSTKV2(Protocol):
 				for x in xrange(length):
 					packet = [AtmelSTKV2Defs.CMD_READ_FUSE_ISP]
 					packet.append(self.device.get_param("isp_interface", "IspReadFuse_pollIndex"))
-					packet.extend(fuse_commands[x])
+					packet.extend(fuse_commands[offset + x])
 					resp = self._trancieve(packet)
 					mem_contents.append(resp[2])
 			else:
@@ -233,18 +233,23 @@ class ProtocolAtmelSTKV2(Protocol):
 				packet.extend([offset >> (8 * x) & 0xFF for x in xrange(4)])
 				self._trancieve(packet)
 
-				packet = []
 				if memory_space == "eeprom":
 					blocksize = self.device.get_param("isp_interface", "IspReadEeprom_blockSize")
-					packet.append(AtmelSTKV2Defs.CMD_READ_EEPROM_ISP)
+
+					packet = [AtmelSTKV2Defs.CMD_READ_EEPROM_ISP]
+					packet.extend([blocksize >> 8, blocksize & 0xFF])
+					packet.append(0xA0)
 				else:
-					blocksize = self.device.get_param("isp_interface", "IspReadEeprom_blockSize")
-					packet.append(AtmelSTKV2Defs.CMD_READ_FLASH_ISP)
-				packet.extend([blocksize >> 8, blocksize & 0xFF])
-				packet.append(0xA0)
+					blocksize = self.device.get_param("isp_interface", "IspReadFlash_blockSize")
+
+					packet = [AtmelSTKV2Defs.CMD_READ_FLASH_ISP]
+					packet.extend([blocksize >> 8, blocksize & 0xFF])
+					packet.append(0x20)
+
 				resp = self._trancieve(packet)
 
-				mem_contents.extend(resp[2:-1])
+				page_data = resp[2:-1]
+				mem_contents.extend(page_data[0 : length])
 
 			else:
 				raise NotImplementedError()
@@ -255,7 +260,62 @@ class ProtocolAtmelSTKV2(Protocol):
 
 
 	def write_memory(self, memory_space, offset, data):
-		raise NotImplementedError()
+		if memory_space is None:
+			return ValueError("Write failed as memory space not set.")
+		elif memory_space == "lockbits":
+			if self.interface == "isp":
+				packet = [AtmelSTKV2Defs.CMD_PROGRAM_LOCK_ISP]
+				packet.extend([0xAC, 0xE0, 0x00, 0xC0 | data[0]])
+				self._trancieve(packet)
+			else:
+				raise NotImplementedError()
+		elif memory_space == "fuses":
+			if self.interface == "isp":
+				fuse_commands = {
+						0 : [0xAC, 0xA0, 0x00, 0x00],
+						1 : [0xAC, 0xA8, 0x00, 0x00],
+						2 : [0xAC, 0xA4, 0x00, 0x00]
+					}
+
+				for x in xrange(length):
+					packet = [AtmelSTKV2Defs.CMD_PROGRAM_FUSE_ISP]
+					packet.extend(fuse_commands[offset + x])
+					packet[-1] = data[offset + x]
+					self._trancieve(packet)
+			else:
+				raise NotImplementedError()
+		elif memory_space in ["eeprom", "flash"]:
+			if self.interface == "isp":
+				blocksize = self.device.get_param("isp_interface", "IspProgram%s_blockSize" % memory_space.capitalize())
+
+				packet = [AtmelSTKV2Defs.CMD_LOAD_ADDRESS]
+				packet.extend([offset >> (8 * x) & 0xFF for x in xrange(4)])
+				self._trancieve(packet)
+
+				if offset % blocksize:
+					alignment_bytes = offset % blocksize
+					data.insert(0, self.read_memory(memory_space, offset - alignment_bytes))
+
+				for chunk in xrange(len(data) / blocksize):
+					if memory_space == "flash":
+						packet = [AtmelSTKV2Defs.CMD_PROGRAM_FLASH_ISP]
+					else:
+						packet = [AtmelSTKV2Defs.CMD_PROGRAM_EEPROM_ISP]
+					packet.extend([blocksize >> 8, blocksize & 0xFF])
+					packet.append(self.device.get_param("isp_interface", "IspProgram%s_mode" % memory_space.capitalize()) | 0x80)
+					packet.append(self.device.get_param("isp_interface", "IspProgram%s_delay" % memory_space.capitalize()))
+					packet.append(self.device.get_param("isp_interface", "IspProgram%s_cmd1" % memory_space.capitalize()))
+					packet.append(self.device.get_param("isp_interface", "IspProgram%s_cmd2" % memory_space.capitalize()))
+					packet.append(self.device.get_param("isp_interface", "IspProgram%s_cmd3" % memory_space.capitalize()))
+					packet.append(self.device.get_param("isp_interface", "IspProgram%s_pollVal1" % memory_space.capitalize()))
+					packet.append(self.device.get_param("isp_interface", "IspProgram%s_pollVal2" % memory_space.capitalize()))
+					packet.extend(data[chunk * blocksize : chunk * blocksize + blocksize])
+
+					self._trancieve(packet)
+			else:
+				raise NotImplementedError()
+		else:
+			raise NotImplementedError()
 
 
 	def open(self):
