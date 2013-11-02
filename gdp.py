@@ -63,15 +63,15 @@ def gdp(options, args):
 		# TEST SESSION CODE
 		lockbits = protocol.read_memory("lockbits", 0, 1)
 		if not lockbits is None:
-			print("Lockbits: 0x%02X" % ' '.join('0x%02X' % b for b in lockbits))
+			print("Lockbits: [%s]" % ' '.join('0x%02X' % b for b in lockbits))
 
 		fusebits = protocol.read_memory("fuses", 0, 3)
 		if not fusebits is None:
 			print("Fusebits: [%s]" % ' '.join('0x%02X' % b for b in fusebits))
 
 		#protocol.erase_memory(None)
-		protocol.write_memory("eeprom", 0, [0xDC] * 128)
-		print(protocol.read_memory("flash", 0, 128))
+		#protocol.write_memory("eeprom", 0, [0xDC] * 128)
+		print(protocol.read_memory("eeprom", 0, 128))
 
 		protocol.exit_session()
 		tool.close()

@@ -227,10 +227,27 @@ class ProtocolAtmelSTKV2(Protocol):
 					mem_contents.append(resp[2])
 			else:
 				raise NotImplementedError()
-		elif memory_space == "eeprom":
-			raise NotImplementedError()
-		elif memory_space == "flash":
-			raise NotImplementedError()
+		elif memory_space in ["eeprom", "flash"]:
+			if self.interface == "isp":
+				packet = [AtmelSTKV2Defs.CMD_LOAD_ADDRESS]
+				packet.extend([offset >> (8 * x) & 0xFF for x in xrange(4)])
+				self._trancieve(packet)
+
+				packet = []
+				if memory_space == "eeprom":
+					blocksize = self.device.get_param("isp_interface", "IspReadEeprom_blockSize")
+					packet.append(AtmelSTKV2Defs.CMD_READ_EEPROM_ISP)
+				else:
+					blocksize = self.device.get_param("isp_interface", "IspReadEeprom_blockSize")
+					packet.append(AtmelSTKV2Defs.CMD_READ_FLASH_ISP)
+				packet.extend([blocksize >> 8, blocksize & 0xFF])
+				packet.append(0xA0)
+				resp = self._trancieve(packet)
+
+				mem_contents.extend(resp[2:-1])
+
+			else:
+				raise NotImplementedError()
 		else:
 			raise NotImplementedError()
 
