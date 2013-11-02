@@ -60,6 +60,7 @@ def main():
 	usage = "usage: %prog [options] FILE"
 
 	parser = OptionParser(usage=usage, description=description)
+	parser.disable_interspersed_args()
 
 	comm_group = OptionGroup(parser,
 	                         "Communication Settings",
@@ -89,7 +90,12 @@ def main():
 
 	parser.add_option_group(comm_group)
 	parser.add_option_group(override_group)
+
 	(options, args) = parser.parse_args()
+
+	if len(args) == 0:
+		print("%s\n\n%s" % (description, parser.get_usage()))
+		sys.exit(0)
 
 	if options.device is None:
 		print("ERROR: No device specified.")
