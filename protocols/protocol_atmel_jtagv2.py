@@ -7,7 +7,12 @@
 from protocols import *
 
 
-JTAG_V2_CMD_SIGN_ON                 = 0x01
+class AtmelJTAGV2Defs(object):
+	CMD_SIGN_OFF                = 0x00
+	CMD_SIGN_ON                 = 0x01
+
+	STATUS_CMD_OK               = 0x00
+
 
 class ProtocolAtmelJTAGV2(Protocol):
 	def __init__(self, tool, device, interface):
@@ -26,14 +31,18 @@ class ProtocolAtmelJTAGV2(Protocol):
 		if packet_in[0] != packet_out[0]:
 			raise ValueError("Invalid response received from tool.")
 
-		if packet_in[1] != V2_STATUS_CMD_OK:
+		if packet_in[1] != AtmelJTAGV2Defs.V2_STATUS_CMD_OK:
 			raise ValueError("Command failed with status %d." % packet_in[1])
 
 		return packet_in
 
 
 	def _sign_on(self):
-		self._trancieve([V2_CMD_SIGN_ON])
+		self._trancieve([AtmelJTAGV2Defs.CMD_SIGN_ON])
+
+
+	def _sign_off(self):
+		self._trancieve([AtmelJTAGV2Defs.CMD_SIGN_OFF])
 
 
 	def get_vtarget(self):
@@ -58,4 +67,5 @@ class ProtocolAtmelJTAGV2(Protocol):
 
 
 	def close(self):
+		self._sign_off()
 		raise NotImplementedError()

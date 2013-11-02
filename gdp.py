@@ -15,7 +15,7 @@ from tools import *
 def gdp(options, args):
 	try:
 		device = DeviceAtmelStudio(part=options.device)
-	except:
+	except IOError:
 		print("ERROR: Unknown device \"%s\"." % options.device)
 		sys.exit(1)
 
@@ -31,7 +31,6 @@ def gdp(options, args):
 	except LookupError as message:
 		print("ERROR: %s" % message)
 		sys.exit(1)
-
 
 	protocol = tool.get_protocol()
 
@@ -66,27 +65,27 @@ def main():
 	                         "Communication Settings",
 	                         "Basic device/tool settings.")
 	comm_group.add_option("-d", "--device",
-	                  action="store", type="string", dest="device",
-	                  help="target device selection")
+	                      action="store", type="string", dest="device",
+	                      help="target device selection")
 	comm_group.add_option("-t", "--tool",
-	                  action="store", type="string", dest="tool",
-	                  help="target device selection")
+	                      action="store", type="string", dest="tool",
+	                      help="target device selection")
 	comm_group.add_option("-p", "--port",
-	                  action="store", type="string", dest="port",
-	                  help="communication port (for serial tools)")
+	                      action="store", type="string", dest="port",
+	                      help="communication port (for serial tools)")
 	comm_group.add_option("-i", "--interface",
-	                  action="store", type="string", dest="interface",
-	                  help="communication interface to use to the target")
+	                      action="store", type="string", dest="interface",
+	                      help="communication interface to use to the target")
 	comm_group.add_option("-f", "--frequency",
-	                  action="store", type="int", dest="frequency", default=250000,
-	                  help="communication interface frequency to use to the target")
+	                      action="store", type="int", dest="frequency", default=250000,
+	                      help="communication interface frequency to use to the target")
 
 	override_group = OptionGroup(parser,
 	                             "Sanity Check Overrides",
 	                             "[Here be dragons.]")
 	override_group.add_option("", "--no-vtarget",
-	                  action="store_true", dest="no_verify_vtarget",
-	                  help="disable VCC range validity check of the target")
+	                          action="store_true", dest="no_verify_vtarget",
+	                          help="disable VCC range validity check of the target")
 
 	parser.add_option_group(comm_group)
 	parser.add_option_group(override_group)

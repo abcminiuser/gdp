@@ -7,53 +7,54 @@
 from protocols import *
 
 
-V2_CMD_SIGN_ON                 = 0x01
-V2_CMD_SET_PARAMETER           = 0x02
-V2_CMD_GET_PARAMETER           = 0x03
-V2_CMD_OSCCAL                  = 0x05
-V2_CMD_LOAD_ADDRESS            = 0x06
-V2_CMD_FIRMWARE_UPGRADE        = 0x07
-V2_CMD_RESET_PROTECTION        = 0x0A
-V2_CMD_ENTER_PROGMODE_ISP      = 0x10
-V2_CMD_LEAVE_PROGMODE_ISP      = 0x11
-V2_CMD_CHIP_ERASE_ISP          = 0x12
-V2_CMD_PROGRAM_FLASH_ISP       = 0x13
-V2_CMD_READ_FLASH_ISP          = 0x14
-V2_CMD_PROGRAM_EEPROM_ISP      = 0x15
-V2_CMD_READ_EEPROM_ISP         = 0x16
-V2_CMD_PROGRAM_FUSE_ISP        = 0x17
-V2_CMD_READ_FUSE_ISP           = 0x18
-V2_CMD_PROGRAM_LOCK_ISP        = 0x19
-V2_CMD_READ_LOCK_ISP           = 0x1A
-V2_CMD_READ_SIGNATURE_ISP      = 0x1B
-V2_CMD_READ_OSCCAL_ISP         = 0x1C
-V2_CMD_SPI_MULTI               = 0x1D
-V2_CMD_XPROG                   = 0x50
-V2_CMD_XPROG_SETMODE           = 0x51
+class AtmelSTKV2Defs(object):
+	CMD_SIGN_ON                 = 0x01
+	CMD_SET_PARAMETER           = 0x02
+	CMD_GET_PARAMETER           = 0x03
+	CMD_OSCCAL                  = 0x05
+	CMD_LOAD_ADDRESS            = 0x06
+	CMD_FIRMWARE_UPGRADE        = 0x07
+	CMD_RESET_PROTECTION        = 0x0A
+	CMD_ENTER_PROGMODE_ISP      = 0x10
+	CMD_LEAVE_PROGMODE_ISP      = 0x11
+	CMD_CHIP_ERASE_ISP          = 0x12
+	CMD_PROGRAM_FLASH_ISP       = 0x13
+	CMD_READ_FLASH_ISP          = 0x14
+	CMD_PROGRAM_EEPROM_ISP      = 0x15
+	CMD_READ_EEPROM_ISP         = 0x16
+	CMD_PROGRAM_FUSE_ISP        = 0x17
+	CMD_READ_FUSE_ISP           = 0x18
+	CMD_PROGRAM_LOCK_ISP        = 0x19
+	CMD_READ_LOCK_ISP           = 0x1A
+	CMD_READ_SIGNATURE_ISP      = 0x1B
+	CMD_READ_OSCCAL_ISP         = 0x1C
+	CMD_SPI_MULTI               = 0x1D
+	CMD_XPROG                   = 0x50
+	CMD_XPROG_SETMODE           = 0x51
 
-V2_STATUS_CMD_OK               = 0x00
-V2_STATUS_CMD_TOUT             = 0x80
-V2_STATUS_RDY_BSY_TOUT         = 0x81
-V2_STATUS_SET_PARAM_MISSING    = 0x82
-V2_STATUS_CMD_FAILED           = 0xC0
-V2_STATUS_CMD_UNKNOWN          = 0xC9
-V2_STATUS_ISP_READY            = 0x00
-V2_STATUS_CONN_FAIL_MOSI       = 0x01
-V2_STATUS_CONN_FAIL_RST        = 0x02
-V2_STATUS_CONN_FAIL_SCK        = 0x04
-V2_STATUS_TGT_NOT_DETECTED     = 0x10
-V2_STATUS_TGT_REVERSE_INSERTED = 0x20
+	STATUS_CMD_OK               = 0x00
+	STATUS_CMD_TOUT             = 0x80
+	STATUS_RDY_BSY_TOUT         = 0x81
+	STATUS_SET_PARAM_MISSING    = 0x82
+	STATUS_CMD_FAILED           = 0xC0
+	STATUS_CMD_UNKNOWN          = 0xC9
+	STATUS_ISP_READY            = 0x00
+	STATUS_CONN_FAIL_MOSI       = 0x01
+	STATUS_CONN_FAIL_RST        = 0x02
+	STATUS_CONN_FAIL_SCK        = 0x04
+	STATUS_TGT_NOT_DETECTED     = 0x10
+	STATUS_TGT_REVERSE_INSERTED = 0x20
 
-V2_PARAM_BUILD_NUMBER_LOW      = 0x80
-V2_PARAM_BUILD_NUMBER_HIGH     = 0x81
-V2_PARAM_HW_VER                = 0x90
-V2_PARAM_SW_MAJOR              = 0x91
-V2_PARAM_SW_MINOR              = 0x92
-V2_PARAM_VTARGET               = 0x94
-V2_PARAM_SCK_DURATION          = 0x98
-V2_PARAM_RESET_POLARITY        = 0x9E
-V2_PARAM_STATUS_TGT_CONN       = 0xA1
-V2_PARAM_DISCHARGEDELAY        = 0xA4
+	PARAM_BUILD_NUMBER_LOW      = 0x80
+	PARAM_BUILD_NUMBER_HIGH     = 0x81
+	PARAM_HW_VER                = 0x90
+	PARAM_SW_MAJOR              = 0x91
+	PARAM_SW_MINOR              = 0x92
+	PARAM_VTARGET               = 0x94
+	PARAM_SCK_DURATION          = 0x98
+	PARAM_RESET_POLARITY        = 0x9E
+	PARAM_STATUS_TGT_CONN       = 0xA1
+	PARAM_DISCHARGEDELAY        = 0xA4
 
 
 class ProtocolAtmelSTKV2(Protocol):
@@ -75,28 +76,28 @@ class ProtocolAtmelSTKV2(Protocol):
 		if packet_in[0] != packet_out[0]:
 			raise ValueError("Invalid response received from tool.")
 
-		if packet_in[1] != V2_STATUS_CMD_OK:
+		if packet_in[1] != AtmelSTKV2Defs.STATUS_CMD_OK:
 			raise ValueError("Command 0x%x failed with status 0x%x." % (packet_out[0], packet_in[1]))
 
 		return packet_in
 
 
 	def _sign_on(self):
-		resp = self._trancieve([V2_CMD_SIGN_ON])
+		resp = self._trancieve([AtmelSTKV2Defs.CMD_SIGN_ON])
 		self.tool_sign_on_string = ''.join([chr(c) for c in resp[3 : ]])
 
 
 	def _reset_protection(self):
 		if self.tool_sign_on_string == "AVRISP_MK2":
-			self._trancieve([V2_CMD_RESET_PROTECTION])
+			self._trancieve([AtmelSTKV2Defs.CMD_RESET_PROTECTION])
 
 
 	def _set_reset_polarity(self, idle_level):
-		self._trancieve([V2_CMD_SET_PARAMETER, V2_PARAM_RESET_POLARITY, idle_level])
+		self._trancieve([AtmelSTKV2Defs.CMD_SET_PARAMETER, AtmelSTKV2Defs.PARAM_RESET_POLARITY, idle_level])
 
 
 	def get_vtarget(self):
-		resp = self._trancieve([V2_CMD_GET_PARAMETER, V2_PARAM_VTARGET])
+		resp = self._trancieve([AtmelSTKV2Defs.CMD_GET_PARAMETER, AtmelSTKV2Defs.PARAM_VTARGET])
 
 		measured_vtarget = (float(resp[2]) / 10)
 		return measured_vtarget
@@ -132,14 +133,14 @@ class ProtocolAtmelSTKV2(Protocol):
 				else:
 					sck_dur = ceil(1 / (2 * B * target_frequency * 135.63e-9) - 10 / 12);
 
-			self._trancieve([V2_CMD_SET_PARAMETER, V2_PARAM_SCK_DURATION, sck_dur])
+			self._trancieve([AtmelSTKV2Defs.CMD_SET_PARAMETER, AtmelSTKV2Defs.PARAM_SCK_DURATION, sck_dur])
 		else:
 			raise NotImplementedError()
 
 
 	def enter_session(self):
 		if self.interface == "isp":
-			packet = [V2_CMD_ENTER_PROGMODE_ISP]
+			packet = [AtmelSTKV2Defs.CMD_ENTER_PROGMODE_ISP]
 			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_timeout"))
 			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_stabDelay"))
 			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_cmdexeDelay"))
@@ -156,7 +157,7 @@ class ProtocolAtmelSTKV2(Protocol):
 
 	def exit_session(self):
 		if self.interface == "isp":
-			packet = [V2_CMD_LEAVE_PROGMODE_ISP]
+			packet = [AtmelSTKV2Defs.CMD_LEAVE_PROGMODE_ISP]
 		else:
 			raise NotImplementedError()
 
