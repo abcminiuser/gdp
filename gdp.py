@@ -71,7 +71,7 @@ def gdp(options, args):
 
 		#protocol.erase_memory(None)
 		protocol.write_memory("eeprom", 0, [0xDC] * 128)
-		print(protocol.read_memory("eeprom", 0, 128))
+		print(protocol.read_memory("flash", 0, 128))
 
 		protocol.exit_session()
 		tool.close()

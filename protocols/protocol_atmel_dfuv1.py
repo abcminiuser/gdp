@@ -16,16 +16,16 @@ class AtmelDFUV1Defs(object):
 	DFU_REQ_GETSTATE                        = 5
 	DFU_REQ_ABORT                           = 6
 
-	DFU_STATE_APP_IDLE                      = 0,
-	DFU_STATE_APP_DETACH                    = 1,
-	DFU_STATE_DFU_IDLE                      = 2,
-	DFU_STATE_DFU_DNLOAD_SYNC               = 3,
-	DFU_STATE_DFU_DNBUSY                    = 4,
-	DFU_STATE_DFU_DNLOAD_IDLE               = 5,
-	DFU_STATE_DFU_MANIFEST_SYNC             = 6,
-	DFU_STATE_DFU_MANIFEST                  = 7,
-	DFU_STATE_DFU_MANIFEST_WAIT_RESET       = 8,
-	DFU_STATE_DFU_UPLOAD_IDLE               = 9,
+	DFU_STATE_APP_IDLE                      = 0
+	DFU_STATE_APP_DETACH                    = 1
+	DFU_STATE_DFU_IDLE                      = 2
+	DFU_STATE_DFU_DNLOAD_SYNC               = 3
+	DFU_STATE_DFU_DNBUSY                    = 4
+	DFU_STATE_DFU_DNLOAD_IDLE               = 5
+	DFU_STATE_DFU_MANIFEST_SYNC             = 6
+	DFU_STATE_DFU_MANIFEST                  = 7
+	DFU_STATE_DFU_MANIFEST_WAIT_RESET       = 8
+	DFU_STATE_DFU_UPLOAD_IDLE               = 9
 	DFU_STATE_DFU_ERROR                     = 10
 
 
@@ -42,6 +42,10 @@ class ProtocolAtmelDFUV1(Protocol):
 
 	def _getstatus(self):
 		return self.tool.read(AtmelDFUV1Defs.DFU_REQ_GETSTATUS, 0, 1)[0]
+
+
+	def _select_64kb_bank(self, bank):
+		self.tool.write(AtmelDFUV1Defs.DFU_REQ_DNLOAD, 0, [0x03, 0x00, bank])
 
 
 	def get_vtarget(self):
@@ -82,10 +86,12 @@ class ProtocolAtmelDFUV1(Protocol):
 		elif memory_space in ["fuses", "lockbits"]:
 			return None
 		elif memory_space in ["flash", "eeprom"]:
+			self._select_64kb_bank(offset >> 16)
+
 			packet = [0x03]
 			packet.append(0x00 if memory_space == "flash" else 0x02)
-			packet.extend([offset & 0xFF, offset >> 8])
-			packet.extend([(offset + length) & 0xFF, (offset + length) >> 8])
+			packet.extend([offset >> 8, offset & 0xFF])
+			packet.extend([(offset + length - 1) >> 8, (offset + length - 1) & 0xFF])
 
 			self.tool.write(AtmelDFUV1Defs.DFU_REQ_DNLOAD, 0, packet)
 			resp = self.tool.read(AtmelDFUV1Defs.DFU_REQ_UPLOAD, 0, length)
@@ -94,25 +100,22 @@ class ProtocolAtmelDFUV1(Protocol):
 		else:
 			raise NotImplementedError()
 
-
 		return mem_contents
+
 
 	def write_memory(self, memory_space, offset, data):
 		if memory_space in ["flash", "eeprom"]:
+			self._select_64kb_bank(offset >> 16)
+
 			packet = [0x01]
 			packet.append(0x00 if memory_space == "flash" else 0x01)
-			packet.extend([offset & 0xFF, offset >> 8])
-			packet.extend([(offset + len(data)) & 0xFF, (offset + len(data)) >> 8])
-			self.tool.write(AtmelDFUV1Defs.DFU_REQ_DNLOAD, 0, packet)
-
-			print packet
-			print self._getstate()
-
-			packet = []
+			packet.extend([offset >> 8, offset & 0xFF])
+			packet.extend([(offset + len(data) - 1) >> 8, (offset + len(data) - 1) & 0xFF])
 			packet.extend([0x00] * 26)
 			packet.extend([0x00] * (offset % 32))
 			packet.extend(data)
-			packet.extend([0x00] * 16)
+			packet.extend([0xFF] * 16)
+
 			self.tool.write(AtmelDFUV1Defs.DFU_REQ_DNLOAD, 0, packet)
 		elif memory_space in ["signature", "fuses", "lockbits"]:
 			pass
