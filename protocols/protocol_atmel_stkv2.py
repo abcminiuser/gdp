@@ -88,7 +88,7 @@ class ProtocolAtmelSTKV2(Protocol):
 
 
 	def _reset_protection(self):
-		if self.tool_sign_on_string == "AVRISP_MK2":
+		if "AVRISP" in self.tool_sign_on_string:
 			self._trancieve([AtmelSTKV2Defs.CMD_RESET_PROTECTION])
 
 
@@ -110,7 +110,7 @@ class ProtocolAtmelSTKV2(Protocol):
 		if self.interface == "isp":
 			sck_dur = 0;
 
-			if self.tool_sign_on_string == "AVRISP_MK2":
+			if "AVRISP" in self.tool_sign_on_string:
 				if target_frequency >= 921600:
 					sck_dur = 0;
 				elif target_frequency >= 230400:
@@ -158,6 +158,8 @@ class ProtocolAtmelSTKV2(Protocol):
 	def exit_session(self):
 		if self.interface == "isp":
 			packet = [AtmelSTKV2Defs.CMD_LEAVE_PROGMODE_ISP]
+			packet.append(self.device.get_interface_param("isp", "IspLeaveProgMode_preDelay"))
+			packet.append(self.device.get_interface_param("isp", "IspLeaveProgMode_postDelay"))
 		else:
 			raise NotImplementedError()
 
