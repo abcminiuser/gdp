@@ -25,6 +25,10 @@ class Protocol(object):
 		raise NotImplementedError
 
 
+	def erase_memory(self, memory_space):
+		raise NotImplementedError()
+
+
 	def open(self):
 		raise NotImplementedError
 

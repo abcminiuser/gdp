@@ -61,6 +61,10 @@ class ProtocolAtmelJTAGV2(Protocol):
 		raise NotImplementedError
 
 
+	def erase_memory(self, memory_space):
+		raise NotImplementedError()
+
+
 	def open(self):
 		self._sign_on()
 		raise NotImplementedError()

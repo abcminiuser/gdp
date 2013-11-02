@@ -110,7 +110,7 @@ class ProtocolAtmelSTKV2(Protocol):
 			raise ValueError("Target communication frequency not specified.")
 
 		if self.interface == "isp":
-			sck_dur = 0;
+			sck_dur = 0
 
 			if "AVRISP" in self.tool_sign_on_string:
 				if target_frequency >= 921600:
@@ -167,6 +167,21 @@ class ProtocolAtmelSTKV2(Protocol):
 			packet.append(self.device.get_interface_param("isp", "IspLeaveProgMode_postDelay"))
 		else:
 			raise NotImplementedError()
+
+		self._trancieve(packet)
+
+
+	def erase_memory(self, memory_space):
+		if memory_space is None:
+			if self.interface == "isp":
+				packet = [AtmelSTKV2Defs.CMD_CHIP_ERASE_ISP]
+				packet.append(self.device.get_interface_param("isp", "IspChipErase_eraseDelay"))
+				packet.append(self.device.get_interface_param("isp", "IspChipErase_pollMethod"))
+				packet.extend([0xAC, 0x80, 0x00, 0x00])
+			else:
+				raise NotImplementedError()
+		else:
+			raise ValueError("The specified tool cannot erase the requested memory space.")
 
 		self._trancieve(packet)
 

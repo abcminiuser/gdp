@@ -49,6 +49,9 @@ def gdp(options, args):
 		protocol.set_interface_frequency(options.frequency)
 		protocol.enter_session()
 
+		# TEST SESSION CODE - Erase chip
+		protocol.erase_memory(None)
+
 		protocol.exit_session()
 		tool.close()
 	except (ValueError, LookupError, IOError) as message:
