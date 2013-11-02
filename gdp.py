@@ -93,7 +93,7 @@ def main():
 
 	(options, args) = parser.parse_args()
 
-	if len(args) == 0:
+	if len(sys.argv) == 0:
 		print("%s\n\n%s" % (description, parser.get_usage()))
 		sys.exit(0)
 

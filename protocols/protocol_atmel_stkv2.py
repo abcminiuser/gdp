@@ -4,6 +4,8 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+import math
+
 from protocols import *
 
 
@@ -120,7 +122,7 @@ class ProtocolAtmelSTKV2(Protocol):
 				elif target_frequency >= 28800:
 					sck_dur = 3;
 				else:
-					sck_dur = ceil(1 / (2 * B * target_frequency * 271.27e-9) - 10 / 12);
+					sck_dur = math.ceil(1.0 / (2 * 12.0 * target_frequency * 271.27e-9) - 10 / 12)
 			else:
 				if target_frequency >= 1843200:
 					sck_dur = 0;
@@ -131,9 +133,12 @@ class ProtocolAtmelSTKV2(Protocol):
 				elif target_frequency >= 57600:
 					sck_dur = 3;
 				else:
-					sck_dur = ceil(1 / (2 * B * target_frequency * 135.63e-9) - 10 / 12);
+					sck_dur = math.ceil(1.0 / (2 * 12.0 * target_frequency * 135.63e-9) - 10 / 12)
 
-			self._trancieve([AtmelSTKV2Defs.CMD_SET_PARAMETER, AtmelSTKV2Defs.PARAM_SCK_DURATION, sck_dur])
+			if sck_dur > 0xFF:
+				raise ValueError("Specified ISP frequency is not obtainable for the current tool.")
+
+			self._trancieve([AtmelSTKV2Defs.CMD_SET_PARAMETER, AtmelSTKV2Defs.PARAM_SCK_DURATION, int(sck_dur)])
 		else:
 			raise NotImplementedError()
 
