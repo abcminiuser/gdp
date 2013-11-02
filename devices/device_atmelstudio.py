@@ -36,14 +36,14 @@ class DeviceAtmelStudio(Device):
 		return [i.get("name").lower() for i in dev_interfaces]
 
 
-	def get_interface_param(self, interface, param):
-		interface_info = self.device_tree.find("devices/device[1]/property-groups/property-group[@name='%s_INTERFACE']" % interface.upper())
-		if interface_info is None:
-			raise KeyError("Interface \"%s\" is not found in the selected device." % interface)
+	def get_param(self, group, param):
+		param_group = self.device_tree.find("devices/device[1]/property-groups/property-group[@name='%s']" % group.upper())
+		if param_group is None:
+			raise KeyError("Property group \"%s\" not found in the selected device." % group)
 
-		param_info = interface_info.find("property[@name='%s']" % param)
+		param_info = param_group.find("property[@name='%s']" % param)
 		if param_info is None:
-			raise KeyError("Interface \"%s\" parameter \"%s\" is not found in the selected device." % (interface, param))
+			raise KeyError("Device group \"%s\" parameter \"%s\" not found in the selected device." % (group, param))
 
 		param_value = param_info.get("value")
 
@@ -51,3 +51,18 @@ class DeviceAtmelStudio(Device):
 			return int(param_value, 16)
 		else:
 			return int(param_value, 10)
+
+
+	def get_signature(self, interface):
+		if interface == "jtag":
+			return self.get_param("signatures", "JTAGID")
+		else:
+			dev_signature = 0
+
+			try:
+				dev_signature = []
+				while True:
+					dev_signature.append(self.get_param("signatures",
+					                     "SIGNATURE%d" % len(dev_signature)))
+			finally:
+				return dev_signature

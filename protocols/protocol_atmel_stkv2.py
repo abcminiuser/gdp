@@ -146,13 +146,13 @@ class ProtocolAtmelSTKV2(Protocol):
 	def enter_session(self):
 		if self.interface == "isp":
 			packet = [AtmelSTKV2Defs.CMD_ENTER_PROGMODE_ISP]
-			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_timeout"))
-			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_stabDelay"))
-			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_cmdexeDelay"))
-			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_synchLoops"))
-			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_byteDelay"))
-			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_pollValue"))
-			packet.append(self.device.get_interface_param("isp", "IspEnterProgMode_pollIndex"))
+			packet.append(self.device.get_param("isp_interface", "IspEnterProgMode_timeout"))
+			packet.append(self.device.get_param("isp_interface", "IspEnterProgMode_stabDelay"))
+			packet.append(self.device.get_param("isp_interface", "IspEnterProgMode_cmdexeDelay"))
+			packet.append(self.device.get_param("isp_interface", "IspEnterProgMode_synchLoops"))
+			packet.append(self.device.get_param("isp_interface", "IspEnterProgMode_byteDelay"))
+			packet.append(self.device.get_param("isp_interface", "IspEnterProgMode_pollValue"))
+			packet.append(self.device.get_param("isp_interface", "IspEnterProgMode_pollIndex"))
 			packet.extend([0xAC, 0x53, 0x00, 0x00])
 		else:
 			raise NotImplementedError()
@@ -163,8 +163,8 @@ class ProtocolAtmelSTKV2(Protocol):
 	def exit_session(self):
 		if self.interface == "isp":
 			packet = [AtmelSTKV2Defs.CMD_LEAVE_PROGMODE_ISP]
-			packet.append(self.device.get_interface_param("isp", "IspLeaveProgMode_preDelay"))
-			packet.append(self.device.get_interface_param("isp", "IspLeaveProgMode_postDelay"))
+			packet.append(self.device.get_param("isp_interface", "IspLeaveProgMode_preDelay"))
+			packet.append(self.device.get_param("isp_interface", "IspLeaveProgMode_postDelay"))
 		else:
 			raise NotImplementedError()
 
@@ -175,8 +175,8 @@ class ProtocolAtmelSTKV2(Protocol):
 		if memory_space is None:
 			if self.interface == "isp":
 				packet = [AtmelSTKV2Defs.CMD_CHIP_ERASE_ISP]
-				packet.append(self.device.get_interface_param("isp", "IspChipErase_eraseDelay"))
-				packet.append(self.device.get_interface_param("isp", "IspChipErase_pollMethod"))
+				packet.append(self.device.get_param("isp_interface", "IspChipErase_eraseDelay"))
+				packet.append(self.device.get_param("isp_interface", "IspChipErase_pollMethod"))
 				packet.extend([0xAC, 0x80, 0x00, 0x00])
 			else:
 				raise NotImplementedError()
@@ -185,6 +185,27 @@ class ProtocolAtmelSTKV2(Protocol):
 
 		self._trancieve(packet)
 
+
+	def read_memory(self, memory_space, offset, length):
+		mem_contents = []
+
+		if memory_space is None:
+			return ValueError("Read failed as memory space not set.")
+		elif memory_space == "signature":
+			if self.interface == "isp":
+				for x in xrange(length):
+					packet = [AtmelSTKV2Defs.CMD_READ_SIGNATURE_ISP]
+					packet.append(self.device.get_param("isp_interface", "IspReadSign_pollIndex"))
+					packet.extend([0x30, 0x80, offset + x, 0x00])
+					resp = self._trancieve(packet)
+
+					mem_contents.append(resp[2])
+			else:
+				raise NotImplementedError()
+		else:
+			raise NotImplementedError()
+
+		return mem_contents
 
 	def open(self):
 		self._sign_on()

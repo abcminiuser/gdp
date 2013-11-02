@@ -49,7 +49,17 @@ def gdp(options, args):
 		protocol.set_interface_frequency(options.frequency)
 		protocol.enter_session()
 
-		# TEST SESSION CODE - Erase chip
+		if not options.no_verify_signature:
+			expected_signature = device.get_signature(options.interface)
+			read_signature = protocol.read_memory("signature", 0, len(expected_signature))
+
+			if expected_signature != read_signature:
+				raise ValueError("Read device signature [%s] does not match the "
+				                 "expected signature [%s]." %
+				                 (' '.join('0x%02X' % b for b in read_signature),
+				                  ' '.join('0x%02X' % b for b in expected_signature)))
+
+		# TEST SESSION CODE
 		protocol.erase_memory(None)
 
 		protocol.exit_session()
@@ -90,6 +100,9 @@ def main():
 	override_group.add_option("", "--no-vtarget",
 	                          action="store_true", dest="no_verify_vtarget",
 	                          help="disable VCC range validity check of the target")
+	override_group.add_option("", "--no-signature",
+	                          action="store_true", dest="no_verify_signature",
+	                          help="disable signature validity check of the target")
 
 	parser.add_option_group(comm_group)
 	parser.add_option_group(override_group)

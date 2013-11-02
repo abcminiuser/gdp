@@ -21,6 +21,9 @@ class Device(object):
 		raise NotImplementedError
 
 
-	def get_interface_param(self, interface, param):
+	def get_param(self, group, param):
 		raise NotImplementedError
 
+
+	def get_signature(self, interface):
+		raise NotImplementedError
