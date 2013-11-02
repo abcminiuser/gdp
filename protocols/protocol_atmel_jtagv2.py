@@ -65,6 +65,14 @@ class ProtocolAtmelJTAGV2(Protocol):
 		raise NotImplementedError()
 
 
+	def read_memory(self, memory_space, offset, length):
+		raise NotImplementedError()
+
+
+	def write_memory(self, memory_space, offset, data):
+		raise NotImplementedError()
+
+
 	def open(self):
 		self._sign_on()
 		raise NotImplementedError()

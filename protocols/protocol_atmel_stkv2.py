@@ -214,9 +214,9 @@ class ProtocolAtmelSTKV2(Protocol):
 		elif memory_space == "fuses":
 			if self.interface == "isp":
 				fuse_commands = {
-					0 : [0x50, 0x00, 0x00, 0x00],
-					1 : [0x50, 0x08, 0x00, 0x00],
-					2 : [0x58, 0x00, 0x00, 0x00]
+						0 : [0x50, 0x00, 0x00, 0x00],
+						1 : [0x50, 0x08, 0x00, 0x00],
+						2 : [0x58, 0x00, 0x00, 0x00]
 					}
 
 				for x in xrange(length):
@@ -235,6 +235,11 @@ class ProtocolAtmelSTKV2(Protocol):
 			raise NotImplementedError()
 
 		return mem_contents
+
+
+	def write_memory(self, memory_space, offset, data):
+		raise NotImplementedError()
+
 
 	def open(self):
 		self._sign_on()

@@ -29,6 +29,14 @@ class Protocol(object):
 		raise NotImplementedError()
 
 
+	def read_memory(self, memory_space, offset, length):
+		raise NotImplementedError()
+
+
+	def write_memory(self, memory_space, offset, data):
+		raise NotImplementedError()
+
+
 	def open(self):
 		raise NotImplementedError
 
