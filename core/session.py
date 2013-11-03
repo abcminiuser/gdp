@@ -85,5 +85,5 @@ class Session(object):
 			print("Fusebits: [%s]" % ' '.join('0x%02X' % b for b in fusebits))
 		"""
 		self.protocol.erase_memory(None)
-		self.protocol.write_memory("flash", 2, [0xDC] * 3)
-		print(self.protocol.read_memory("flash", 2, 3))
+		self.protocol.write_memory("flash", 2, [0xDC] * 4)
+		print(self.protocol.read_memory("flash", 2, 4))

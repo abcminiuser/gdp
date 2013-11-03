@@ -20,8 +20,7 @@ class AtmelDFUV1Defs(object):
 
 	states = {
 		"APP_IDLE"            : 0,
-		"APP_DETATCH"         : 1,
-		"IDLE"                : 2,
+		"APP_DETACH"          : 1,
 		"IDLE"                : 2,
 		"DNLOAD_SYNC"         : 3,
 		"DNBUSY"              : 4,
@@ -118,9 +117,7 @@ class ProtocolAtmelDFUV1(Protocol):
 
 
 	def enter_session(self):
-		if self._getstate() != AtmelDFUV1Defs.states["IDLE"]:
-			self._abort()
-
+		self._abort()
 		self._clearstatus()
 
 
