@@ -8,10 +8,10 @@ from protocols import *
 
 
 class AtmelJTAGV2Defs(object):
-	CMD_SIGN_OFF                = 0x00
-	CMD_SIGN_ON                 = 0x01
-
-	STATUS_CMD_OK               = 0x00
+	commands = {
+		"SIGN_OFF"             : 0x00,
+		"SIGN_ON"              : 0x01
+	}
 
 
 class ProtocolAtmelJTAGV2(Protocol):
@@ -28,21 +28,15 @@ class ProtocolAtmelJTAGV2(Protocol):
 		if packet_in is None:
 			raise ProtocolError("No response received from tool.")
 
-		if packet_in[0] != packet_out[0]:
-			raise ProtocolError("Invalid response received from tool.")
-
-		if packet_in[1] != AtmelJTAGV2Defs.V2_STATUS_CMD_OK:
-			raise ProtocolError("Command failed with status %d." % packet_in[1])
-
 		return packet_in
 
 
 	def _sign_on(self):
-		self._trancieve([AtmelJTAGV2Defs.CMD_SIGN_ON])
+		self._trancieve([AtmelJTAGV2Defs.commands["SIGN_ON"]])
 
 
 	def _sign_off(self):
-		self._trancieve([AtmelJTAGV2Defs.CMD_SIGN_OFF])
+		self._trancieve([AtmelJTAGV2Defs.commands["SIGN_OFF"]])
 
 
 	def get_vtarget(self):

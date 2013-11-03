@@ -8,13 +8,15 @@ from protocols import *
 
 
 class AtmelDFUV1Defs(object):
-	DFU_REQ_DETATCH                         = 0
-	DFU_REQ_DNLOAD                          = 1
-	DFU_REQ_UPLOAD                          = 2
-	DFU_REQ_GETSTATUS                       = 3
-	DFU_REQ_CLRSTATUS                       = 4
-	DFU_REQ_GETSTATE                        = 5
-	DFU_REQ_ABORT                           = 6
+	requests = {
+		"DETATCH"                     : 0,
+		"DNLOAD"                      : 1,
+		"UPLOAD"                      : 2,
+		"GETSTATUS"                   : 3,
+		"CLRSTATUS"                   : 4,
+		"GETSTATE"                    : 5,
+		"ABORT"                       : 6
+	}
 
 	DFU_STATE_APP_IDLE                      = 0
 	DFU_STATE_APP_DETACH                    = 1
@@ -37,15 +39,15 @@ class ProtocolAtmelDFUV1(Protocol):
 
 
 	def _getstate(self):
-		return self.tool.read(AtmelDFUV1Defs.DFU_REQ_GETSTATE, 0, 1)[0]
+		return self.tool.read(AtmelDFUV1Defs.requests["GETSTATE"], 0, 1)[0]
 
 
 	def _getstatus(self):
-		return self.tool.read(AtmelDFUV1Defs.DFU_REQ_GETSTATUS, 0, 1)[0]
+		return self.tool.read(AtmelDFUV1Defs.requests["GETSTATUS"], 0, 1)[0]
 
 
 	def _select_64kb_bank(self, bank):
-		self.tool.write(AtmelDFUV1Defs.DFU_REQ_DNLOAD, 0, [0x03, 0x00, bank])
+		self.tool.write(AtmelDFUV1Defs.requests["DNLOAD"], 0, [0x03, 0x00, bank])
 
 
 	def get_vtarget(self):
@@ -58,9 +60,9 @@ class ProtocolAtmelDFUV1(Protocol):
 
 	def enter_session(self):
 		if self._getstate() != AtmelDFUV1Defs.DFU_STATE_APP_IDLE:
-			self.tool.write(AtmelDFUV1Defs.DFU_REQ_ABORT, 0, None)
+			self.tool.write(AtmelDFUV1Defs.requests["ABORT"], 0, None)
 
-		self.tool.write(AtmelDFUV1Defs.DFU_REQ_CLRSTATUS, 0, None)
+		self.tool.write(AtmelDFUV1Defs.requests["CLRSTATUS"], 0, None)
 
 
 	def exit_session(self):
@@ -68,7 +70,7 @@ class ProtocolAtmelDFUV1(Protocol):
 
 
 	def erase_memory(self, memory_space):
-		self.tool.write(AtmelDFUV1Defs.DFU_REQ_DNLOAD, 0, [0x04, 0x00, 0xFF])
+		self.tool.write(AtmelDFUV1Defs.requests["DNLOAD"], 0, [0x04, 0x00, 0xFF])
 
 
 	def read_memory(self, memory_space, offset, length):
@@ -79,12 +81,12 @@ class ProtocolAtmelDFUV1(Protocol):
 				packet = [0x05, 0x01]
 				packet.append(0x30 + offset + x)
 
-				self.tool.write(AtmelDFUV1Defs.DFU_REQ_DNLOAD, 0, packet)
-				resp = self.tool.read(AtmelDFUV1Defs.DFU_REQ_UPLOAD, 0, 1)
+				self.tool.write(AtmelDFUV1Defs.requests["DNLOAD"], 0, packet)
+				resp = self.tool.read(AtmelDFUV1Defs.requests["UPLOAD"], 0, 1)
 
 				mem_contents.append(resp[0])
 		elif memory_space in ["fuses", "lockbits"]:
-			return None
+			raise ProtocolError("Protocol does not support reading from memory \"%s\"." % memory_space)
 		elif memory_space in ["flash", "eeprom"]:
 			self._select_64kb_bank(offset >> 16)
 
@@ -93,8 +95,8 @@ class ProtocolAtmelDFUV1(Protocol):
 			packet.extend([offset >> 8, offset & 0xFF])
 			packet.extend([(offset + length - 1) >> 8, (offset + length - 1) & 0xFF])
 
-			self.tool.write(AtmelDFUV1Defs.DFU_REQ_DNLOAD, 0, packet)
-			resp = self.tool.read(AtmelDFUV1Defs.DFU_REQ_UPLOAD, 0, length)
+			self.tool.write(AtmelDFUV1Defs.requests["DNLOAD"], 0, packet)
+			resp = self.tool.read(AtmelDFUV1Defs.requests["UPLOAD"], 0, length)
 
 			mem_contents.extend(resp)
 		else:
@@ -116,9 +118,9 @@ class ProtocolAtmelDFUV1(Protocol):
 			packet.extend(data)
 			packet.extend([0xFF] * 16)
 
-			self.tool.write(AtmelDFUV1Defs.DFU_REQ_DNLOAD, 0, packet)
+			self.tool.write(AtmelDFUV1Defs.requests["DNLOAD"], 0, packet)
 		elif memory_space in ["signature", "fuses", "lockbits"]:
-			pass
+			raise ProtocolError("Protocol does not support writing to memory \"%s\"." % memory_space)
 		else:
 			raise NotImplementedError()
 
