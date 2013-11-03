@@ -90,6 +90,19 @@ class ProtocolAtmelSTKV2(Protocol):
 		self._trancieve(packet)
 
 
+	def _set_param(self, param, value):
+		packet = [AtmelSTKV2Defs.CMD_SET_PARAMETER]
+		packet.append(param)
+		packet.append(value)
+		self._trancieve(packet)
+
+
+	def _get_param(self, param):
+		packet = [AtmelSTKV2Defs.CMD_GET_PARAMETER]
+		packet.append(param)
+		return self._trancieve(packet)[2]
+
+
 	def _sign_on(self):
 		resp = self._trancieve([AtmelSTKV2Defs.CMD_SIGN_ON])
 		self.tool_sign_on_string = ''.join([chr(c) for c in resp[3 : ]])
@@ -100,14 +113,10 @@ class ProtocolAtmelSTKV2(Protocol):
 			self._trancieve([AtmelSTKV2Defs.CMD_RESET_PROTECTION])
 
 
-	def _set_reset_polarity(self, idle_level):
-		self._trancieve([AtmelSTKV2Defs.CMD_SET_PARAMETER, AtmelSTKV2Defs.PARAM_RESET_POLARITY, idle_level])
-
-
 	def get_vtarget(self):
-		resp = self._trancieve([AtmelSTKV2Defs.CMD_GET_PARAMETER, AtmelSTKV2Defs.PARAM_VTARGET])
+		vtarget_raw = self._get_param(AtmelSTKV2Defs.PARAM_VTARGET)
 
-		measured_vtarget = (float(resp[2]) / 10)
+		measured_vtarget = (float(vtarget_raw) / 10)
 		return measured_vtarget
 
 
@@ -144,7 +153,7 @@ class ProtocolAtmelSTKV2(Protocol):
 			if sck_dur > 0xFF:
 				raise ProtocolError("Specified ISP frequency is not obtainable for the current tool.")
 
-			self._trancieve([AtmelSTKV2Defs.CMD_SET_PARAMETER, AtmelSTKV2Defs.PARAM_SCK_DURATION, int(sck_dur)])
+			self._set_param(AtmelSTKV2Defs.PARAM_SCK_DURATION, int(sck_dur))
 		else:
 			raise NotImplementedError()
 
@@ -243,6 +252,8 @@ class ProtocolAtmelSTKV2(Protocol):
 				blocks_to_read = int(math.ceil(length / float(blocksize)))
 
 				for block in xrange(blocks_to_read):
+					page_address = start_address + (block * blocksize)
+
 					if memory_space == "eeprom":
 						packet = [AtmelSTKV2Defs.CMD_READ_EEPROM_ISP]
 						packet.extend([blocksize >> 8, blocksize & 0xFF])
@@ -251,8 +262,6 @@ class ProtocolAtmelSTKV2(Protocol):
 						packet = [AtmelSTKV2Defs.CMD_READ_FLASH_ISP]
 						packet.extend([blocksize >> 8, blocksize & 0xFF])
 						packet.append(0x20)
-
-					page_address = start_address + (block * blocksize)
 
 					self._set_address(page_address)
 					resp = self._trancieve(packet)
@@ -310,20 +319,6 @@ class ProtocolAtmelSTKV2(Protocol):
 				blocks_to_write = int(math.ceil(len(data) / float(blocksize)))
 
 				for block in xrange(blocks_to_write):
-					if memory_space == "flash":
-						packet = [AtmelSTKV2Defs.CMD_PROGRAM_FLASH_ISP]
-					else:
-						packet = [AtmelSTKV2Defs.CMD_PROGRAM_EEPROM_ISP]
-
-					packet.extend([blocksize >> 8, blocksize & 0xFF])
-					packet.append(self.device.get_param("isp_interface", "IspProgram%s_mode" % memory_space.capitalize()) | 0x80)
-					packet.append(self.device.get_param("isp_interface", "IspProgram%s_delay" % memory_space.capitalize()))
-					packet.append(self.device.get_param("isp_interface", "IspProgram%s_cmd1" % memory_space.capitalize()))
-					packet.append(self.device.get_param("isp_interface", "IspProgram%s_cmd2" % memory_space.capitalize()))
-					packet.append(self.device.get_param("isp_interface", "IspProgram%s_cmd3" % memory_space.capitalize()))
-					packet.append(self.device.get_param("isp_interface", "IspProgram%s_pollVal1" % memory_space.capitalize()))
-					packet.append(self.device.get_param("isp_interface", "IspProgram%s_pollVal2" % memory_space.capitalize()))
-
 					page_address = start_address + (block * blocksize)
 					page_data = []
 
@@ -336,6 +331,18 @@ class ProtocolAtmelSTKV2(Protocol):
 					if (len(page_data) < blocksize):
 						page_data.extend(self.read_memory(memory_space, page_address + len(page_data), blocksize - len(page_data)))
 
+					if memory_space == "flash":
+						packet = [AtmelSTKV2Defs.CMD_PROGRAM_FLASH_ISP]
+					else:
+						packet = [AtmelSTKV2Defs.CMD_PROGRAM_EEPROM_ISP]
+					packet.extend([blocksize >> 8, blocksize & 0xFF])
+					packet.append(self.device.get_param("isp_interface", "IspProgram%s_mode" % memory_space.capitalize()) | 0x80)
+					packet.append(self.device.get_param("isp_interface", "IspProgram%s_delay" % memory_space.capitalize()))
+					packet.append(self.device.get_param("isp_interface", "IspProgram%s_cmd1" % memory_space.capitalize()))
+					packet.append(self.device.get_param("isp_interface", "IspProgram%s_cmd2" % memory_space.capitalize()))
+					packet.append(self.device.get_param("isp_interface", "IspProgram%s_cmd3" % memory_space.capitalize()))
+					packet.append(self.device.get_param("isp_interface", "IspProgram%s_pollVal1" % memory_space.capitalize()))
+					packet.append(self.device.get_param("isp_interface", "IspProgram%s_pollVal2" % memory_space.capitalize()))
 					packet.extend(page_data)
 
 					self._set_address(page_address)
@@ -348,7 +355,7 @@ class ProtocolAtmelSTKV2(Protocol):
 
 	def open(self):
 		self._sign_on()
-		self._set_reset_polarity(1)
+		self._set_param(AtmelSTKV2Defs.PARAM_RESET_POLARITY, 1)
 		self._reset_protection()
 
 
