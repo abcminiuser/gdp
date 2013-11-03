@@ -9,7 +9,7 @@ try:
 	import usb.core
 	import usb.util
 except ImportError:
-	print("The PyUSB library is not installed.")
+	print("The PyUSB 1.x library is not installed.")
 	sys.exit(1)
 
 from transports import *

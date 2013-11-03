@@ -75,6 +75,7 @@ class Session(object):
 	def process_commands(self, command_args):
 		if len(command_args) > 0:
 			raise NotImplementedError()
+
 		"""
 		lockbits = self.protocol.read_memory("lockbits", 0, 1)
 		if not lockbits is None:
@@ -84,6 +85,7 @@ class Session(object):
 		if not fusebits is None:
 			print("Fusebits: [%s]" % ' '.join('0x%02X' % b for b in fusebits))
 		"""
+
 		self.protocol.erase_memory(None)
 		self.protocol.write_memory("flash", 2, [0xDC] * 4)
 		print(self.protocol.read_memory("flash", 2, 4))
