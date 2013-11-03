@@ -64,6 +64,7 @@ class AtmelSTKV2Defs(object):
 		"DISCHARGEDELAY"       : 0xA4
 	}
 
+
 	@staticmethod
 	def find(dictionary, find_value):
 		for key, value in dictionary.iteritems():

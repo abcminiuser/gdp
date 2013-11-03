@@ -9,11 +9,11 @@ from transports import *
 from protocols import *
 
 
-STK500_PACKET_START = 0x1B
-STK500_PACKET_TOKEN = 0x0E
-
-
 class ToolAtmelSTK500(Tool):
+	STK500_PACKET_START = 0x1B
+	STK500_PACKET_TOKEN = 0x0E
+
+
 	@staticmethod
 	def _calc_checksum(data):
 		checksum = 0x00
@@ -86,7 +86,7 @@ class ToolAtmelSTK500(Tool):
 		if len(packet) < 6:
 			return None
 
-		if packet[0] != STK500_PACKET_START:
+		if packet[0] != ToolAtmelSTK500.STK500_PACKET_START:
 			return None
 
 		rec_sequence = packet[1]
@@ -94,7 +94,7 @@ class ToolAtmelSTK500(Tool):
 			self.sequence = rec_sequence
 			return None
 
-		if packet[4] != STK500_PACKET_TOKEN:
+		if packet[4] != ToolAtmelSTK500.STK500_PACKET_TOKEN:
 			return None
 
 		checksum = packet[-1]
@@ -109,10 +109,10 @@ class ToolAtmelSTK500(Tool):
 		self.sequence += 1
 
 		packet = []
-		packet.append(STK500_PACKET_START)
+		packet.append(ToolAtmelSTK500.STK500_PACKET_START)
 		packet.append(self.sequence)
 		packet.extend(self._toarray(len(data), 2))
-		packet.append(STK500_PACKET_TOKEN)
+		packet.append(ToolAtmelSTK500.STK500_PACKET_TOKEN)
 		packet.extend(data)
 		packet.append(self._calc_checksum(packet))
 
