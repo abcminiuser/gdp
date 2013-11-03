@@ -84,6 +84,12 @@ class ProtocolAtmelSTKV2(Protocol):
 		return packet_in
 
 
+	def _set_address(self, address):
+		packet = [AtmelSTKV2Defs.CMD_LOAD_ADDRESS]
+		packet.extend([address >> (8 * x) & 0xFF for x in xrange(4)])
+		self._trancieve(packet)
+
+
 	def _sign_on(self):
 		resp = self._trancieve([AtmelSTKV2Defs.CMD_SIGN_ON])
 		self.tool_sign_on_string = ''.join([chr(c) for c in resp[3 : ]])
@@ -229,28 +235,38 @@ class ProtocolAtmelSTKV2(Protocol):
 				raise NotImplementedError()
 		elif memory_space in ["eeprom", "flash"]:
 			if self.interface == "isp":
-				packet = [AtmelSTKV2Defs.CMD_LOAD_ADDRESS]
-				packet.extend([offset >> (8 * x) & 0xFF for x in xrange(4)])
-				self._trancieve(packet)
+				blocksize = self.device.get_param("isp_interface", "IspRead%s_blockSize" % memory_space.capitalize())
 
-				if memory_space == "eeprom":
-					blocksize = self.device.get_param("isp_interface", "IspReadEeprom_blockSize")
+				alignment_bytes = offset % blocksize
+				start_address = offset - alignment_bytes
 
-					packet = [AtmelSTKV2Defs.CMD_READ_EEPROM_ISP]
-					packet.extend([blocksize >> 8, blocksize & 0xFF])
-					packet.append(0xA0)
-				else:
-					blocksize = self.device.get_param("isp_interface", "IspReadFlash_blockSize")
+				blocks_to_read = int(math.ceil(length / float(blocksize)))
 
-					packet = [AtmelSTKV2Defs.CMD_READ_FLASH_ISP]
-					packet.extend([blocksize >> 8, blocksize & 0xFF])
-					packet.append(0x20)
+				for block in xrange(blocks_to_read):
+					if memory_space == "eeprom":
+						packet = [AtmelSTKV2Defs.CMD_READ_EEPROM_ISP]
+						packet.extend([blocksize >> 8, blocksize & 0xFF])
+						packet.append(0xA0)
+					else:
+						packet = [AtmelSTKV2Defs.CMD_READ_FLASH_ISP]
+						packet.extend([blocksize >> 8, blocksize & 0xFF])
+						packet.append(0x20)
 
-				resp = self._trancieve(packet)
+					page_address = start_address + (block * blocksize)
 
-				page_data = resp[2:-1]
-				mem_contents.extend(page_data[0 : length])
+					self._set_address(page_address)
+					resp = self._trancieve(packet)
 
+					page_data = resp[2 : -1]
+
+					if length < blocksize:
+						mem_contents.extend(page_data[alignment_bytes : alignment_bytes + length])
+						length = 0
+					else:
+						mem_contents.extend(page_data[alignment_bytes : ])
+						length -= blocksize - alignment_bytes
+
+					alignment_bytes = 0
 			else:
 				raise NotImplementedError()
 		else:
@@ -288,19 +304,17 @@ class ProtocolAtmelSTKV2(Protocol):
 			if self.interface == "isp":
 				blocksize = self.device.get_param("isp_interface", "IspProgram%s_blockSize" % memory_space.capitalize())
 
-				packet = [AtmelSTKV2Defs.CMD_LOAD_ADDRESS]
-				packet.extend([offset >> (8 * x) & 0xFF for x in xrange(4)])
-				self._trancieve(packet)
+				alignment_bytes = offset % blocksize
+				start_address = offset - alignment_bytes
 
-				if offset % blocksize:
-					alignment_bytes = offset % blocksize
-					data.insert(0, self.read_memory(memory_space, offset - alignment_bytes))
+				blocks_to_write = int(math.ceil(len(data) / float(blocksize)))
 
-				for chunk in xrange(len(data) / blocksize):
+				for block in xrange(blocks_to_write):
 					if memory_space == "flash":
 						packet = [AtmelSTKV2Defs.CMD_PROGRAM_FLASH_ISP]
 					else:
 						packet = [AtmelSTKV2Defs.CMD_PROGRAM_EEPROM_ISP]
+
 					packet.extend([blocksize >> 8, blocksize & 0xFF])
 					packet.append(self.device.get_param("isp_interface", "IspProgram%s_mode" % memory_space.capitalize()) | 0x80)
 					packet.append(self.device.get_param("isp_interface", "IspProgram%s_delay" % memory_space.capitalize()))
@@ -309,8 +323,22 @@ class ProtocolAtmelSTKV2(Protocol):
 					packet.append(self.device.get_param("isp_interface", "IspProgram%s_cmd3" % memory_space.capitalize()))
 					packet.append(self.device.get_param("isp_interface", "IspProgram%s_pollVal1" % memory_space.capitalize()))
 					packet.append(self.device.get_param("isp_interface", "IspProgram%s_pollVal2" % memory_space.capitalize()))
-					packet.extend(data[chunk * blocksize : chunk * blocksize + blocksize])
 
+					page_address = start_address + (block * blocksize)
+					page_data = []
+
+					if alignment_bytes > 0:
+						page_data.extend(self.read_memory(memory_space, page_address, alignment_bytes))
+						alignment_bytes = 0
+
+					page_data.extend(data[block * blocksize : (block + 1) * blocksize])
+
+					if (len(page_data) < blocksize):
+						page_data.extend(self.read_memory(memory_space, page_address + len(page_data), blocksize - len(page_data)))
+
+					packet.extend(page_data)
+
+					self._set_address(page_address)
 					self._trancieve(packet)
 			else:
 				raise NotImplementedError()

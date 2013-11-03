@@ -69,9 +69,9 @@ def gdp(options, args):
 		if not fusebits is None:
 			print("Fusebits: [%s]" % ' '.join('0x%02X' % b for b in fusebits))
 
-		#protocol.erase_memory(None)
-		protocol.write_memory("eeprom", 0, [0xDC] * 32)
-		print(protocol.read_memory("eeprom", 0, 32))
+		protocol.erase_memory(None)
+		protocol.write_memory("flash", 2, [0xDC] * 3)
+		print(protocol.read_memory("flash", 2, 3))
 
 		protocol.exit_session()
 		tool.close()
