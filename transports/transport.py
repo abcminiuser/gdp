@@ -9,21 +9,21 @@ class TransportError(Exception):
 
 
 class Transport(object):
-	def __init__(self):
-		raise NotImplementedError
+    def __init__(self):
+        raise NotImplementedError
 
 
-	def open(self):
-		raise NotImplementedError
+    def open(self):
+        raise NotImplementedError
 
 
-	def close(self):
-		raise NotImplementedError
+    def close(self):
+        raise NotImplementedError
 
 
-	def read(self):
-		raise NotImplementedError
+    def read(self):
+        raise NotImplementedError
 
 
-	def write(self, data):
-		raise NotImplementedError
+    def write(self, data):
+        raise NotImplementedError

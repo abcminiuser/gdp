@@ -10,68 +10,68 @@ from protocols import *
 
 
 class ToolAtmelAVR8DFU(Tool):
-	device_to_pid = {
-		"at90usb1287" : 0x2FFB,
-		"at90usb647"  : 0x2FF9,
-		"at90usb1286" : 0x2FFB,
-		"at90usb646"  : 0x2FF9,
-		"atmega32U4"  : 0x2FF4,
-		"atmega16U4"  : 0x2FF3,
-		"atmega32U2"  : 0x2FF0,
-		"atmega16U2"  : 0x2FEF,
-		"at90usb162"  : 0x2FFA,
-		"atmega8U2"	  : 0x2FEE,
-		"at90usb82"	  : 0x2FF7,
-	}
+    device_to_pid = {
+        "at90usb1287" : 0x2FFB,
+        "at90usb647"  : 0x2FF9,
+        "at90usb1286" : 0x2FFB,
+        "at90usb646"  : 0x2FF9,
+        "atmega32U4"  : 0x2FF4,
+        "atmega16U4"  : 0x2FF3,
+        "atmega32U2"  : 0x2FF0,
+        "atmega16U2"  : 0x2FEF,
+        "at90usb162"  : 0x2FFA,
+        "atmega8U2"   : 0x2FEE,
+        "at90usb82"   : 0x2FF7,
+    }
 
 
-	def __init__(self, device, port=None, interface="dfu"):
-		try:
-			pid = ToolAtmelAVR8DFU.device_to_pid[device.get_name().lower()]
-		except KeyError:
-			raise ToolError("Unsupported device for the specified tool.")
+    def __init__(self, device, port=None, interface="dfu"):
+        try:
+            pid = ToolAtmelAVR8DFU.device_to_pid[device.get_name().lower()]
+        except KeyError:
+            raise ToolError("Unsupported device for the specified tool.")
 
-		if port is None:
-			self.transport = TransportDFUUSB(vid=0x03EB, pid=pid)
-		else:
-			raise ToolError("Unsupported port for the specified tool.")
+        if port is None:
+            self.transport = TransportDFUUSB(vid=0x03EB, pid=pid)
+        else:
+            raise ToolError("Unsupported port for the specified tool.")
 
-		if not interface in self.get_supported_interfaces():
-			raise ToolError("Unsupported interface \"%s\" for the specified tool." % interface)
-		else:
-			self.interface = interface
+        if not interface in self.get_supported_interfaces():
+            raise ToolError("Unsupported interface \"%s\" for the specified tool." % interface)
+        else:
+            self.interface = interface
 
-		self.protocol = ProtocolAtmelDFUV1(self, device, interface)
-		self.sequence = 0x00
-
-
-	@staticmethod
-	def get_name():
-		return "Atmel DFU Bootloader (AVR8)"
+        self.protocol = ProtocolAtmelDFUV1(self, device, interface)
+        self.sequence = 0x00
 
 
-	@staticmethod
-	def get_supported_interfaces():
-		return ["dfu"]
+    @staticmethod
+    def get_name():
+        return "Atmel DFU Bootloader (AVR8)"
 
 
-	def get_protocol(self):
-		return self.protocol
+    @staticmethod
+    def get_supported_interfaces():
+        return ["dfu"]
 
 
-	def open(self):
-		self.transport.open()
-		self.protocol.open()
+    def get_protocol(self):
+        return self.protocol
 
 
-	def close(self):
-		self.protocol.close()
-		self.transport.close()
+    def open(self):
+        self.transport.open()
+        self.protocol.open()
 
 
-	def read(self, read_type, length):
-		return self.transport.read(read_type, length)
+    def close(self):
+        self.protocol.close()
+        self.transport.close()
 
 
-	def write(self, write_type, data):
-		self.transport.write(write_type, data)
+    def read(self, read_type, length):
+        return self.transport.read(read_type, length)
+
+
+    def write(self, write_type, data):
+        self.transport.write(write_type, data)

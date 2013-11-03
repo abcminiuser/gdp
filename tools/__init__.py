@@ -13,9 +13,9 @@ from tools.tool_atmel_stk500 import *
 
 
 gdp_tools = {
-		'avrisp'		:	ToolAtmelAVRISP,
-		'avrispmkii'	:	ToolAtmelAVRISPMKII,
-		'jtagicemkii'	:	ToolAtmelJTAGICEMKII,
-		'stk500'		:	ToolAtmelSTK500,
-		'avr8dfu'		:	ToolAtmelAVR8DFU
-	}
+        'avrisp'        :   ToolAtmelAVRISP,
+        'avrispmkii'    :   ToolAtmelAVRISPMKII,
+        'jtagicemkii'   :   ToolAtmelJTAGICEMKII,
+        'stk500'        :   ToolAtmelSTK500,
+        'avr8dfu'       :   ToolAtmelAVR8DFU
+    }

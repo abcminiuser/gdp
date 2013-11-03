@@ -8,70 +8,70 @@ from protocols import *
 
 
 class AtmelJTAGV2Defs(object):
-	commands = {
-		"SIGN_OFF"             : 0x00,
-		"SIGN_ON"              : 0x01
-	}
+    commands = {
+        "SIGN_OFF"             : 0x00,
+        "SIGN_ON"              : 0x01
+    }
 
 
 class ProtocolAtmelJTAGV2(Protocol):
-	def __init__(self, tool, device, interface):
-		self.tool      = tool
-		self.device    = device
-		self.interface = interface
+    def __init__(self, tool, device, interface):
+        self.tool      = tool
+        self.device    = device
+        self.interface = interface
 
 
-	def _trancieve(self, packet_out):
-		self.tool.write(packet_out)
-		packet_in = self.tool.read()
+    def _trancieve(self, packet_out):
+        self.tool.write(packet_out)
+        packet_in = self.tool.read()
 
-		if packet_in is None:
-			raise ProtocolError("No response received from tool.")
+        if packet_in is None:
+            raise ProtocolError("No response received from tool.")
 
-		return packet_in
-
-
-	def _sign_on(self):
-		self._trancieve([AtmelJTAGV2Defs.commands["SIGN_ON"]])
+        return packet_in
 
 
-	def _sign_off(self):
-		self._trancieve([AtmelJTAGV2Defs.commands["SIGN_OFF"]])
+    def _sign_on(self):
+        self._trancieve([AtmelJTAGV2Defs.commands["SIGN_ON"]])
 
 
-	def get_vtarget(self):
-		raise NotImplementedError
+    def _sign_off(self):
+        self._trancieve([AtmelJTAGV2Defs.commands["SIGN_OFF"]])
 
 
-	def set_interface_frequency(self, target_frequency):
-		raise NotImplementedError
+    def get_vtarget(self):
+        raise NotImplementedError
 
 
-	def enter_session(self):
-		raise NotImplementedError
+    def set_interface_frequency(self, target_frequency):
+        raise NotImplementedError
 
 
-	def exit_session(self):
-		raise NotImplementedError
+    def enter_session(self):
+        raise NotImplementedError
 
 
-	def erase_memory(self, memory_space):
-		raise NotImplementedError()
+    def exit_session(self):
+        raise NotImplementedError
 
 
-	def read_memory(self, memory_space, offset, length):
-		raise NotImplementedError()
+    def erase_memory(self, memory_space):
+        raise NotImplementedError()
 
 
-	def write_memory(self, memory_space, offset, data):
-		raise NotImplementedError()
+    def read_memory(self, memory_space, offset, length):
+        raise NotImplementedError()
 
 
-	def open(self):
-		self._sign_on()
-		raise NotImplementedError()
+    def write_memory(self, memory_space, offset, data):
+        raise NotImplementedError()
 
 
-	def close(self):
-		self._sign_off()
-		raise NotImplementedError()
+    def open(self):
+        self._sign_on()
+        raise NotImplementedError()
+
+
+    def close(self):
+        self._sign_off()
+        raise NotImplementedError()
