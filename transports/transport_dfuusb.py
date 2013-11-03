@@ -16,10 +16,16 @@ from transports import *
 
 
 class TransportDFUUSB(Transport):
+	DFU_REQUEST_DNLOAD = 1
+	DFU_REQUEST_UPLOAD = 2
+
+
 	def __init__(self, vid=0x03eb, pid=None):
 		self.dev_handle = None
 		self.vid = vid
 		self.pid = pid
+
+		self.sequence = 0
 
 
 	def open(self):
@@ -37,29 +43,47 @@ class TransportDFUUSB(Transport):
 		pass
 
 
-	def read(self, request, value, length):
+	def read(self, request, length):
 		bmRequestType = usb.util.build_request_type(
                         usb.util.CTRL_IN,
                         usb.util.CTRL_TYPE_CLASS,
                         usb.util.CTRL_RECIPIENT_INTERFACE
                     )
 
-		resp = self.dev_handle.ctrl_transfer(bmRequestType=bmRequestType,
+		if request == TransportDFUUSB.DFU_REQUEST_UPLOAD:
+			value = self.sequence
+			self.sequence += 1
+		else:
+			value = 0
+
+		print "READ"
+		print request
+		print length
+
+		return self.dev_handle.ctrl_transfer(bmRequestType=bmRequestType,
 		                                     bRequest=request,
 		                                     wValue=value,
 		                                     wIndex=0,
 		                                     data_or_wLength=length,
 		                                     timeout=5000)
 
-		return resp
 
-
-	def write(self, request, value, data):
+	def write(self, request, data):
 		bmRequestType = usb.util.build_request_type(
                         usb.util.CTRL_OUT,
                         usb.util.CTRL_TYPE_CLASS,
                         usb.util.CTRL_RECIPIENT_INTERFACE
                     )
+
+		if request == TransportDFUUSB.DFU_REQUEST_DNLOAD:
+			value = self.sequence
+			self.sequence += 1
+		else:
+			value = 0
+
+		print "WRITE"
+		print request
+		print data
 
 		self.dev_handle.ctrl_transfer(bmRequestType=bmRequestType,
 		                              bRequest=request,

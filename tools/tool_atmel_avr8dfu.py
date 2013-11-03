@@ -69,9 +69,9 @@ class ToolAtmelAVR8DFU(Tool):
 		self.transport.close()
 
 
-	def read(self, read_type, wValue, wLength):
-		return self.transport.read(read_type, wValue, wLength)
+	def read(self, read_type, length):
+		return self.transport.read(read_type, length)
 
 
-	def write(self, write_type, wValue, data):
-		self.transport.write(write_type, wValue, data)
+	def write(self, write_type, data):
+		self.transport.write(write_type, data)
