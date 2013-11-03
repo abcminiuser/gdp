@@ -30,7 +30,7 @@ class Session(object):
 			raise SessionError("Unknown device \"%s\"." % options.device)
 
 		try:
-			self.tool = gdp_tools[options.tool](self.device,
+			self.tool = gdp_tools[options.tool](device=self.device,
 			                                    port=options.port,
 			                                    interface=options.interface)
 		except KeyError:

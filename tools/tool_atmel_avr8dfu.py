@@ -22,7 +22,7 @@ class ToolAtmelAVR8DFU(Tool):
 		"at90usb162"  : 0x2FFA,
 		"atmega8U2"	  : 0x2FEE,
 		"at90usb82"	  : 0x2FF7,
-		}
+	}
 
 
 	def __init__(self, device, port=None, interface="dfu"):

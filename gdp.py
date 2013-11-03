@@ -53,7 +53,7 @@ def _create_option_parser(usage, description):
 
 def main():
 	description = "GDP, the Generic Device Programmer."
-	usage = "usage: %prog [options] FILE"
+	usage = "usage: %prog [options] COMMAND"
 	parser = _create_option_parser(usage, description)
 	(options, args) = parser.parse_args()
 
