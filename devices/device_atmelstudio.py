@@ -17,9 +17,12 @@ from devices import *
 class DeviceAtmelStudio(Device):
 	def __init__(self, part=None):
 		if part is None:
-			raise ValueError("Device part name must be specified.")
+			raise DeviceError("Device part name must be specified.")
 
-		self.device_tree = etree.parse("devices/devicefiles/%s.xml" % part)
+		try:
+			self.device_tree = etree.parse("devices/devicefiles/%s.xml" % part)
+		except IOError:
+			raise DeviceError("Could not open the specified part file.")
 
 
 	def get_name(self):
@@ -39,11 +42,11 @@ class DeviceAtmelStudio(Device):
 	def get_param(self, group, param):
 		param_group = self.device_tree.find("devices/device[1]/property-groups/property-group[@name='%s']" % group.upper())
 		if param_group is None:
-			raise KeyError("Property group \"%s\" not found in the selected device." % group)
+			raise DeviceError("Property group \"%s\" not found in the selected device." % group)
 
 		param_info = param_group.find("property[@name='%s']" % param)
 		if param_info is None:
-			raise KeyError("Device group \"%s\" parameter \"%s\" not found in the selected device." % (group, param))
+			raise DeviceError("Device group \"%s\" parameter \"%s\" not found in the selected device." % (group, param))
 
 		param_value = param_info.get("value")
 

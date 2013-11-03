@@ -73,13 +73,13 @@ class ProtocolAtmelSTKV2(Protocol):
 		packet_in = self.tool.read()
 
 		if packet_in is None:
-			raise ValueError("No response received from tool.")
+			raise ProtocolError("No response received from tool.")
 
 		if packet_in[0] != packet_out[0]:
-			raise ValueError("Invalid response received from tool.")
+			raise ProtocolError("Invalid response received from tool.")
 
 		if packet_in[1] != AtmelSTKV2Defs.STATUS_CMD_OK:
-			raise ValueError("Command 0x%x failed with status 0x%x." % (packet_out[0], packet_in[1]))
+			raise ProtocolError("Command 0x%x failed with status 0x%x." % (packet_out[0], packet_in[1]))
 
 		return packet_in
 
@@ -113,7 +113,7 @@ class ProtocolAtmelSTKV2(Protocol):
 
 	def set_interface_frequency(self, target_frequency):
 		if not target_frequency:
-			raise ValueError("Target communication frequency not specified.")
+			raise ProtocolError("Target communication frequency not specified.")
 
 		if self.interface == "isp":
 			sck_dur = 0
@@ -142,7 +142,7 @@ class ProtocolAtmelSTKV2(Protocol):
 					sck_dur = math.ceil(1.0 / (2 * 12.0 * target_frequency * 135.63e-9) - 10 / 12)
 
 			if sck_dur > 0xFF:
-				raise ValueError("Specified ISP frequency is not obtainable for the current tool.")
+				raise ProtocolError("Specified ISP frequency is not obtainable for the current tool.")
 
 			self._trancieve([AtmelSTKV2Defs.CMD_SET_PARAMETER, AtmelSTKV2Defs.PARAM_SCK_DURATION, int(sck_dur)])
 		else:
@@ -187,7 +187,7 @@ class ProtocolAtmelSTKV2(Protocol):
 			else:
 				raise NotImplementedError()
 		else:
-			raise ValueError("The specified tool cannot erase the requested memory space.")
+			raise ProtocolError("The specified tool cannot erase the requested memory space.")
 
 		self._trancieve(packet)
 
@@ -196,7 +196,7 @@ class ProtocolAtmelSTKV2(Protocol):
 		mem_contents = []
 
 		if memory_space is None:
-			return ValueError("Read failed as memory space not set.")
+			return ProtocolError("Read failed as memory space not set.")
 		elif memory_space == "signature":
 			if self.interface == "isp":
 				for x in xrange(length):
@@ -277,7 +277,7 @@ class ProtocolAtmelSTKV2(Protocol):
 
 	def write_memory(self, memory_space, offset, data):
 		if memory_space is None:
-			return ValueError("Write failed as memory space not set.")
+			return ProtocolError("Write failed as memory space not set.")
 		elif memory_space == "lockbits":
 			if self.interface == "isp":
 				packet = [AtmelSTKV2Defs.CMD_PROGRAM_LOCK_ISP]

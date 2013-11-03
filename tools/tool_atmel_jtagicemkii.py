@@ -80,9 +80,9 @@ class ToolAtmelJTAGICEMKII(Tool):
 			self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2103, read_ep=2, write_ep=2)
 
 		if not interface in device.get_supported_interfaces():
-			raise LookupError("Unsupported interface \"%s\" for the specified device." % interface)
+			raise ToolError("Unsupported interface \"%s\" for the specified device." % interface)
 		elif not interface in self.get_supported_interfaces():
-			raise LookupError("Unsupported interface \"%s\" for the specified tool." % interface)
+			raise ToolError("Unsupported interface \"%s\" for the specified tool." % interface)
 		else:
 			self.interface = interface
 

@@ -26,13 +26,13 @@ class ProtocolAtmelJTAGV2(Protocol):
 		packet_in = self.tool.read()
 
 		if packet_in is None:
-			raise ValueError("No response received from tool.")
+			raise ProtocolError("No response received from tool.")
 
 		if packet_in[0] != packet_out[0]:
-			raise ValueError("Invalid response received from tool.")
+			raise ProtocolError("Invalid response received from tool.")
 
 		if packet_in[1] != AtmelJTAGV2Defs.V2_STATUS_CMD_OK:
-			raise ValueError("Command failed with status %d." % packet_in[1])
+			raise ProtocolError("Command failed with status %d." % packet_in[1])
 
 		return packet_in
 

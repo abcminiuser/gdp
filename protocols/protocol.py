@@ -4,6 +4,11 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+
+class ProtocolError(Exception):
+    pass
+
+
 class Protocol(object):
 	def __init__(self):
 		raise NotImplementedError

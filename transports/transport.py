@@ -4,6 +4,10 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+class TransportError(Exception):
+    pass
+
+
 class Transport(object):
 	def __init__(self):
 		raise NotImplementedError

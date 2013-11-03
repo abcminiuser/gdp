@@ -4,6 +4,11 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+
+class DeviceError(Exception):
+    pass
+
+
 class Device(object):
 	def __init__(self):
 		raise NotImplementedError

@@ -29,15 +29,15 @@ class ToolAtmelAVR8DFU(Tool):
 		try:
 			pid = ToolAtmelAVR8DFU.device_to_pid[device.get_name().lower()]
 		except KeyError:
-			raise LookupError("Unsupported device for the specified tool.")
+			raise ToolError("Unsupported device for the specified tool.")
 
 		if port is None:
 			self.transport = TransportDFUUSB(vid=0x03EB, pid=pid)
 		else:
-			raise LookupError("Unsupported port for the specified tool.")
+			raise ToolError("Unsupported port for the specified tool.")
 
 		if not interface in self.get_supported_interfaces():
-			raise LookupError("Unsupported interface \"%s\" for the specified tool." % interface)
+			raise ToolError("Unsupported interface \"%s\" for the specified tool." % interface)
 		else:
 			self.interface = interface
 

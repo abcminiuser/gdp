@@ -15,7 +15,7 @@ from tools import *
 def gdp(options, args):
 	try:
 		device = DeviceAtmelStudio(part=options.device)
-	except IOError:
+	except DeviceError:
 		print("ERROR: Unknown device \"%s\"." % options.device)
 		sys.exit(1)
 
@@ -28,7 +28,7 @@ def gdp(options, args):
 		    print("  - %s (%s)" % (key, gdp_tools[key].get_name()))
 
 		sys.exit(1)
-	except LookupError as message:
+	except (TransportError, ToolError, ProtocolError) as message:
 		print("ERROR: %s" % message)
 		sys.exit(1)
 
@@ -60,7 +60,7 @@ def gdp(options, args):
 				                 (' '.join('0x%02X' % b for b in read_signature),
 				                  ' '.join('0x%02X' % b for b in expected_signature)))
 
-		# TEST SESSION CODE
+		# START TEST SESSION CODE
 		lockbits = protocol.read_memory("lockbits", 0, 1)
 		if not lockbits is None:
 			print("Lockbits: [%s]" % ' '.join('0x%02X' % b for b in lockbits))
@@ -72,10 +72,11 @@ def gdp(options, args):
 		protocol.erase_memory(None)
 		protocol.write_memory("flash", 2, [0xDC] * 3)
 		print(protocol.read_memory("flash", 2, 3))
+		# END TEST SESSION CODE
 
 		protocol.exit_session()
 		tool.close()
-	except (ValueError, LookupError, IOError) as message:
+	except (ValueError, TransportError, ToolError, ProtocolError) as message:
 		print("ERROR: %s" % message)
 
 

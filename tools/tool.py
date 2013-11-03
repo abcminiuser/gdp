@@ -4,6 +4,11 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+
+class ToolError(Exception):
+    pass
+
+
 class Tool(object):
 	def __init__(self):
 		raise NotImplementedError

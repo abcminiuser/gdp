@@ -41,14 +41,14 @@ class ToolAtmelSTK500(Tool):
 
 	def __init__(self, device, port=None, interface="isp"):
 		if port is None:
-			raise LookupError("Unsupported port for the specified tool.")
+			raise ToolError("Unsupported port for the specified tool.")
 		else:
 			self.transport = TransportSerial(port=port, baud=115200)
 
 		if not interface in device.get_supported_interfaces():
-			raise LookupError("Unsupported interface \"%s\" for the specified device." % interface)
+			raise ToolError("Unsupported interface \"%s\" for the specified device." % interface)
 		elif not interface in self.get_supported_interfaces():
-			raise LookupError("Unsupported interface \"%s\" for the specified tool." % interface)
+			raise ToolError("Unsupported interface \"%s\" for the specified tool." % interface)
 		else:
 			self.interface = interface
 
