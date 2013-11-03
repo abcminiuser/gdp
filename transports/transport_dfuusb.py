@@ -56,10 +56,6 @@ class TransportDFUUSB(Transport):
 		else:
 			value = 0
 
-		print "READ"
-		print request
-		print length
-
 		return self.dev_handle.ctrl_transfer(bmRequestType=bmRequestType,
 		                                     bRequest=request,
 		                                     wValue=value,
@@ -80,10 +76,6 @@ class TransportDFUUSB(Transport):
 			self.sequence += 1
 		else:
 			value = 0
-
-		print "WRITE"
-		print request
-		print data
 
 		self.dev_handle.ctrl_transfer(bmRequestType=bmRequestType,
 		                              bRequest=request,

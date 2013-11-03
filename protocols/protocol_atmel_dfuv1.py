@@ -52,6 +52,7 @@ class AtmelDFUV1Defs(object):
 		"ERROR_STALLEDPKT"    : 0x0f,
 	}
 
+
 	@staticmethod
 	def find(dictionary, find_value):
 		for key, value in dictionary.iteritems():
@@ -68,16 +69,20 @@ class ProtocolAtmelDFUV1(Protocol):
 		self.interface = interface
 
 
+	def _abort(self):
+		self.tool.write(AtmelDFUV1Defs.requests["ABORT"], None)
+
+
 	def _getstate(self):
 		return self.tool.read(AtmelDFUV1Defs.requests["GETSTATE"], 1)[0]
 
 
+	def _clearstatus(self):
+		self.tool.write(AtmelDFUV1Defs.requests["CLRSTATUS"], None)
+
+
 	def _getstatus(self):
 		return self.tool.read(AtmelDFUV1Defs.requests["GETSTATUS"], 6)[0]
-
-
-	def _select_64kb_bank(self, bank):
-		self.tool.write(AtmelDFUV1Defs.requests["DNLOAD"], [0x03, 0x00, bank])
 
 
 	def _download(self, command):
@@ -100,6 +105,10 @@ class ProtocolAtmelDFUV1(Protocol):
 		return self.tool.read(AtmelDFUV1Defs.requests["UPLOAD"], read_length)
 
 
+	def _select_64kb_bank(self, bank):
+		self._download([0x03, 0x00, bank])
+
+
 	def get_vtarget(self):
 		return None
 
@@ -110,9 +119,9 @@ class ProtocolAtmelDFUV1(Protocol):
 
 	def enter_session(self):
 		if self._getstate() != AtmelDFUV1Defs.states["IDLE"]:
-			self.tool.write(AtmelDFUV1Defs.requests["ABORT"], None)
+			self._abort()
 
-		self.tool.write(AtmelDFUV1Defs.requests["CLRSTATUS"], None)
+		self._clearstatus()
 
 
 	def exit_session(self):
@@ -120,14 +129,14 @@ class ProtocolAtmelDFUV1(Protocol):
 
 
 	def erase_memory(self, memory_space):
-		self.tool.write(AtmelDFUV1Defs.requests["DNLOAD"], [0x04, 0x00, 0xFF])
+		self._download([0x04, 0x00, 0xFF])
 
 
 	def read_memory(self, memory_space, offset, length):
 		mem_contents = []
 
 		if memory_space == "signature":
-			sig_byte_addresses = [0x30, 0x31, 0x60]
+			sig_byte_addresses = [0x31, 0x60, 0x61]
 
 			for x in xrange(min(length, 3)):
 				packet = [0x05, 0x01]
