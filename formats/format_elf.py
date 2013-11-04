@@ -37,6 +37,7 @@ class FormatELF_Section(FormatSection):
 class FormatELF(Format):
     SHF_ALLOC = 0x02
 
+
     def __init__(self, filename=None):
         if filename is None:
             raise FormatError("Filename not specified.")
@@ -48,6 +49,9 @@ class FormatELF(Format):
                 elffile = ELFFile(f)
 
                 for section in elffile.iter_sections():
+                    if section["sh_type"] != "SHT_PROGBITS":
+                        continue
+
                     if section["sh_flags"] & FormatELF.SHF_ALLOC:
                         self.sections.append(FormatELF_Section(section))
         except:
