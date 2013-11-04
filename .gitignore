@@ -3,4 +3,5 @@
 *.spec
 build/build
 build/dist
+build/upx.exe
 devices/atmelstudio/devicefiles/*.xml
