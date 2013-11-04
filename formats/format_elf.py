@@ -4,7 +4,6 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
-import os
 import sys
 try:
 	from elftools.elf.elffile import ELFFile
@@ -27,7 +26,8 @@ class FormatELF_Section(FormatSection):
 
 
     def get_bounds(self):
-        return NotImplementedError
+        return (self.instance["sh_addr"],
+                self.instance["sh_addr"] + self.instance["sh_size"])
 
 
     def get_data(self):
@@ -35,6 +35,8 @@ class FormatELF_Section(FormatSection):
 
 
 class FormatELF(Format):
+    SHF_ALLOC = 0x02
+
     def __init__(self, filename=None):
         if filename is None:
             raise FormatError("Filename not specified.")
@@ -46,7 +48,7 @@ class FormatELF(Format):
                 elffile = ELFFile(f)
 
                 for section in elffile.iter_sections():
-                    if not section.name.startswith(".debug"):
+                    if section["sh_flags"] & FormatELF.SHF_ALLOC:
                         self.sections.append(FormatELF_Section(section))
         except:
             raise FormatError("Could not open the specified ELF file.")
