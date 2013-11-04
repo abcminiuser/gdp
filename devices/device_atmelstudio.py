@@ -4,12 +4,7 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
-import sys
-try:
-    from lxml import etree
-except ImportError:
-    print("The lxml library is not installed.")
-    sys.exit(1)
+import xml.etree.ElementTree as ET
 
 from devices import *
 
@@ -20,7 +15,7 @@ class DeviceAtmelStudio(Device):
             raise DeviceError("Device part name must be specified.")
 
         try:
-            self.device_tree = etree.parse("devices/devicefiles/%s.xml" % part)
+            self.device_tree = ET.parse("devicefiles/%s.xml" % part)
         except IOError:
             raise DeviceError("Could not open the specified part file.")
 

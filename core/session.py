@@ -22,7 +22,7 @@ class Session(object):
             raise SessionError("No tool specified.")
 
         if options.interface is None:
-            raise SessionError("ERROR: No interface specified.")
+            raise SessionError("No interface specified.")
 
         try:
             self.device = DeviceAtmelStudio(part=options.device)
