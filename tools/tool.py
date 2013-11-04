@@ -4,37 +4,43 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+from abc import ABCMeta, abstractmethod
+
 
 class ToolError(Exception):
     pass
 
 
 class Tool(object):
-    def __init__(self):
-        raise NotImplementedError
+    __metaclass__ = ABCMeta
 
 
-    @staticmethod
+    @abstractmethod
     def get_name():
         raise NotImplementedError
 
 
-    @staticmethod
+    @abstractmethod
     def get_supported_interfaces():
         raise NotImplementedError
 
 
+    @abstractmethod
     def open(self):
-        raise NotImplementedError
+        pass
 
 
+    @abstractmethod
     def close(self):
-        raise NotImplementedError
+        pass
 
 
+    @abstractmethod
     def read(self):
-        raise NotImplementedError
+        pass
 
 
+    @abstractmethod
     def write(self, data):
-        raise NotImplementedError
+        pass
+

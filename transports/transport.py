@@ -4,26 +4,32 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+from abc import ABCMeta, abstractmethod
+
+
 class TransportError(Exception):
     pass
 
 
 class Transport(object):
-    def __init__(self):
-        raise NotImplementedError
+    __metaclass__ = ABCMeta
 
 
+    @abstractmethod
     def open(self):
-        raise NotImplementedError
+        pass
 
 
+    @abstractmethod
     def close(self):
-        raise NotImplementedError
+        pass
 
 
+    @abstractmethod
     def read(self):
-        raise NotImplementedError
+        pass
 
 
+    @abstractmethod
     def write(self, data):
-        raise NotImplementedError
+        pass

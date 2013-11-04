@@ -4,31 +4,37 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+from abc import ABCMeta, abstractmethod
+
 
 class DeviceError(Exception):
     pass
 
 
 class Device(object):
-	def __init__(self):
-		raise NotImplementedError
+    __metaclass__ = ABCMeta
 
 
-	def get_name(self):
-		raise NotImplementedError
+    @abstractmethod
+    def get_name(self):
+        pass
 
 
-	def get_vcc_range(self):
-		raise NotImplementedError
+    @abstractmethod
+    def get_vcc_range(self):
+        pass
 
 
-	def get_supported_interfaces(self):
-		raise NotImplementedError
+    @abstractmethod
+    def get_supported_interfaces(self):
+        pass
 
 
-	def get_param(self, group, param):
-		raise NotImplementedError
+    @abstractmethod
+    def get_param(self, group, param):
+        pass
 
 
-	def get_signature(self, interface):
-		raise NotImplementedError
+    @abstractmethod
+    def get_signature(self, interface):
+        pass

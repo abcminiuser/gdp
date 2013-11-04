@@ -4,22 +4,25 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+from abc import ABCMeta, abstractmethod
 
 from formats.format import *
 
 
-class FormatSection(Format):
-    def __init__(self, format_instance):
-        raise NotImplementedError
+class FormatSection(object):
+    __metaclass__ = ABCMeta
 
 
+    @abstractmethod
     def get_name(self):
-        raise NotImplementedError
+        pass
 
 
+    @abstractmethod
     def get_bounds(self):
-        raise NotImplementedError
+        pass
 
 
+    @abstractmethod
     def get_data(self):
-        raise NotImplementedError
+        pass

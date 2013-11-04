@@ -4,47 +4,57 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+from abc import ABCMeta, abstractmethod
+
 
 class ProtocolError(Exception):
     pass
 
 
 class Protocol(object):
-    def __init__(self):
-        raise NotImplementedError
+    __metaclass__ = ABCMeta
 
 
+    @abstractmethod
     def get_vtarget(self):
-        raise NotImplementedError
+        pass
 
 
+    @abstractmethod
     def set_interface_frequency(self, target_frequency):
-        raise NotImplementedError
+        pass
 
 
+    @abstractmethod
     def enter_session(self):
-        raise NotImplementedError
+        pass
 
 
+    @abstractmethod
     def exit_session(self):
-        raise NotImplementedError
+        pass
 
 
+    @abstractmethod
     def erase_memory(self, memory_space):
-        raise NotImplementedError()
+        pass
 
 
+    @abstractmethod
     def read_memory(self, memory_space, offset, length):
-        raise NotImplementedError()
+        pass
 
 
+    @abstractmethod
     def write_memory(self, memory_space, offset, data):
-        raise NotImplementedError()
+        pass
 
 
+    @abstractmethod
     def open(self):
-        raise NotImplementedError
+        pass
 
 
+    @abstractmethod
     def close(self):
-        raise NotImplementedError
+        pass

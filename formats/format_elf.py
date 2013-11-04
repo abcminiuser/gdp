@@ -58,5 +58,9 @@ class FormatELF(Format):
             raise FormatError("Could not open ELF file \"%s\"." % filename)
 
 
+    def get_name():
+        return "ELF File Parser"
+
+
     def get_sections(self):
         return self.sections

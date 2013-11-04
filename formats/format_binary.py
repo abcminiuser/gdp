@@ -15,3 +15,7 @@ class FormatBinary(FormatIntelHex):
 
     def get_sections(self):
         return super(FormatBinary, self).get_sections()
+
+
+    def get_name():
+        return "Binary File Parser"
