@@ -17,11 +17,7 @@ class FormatSection(Format):
         raise NotImplementedError
 
 
-    def get_address_space(self):
-        raise NotImplementedError
-
-
-    def get_address_bounds(self):
+    def get_bounds(self):
         raise NotImplementedError
 
 

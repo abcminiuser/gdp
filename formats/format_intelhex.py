@@ -18,19 +18,15 @@ from formats.formatsection import *
 
 
 class FormatIntelHex_Section(FormatSection):
-    def __init__(self, format_instance=None):
-        self.instance = format_instance
+    def __init__(self, instance=None):
+        self.instance = instance
 
 
     def get_name(self):
         return None
 
 
-    def get_address_space(self):
-        return None
-
-
-    def get_address_bounds(self):
+    def get_bounds(self):
         return (self.instance.minaddr(), self.instance.maxaddr())
 
 
@@ -46,17 +42,17 @@ class FormatIntelHex(Format):
         file_extension = os.path.splitext(filename)[1][1:].lower()
 
         try:
-            section_data = IntelHex()
+            hexfile = IntelHex()
 
             if file_extension == "bin":
-                section_data.loadbin(filename)
+                hexfile.loadbin(filename)
             else:
-                section_data.loadhex(filename)
+                hexfile.loadhex(filename)
         except:
             raise FormatError("Could not open the specified %s file." %
                               file_extension.upper())
 
-        self.sections = [FormatIntelHex_Section(section_data)]
+        self.sections = [FormatIntelHex_Section(hexfile)]
 
 
     def get_sections(self):

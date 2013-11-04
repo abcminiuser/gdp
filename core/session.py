@@ -87,10 +87,9 @@ class Session(object):
             raise SessionError("Unrecognized input file extension (%s)." % file_ext)
 
         for s in format_reader.get_sections():
-            section_bounds = s.get_address_bounds()
-            print("Section %s [%s] - 0x%08x-0x%08x" %
-                  (s.get_name(), s.get_address_space(),
-                   section_bounds[0], section_bounds[1]))
+            section_bounds = s.get_bounds()
+            print("Section %s - 0x%08x-0x%08x" %
+                  (s.get_name(), section_bounds[0], section_bounds[1]))
 
         """
         lockbits = self.protocol.read_memory("lockbits", 0, 1)
