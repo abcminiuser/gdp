@@ -110,7 +110,7 @@ class Session(object):
         print("Reading %d bytes of data from %s at 0x%08x-0x%08x..." %
               (len(flash_section_data), "flash",
                flash_section_bounds[0], flash_section_bounds[1]))
-        print(self.protocol.read_memory("flash", flash_section_bounds[0], len(flash_section_data)))
+        print([hex(x) for x in self.protocol.read_memory("flash", flash_section_bounds[0], len(flash_section_data))])
 
         """
         lockbits = self.protocol.read_memory("lockbits", 0, 1)

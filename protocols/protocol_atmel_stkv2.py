@@ -103,7 +103,10 @@ class ProtocolAtmelSTKV2(Protocol):
 
     def _set_address(self, address):
         packet = [AtmelSTKV2Defs.commands["LOAD_ADDRESS"]]
-        packet.extend([address >> (8 * x) & 0xFF for x in xrange(4)])
+        packet.append(address >> 24)
+        packet.append(address >> 16)
+        packet.append(address >> 8)
+        packet.append(address & 0xFF)
         self._trancieve(packet)
 
 
