@@ -4,6 +4,9 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+import os.path
+
+
 from devices import *
 from formats import *
 from tools import *
@@ -73,8 +76,21 @@ class Session(object):
 
 
     def process_commands(self, command_args):
-        if len(command_args) > 0:
-            raise NotImplementedError()
+        # TEST SESSION CODE
+        # FIXME
+
+        try:
+            file_name = command_args[0]
+            file_ext = os.path.splitext(file_name)[1][1:].lower()
+            format_reader = gdp_formats[file_ext](file_name)
+        except KeyError:
+            raise SessionError("Unrecognized input file extension (%s)." % file_ext)
+
+        for s in format_reader.get_sections():
+            section_bounds = s.get_address_bounds()
+            print("Section %s [%s] - 0x%08x-0x%08x" %
+                  (s.get_name(), s.get_address_space(),
+                   section_bounds[0], section_bounds[1]))
 
         """
         lockbits = self.protocol.read_memory("lockbits", 0, 1)
@@ -84,8 +100,8 @@ class Session(object):
         fusebits = self.protocol.read_memory("fuses", 0, 3)
         if not fusebits is None:
             print("Fusebits: [%s]" % ' '.join('0x%02X' % b for b in fusebits))
-        """
 
         self.protocol.erase_memory(None)
         self.protocol.write_memory("flash", 2, [0xDC] * 4)
         print(self.protocol.read_memory("flash", 2, 4))
+        """
