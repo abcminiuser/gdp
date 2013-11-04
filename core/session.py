@@ -85,7 +85,7 @@ class Session(object):
 
             format_reader = gdp_formats[file_ext](file_name)
         except KeyError:
-            raise SessionError("Unrecognized input file extension (%s)." % file_ext)
+            raise SessionError("Unrecognized input file type \"%s\"." % file_name)
 
         for name, section in format_reader.get_sections().items():
             section_bounds = section.get_bounds()

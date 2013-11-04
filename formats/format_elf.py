@@ -55,7 +55,7 @@ class FormatELF(Format):
                     new_section = FormatELF_Section(section)
                     self.sections[new_section.get_name()] = new_section
         except:
-            raise FormatError("Could not open the specified ELF file.")
+            raise FormatError("Could not open ELF file \"%s\"." % filename)
 
 
     def get_sections(self):

@@ -67,7 +67,8 @@ def main():
         session.open()
         session.process_commands(args)
         session.close()
-    except (SessionError, TransportError, ToolError, ProtocolError) as gdp_error:
+    except (FormatError, SessionError, TransportError,
+            ToolError, ProtocolError) as gdp_error:
         error_type = type(gdp_error).__name__.split("Error")[0]
         error_message = gdp_error.message
 

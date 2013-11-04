@@ -51,8 +51,8 @@ class FormatIntelHex(Format):
             else:
                 hexfile.loadhex(filename)
         except:
-            raise FormatError("Could not open the specified %s file." %
-                              file_extension.upper())
+            raise FormatError("Could not open %s file \"%s\"." %
+                              (file_extension.upper(), filename))
 
         self.sections[None] = FormatIntelHex_Section(hexfile)
 
