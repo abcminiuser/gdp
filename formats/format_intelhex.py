@@ -31,13 +31,15 @@ class FormatIntelHex_Section(FormatSection):
 
 
     def get_data(self):
-        return self.instance
+        return self.instance.tobinarray()
 
 
 class FormatIntelHex(Format):
     def __init__(self, filename=None):
         if filename is None:
             raise FormatError("Filename not specified.")
+
+        self.sections = dict()
 
         file_extension = os.path.splitext(filename)[1][1:].lower()
 
@@ -52,7 +54,7 @@ class FormatIntelHex(Format):
             raise FormatError("Could not open the specified %s file." %
                               file_extension.upper())
 
-        self.sections = [FormatIntelHex_Section(hexfile)]
+        self.sections[None] = FormatIntelHex_Section(hexfile)
 
 
     def get_sections(self):

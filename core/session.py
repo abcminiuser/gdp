@@ -82,14 +82,35 @@ class Session(object):
         try:
             file_name = command_args[0]
             file_ext = os.path.splitext(file_name)[1][1:].lower()
+
             format_reader = gdp_formats[file_ext](file_name)
         except KeyError:
             raise SessionError("Unrecognized input file extension (%s)." % file_ext)
 
-        for s in format_reader.get_sections():
-            section_bounds = s.get_bounds()
+        for name, section in format_reader.get_sections().items():
+            section_bounds = section.get_bounds()
             print("Section %s - 0x%08x-0x%08x" %
-                  (s.get_name(), section_bounds[0], section_bounds[1]))
+                  (name, section_bounds[0], section_bounds[1]))
+
+        try:
+            flash_section = format_reader.get_sections()["text"]
+        except:
+            flash_section = format_reader.get_sections()[None]
+        flash_section_bounds = flash_section.get_bounds()
+        flash_section_data   = flash_section.get_data()
+
+        print("Erasing device memory...")
+        self.protocol.erase_memory(None)
+
+        print("Programming %d bytes of data to %s at 0x%08x-0x%08x..." %
+              (len(flash_section_data), "flash",
+               flash_section_bounds[0], flash_section_bounds[1]))
+        self.protocol.write_memory("flash", flash_section_bounds[0], flash_section_data)
+
+        print("Reading %d bytes of data from %s at 0x%08x-0x%08x..." %
+              (len(flash_section_data), "flash",
+               flash_section_bounds[0], flash_section_bounds[1]))
+        print(self.protocol.read_memory("flash", flash_section_bounds[0], len(flash_section_data)))
 
         """
         lockbits = self.protocol.read_memory("lockbits", 0, 1)

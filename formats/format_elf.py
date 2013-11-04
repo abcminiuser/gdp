@@ -31,7 +31,7 @@ class FormatELF_Section(FormatSection):
 
 
     def get_data(self):
-        return self.instance.data
+        return [ord(x) for x in self.instance.data()]
 
 
 class FormatELF(Format):
@@ -42,18 +42,18 @@ class FormatELF(Format):
         if filename is None:
             raise FormatError("Filename not specified.")
 
-        self.sections = []
+        self.sections = dict()
 
         try:
-            with open(filename, 'rb') as f:
-                elffile = ELFFile(f)
+            elffile = ELFFile(open(filename, 'rb'))
 
-                for section in elffile.iter_sections():
-                    if section["sh_type"] != "SHT_PROGBITS":
-                        continue
+            for section in elffile.iter_sections():
+                if section["sh_type"] != "SHT_PROGBITS":
+                    continue
 
-                    if section["sh_flags"] & FormatELF.SHF_ALLOC:
-                        self.sections.append(FormatELF_Section(section))
+                if section["sh_flags"] & FormatELF.SHF_ALLOC:
+                    new_section = FormatELF_Section(section)
+                    self.sections[new_section.get_name()] = new_section
         except:
             raise FormatError("Could not open the specified ELF file.")
 
