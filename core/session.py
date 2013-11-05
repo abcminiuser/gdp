@@ -92,10 +92,8 @@ class Session(object):
             print("Section %s - 0x%08x-0x%08x" %
                   (name, section_bounds[0], section_bounds[1]))
 
-        try:
-            flash_section = format_reader.get_sections()["text"]
-        except:
-            flash_section = format_reader.get_sections()[None]
+
+        flash_section = format_reader.get_sections()["text"]
         flash_section_bounds = flash_section.get_bounds()
         flash_section_data   = flash_section.get_data()
 

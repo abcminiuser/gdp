@@ -22,10 +22,6 @@ class FormatIntelHex_Section(FormatSection):
         self.instance = instance
 
 
-    def get_name(self):
-        return None
-
-
     def get_bounds(self):
         return (self.instance.minaddr(), self.instance.maxaddr())
 
@@ -54,7 +50,9 @@ class FormatIntelHex(Format):
             raise FormatError("Could not open %s file \"%s\"." %
                               (file_extension.upper(), filename))
 
-        self.sections[None] = FormatIntelHex_Section(hexfile)
+        if hexfile.minaddr() != None:
+            section_name = "eeprom" if file_extension == "eep" else "text"
+            self.sections[section_name] = FormatIntelHex_Section(hexfile)
 
 
     def get_name():

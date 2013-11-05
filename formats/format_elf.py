@@ -6,7 +6,8 @@
 
 import sys
 try:
-	from elftools.elf.elffile import ELFFile
+    from elftools.elf.elffile import ELFFile
+    from elftools.elf.constants import SH_FLAGS
 except ImportError:
     print("The PyELFTools library is not installed.")
     sys.exit(1)
@@ -21,10 +22,6 @@ class FormatELF_Section(FormatSection):
         self.instance = instance
 
 
-    def get_name(self):
-        return self.instance.name[1 : ]
-
-
     def get_bounds(self):
         return (self.instance["sh_addr"],
                 self.instance["sh_addr"] + self.instance["sh_size"])
@@ -35,9 +32,6 @@ class FormatELF_Section(FormatSection):
 
 
 class FormatELF(Format):
-    SHF_ALLOC = 0x02
-
-
     def __init__(self, filename=None):
         if filename is None:
             raise FormatError("Filename not specified.")
@@ -46,16 +40,18 @@ class FormatELF(Format):
 
         try:
             elffile = ELFFile(open(filename, 'rb'))
-
-            for section in elffile.iter_sections():
-                if section["sh_type"] != "SHT_PROGBITS":
-                    continue
-
-                if section["sh_flags"] & FormatELF.SHF_ALLOC:
-                    new_section = FormatELF_Section(section)
-                    self.sections[new_section.get_name()] = new_section
         except:
             raise FormatError("Could not open ELF file \"%s\"." % filename)
+
+        for section in elffile.iter_sections():
+            if section["sh_type"] != "SHT_PROGBITS":
+                continue
+
+            if section["sh_flags"] & SH_FLAGS.SHF_ALLOC:
+                new_section = FormatELF_Section(section)
+
+                section_name = section.name[1 : ]
+                self.sections[section_name] = new_section
 
 
     def get_name():
