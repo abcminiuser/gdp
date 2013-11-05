@@ -8,6 +8,9 @@ from protocols import *
 
 
 class AtmelDFUV1Defs(object):
+    DFU_DNLOAD_ALIGNMENT_LENGTH = 26
+    DFU_DNLOAD_SUFFIX_LENGTH    = 16
+
     requests = {
         "DETATCH"             : 0,
         "DNLOAD"              : 1,
@@ -167,10 +170,10 @@ class ProtocolAtmelDFUV1(Protocol):
             packet.append(0x00 if memory_space == "flash" else 0x01)
             packet.extend([offset >> 8, offset & 0xFF])
             packet.extend([(offset + len(data) - 1) >> 8, (offset + len(data) - 1) & 0xFF])
-            packet.extend([0x00] * 26)
+            packet.extend([0x00] * AtmelDFUV1Defs.DFU_DNLOAD_ALIGNMENT_LENGTH)
             packet.extend([0x00] * (offset % 32))
             packet.extend(data)
-            packet.extend([0xFF] * 16)
+            packet.extend([0xFF] * AtmelDFUV1Defs.DFU_DNLOAD_SUFFIX_LENGTH)
 
             self._download(packet)
         elif memory_space in ["signature", "fuses", "lockbits"]:
