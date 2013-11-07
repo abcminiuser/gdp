@@ -53,6 +53,9 @@ class FormatELF(Format):
                 section_name = section.name[1 : ]
                 self.sections[section_name] = new_section
 
+        if len(self.sections) == 0:
+            raise FormatError("ELF file \"%s\" contains no data." % filename)
+
 
     def get_name():
         return "ELF File Parser"
