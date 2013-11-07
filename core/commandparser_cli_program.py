@@ -12,11 +12,7 @@ from core.commandparser import *
 from formats import *
 
 
-class CommandParserCLIProgram(object):
-    def __init__(self, session):
-        self.session = session
-
-
+class CommandParserCLIProgram(CommandParser):
     def parse_arguments(self, args):
         parser = OptionParser(description="PROGRAM command")
         parser.disable_interspersed_args()
@@ -40,7 +36,7 @@ class CommandParserCLIProgram(object):
         parser.add_option("-v", "--verify",
                           action="store_true", dest="verify",
                           help="verify result after programming")
-        (self.options, args) = parser.parse_args(args)
+        (self.options, args) = parser.parse_args(args=args)
 
         try:
             file_name = self.options.filename
@@ -57,8 +53,8 @@ class CommandParserCLIProgram(object):
         return args
 
 
-    def execute(self):
-        protocol = self.session.get_protocol()
+    def execute(self, session):
+        protocol = session.get_protocol()
 
         if self.options.chiperase is True:
             print(" - Erasing chip...")

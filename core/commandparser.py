@@ -17,5 +17,5 @@ class CommandParser(object):
 
 
     @abstractmethod
-    def execute(self):
+    def execute(self, session):
         pass

@@ -37,7 +37,7 @@ class FormatIntelHex(Format):
 
         self.sections = dict()
 
-        file_extension = os.path.splitext(filename)[1][1:].lower()
+        file_extension = os.path.splitext(filename)[1][1 : ].lower()
 
         try:
             hexfile = IntelHex()

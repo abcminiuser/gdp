@@ -19,8 +19,10 @@ class InterfaceCLI(object):
     }
 
 
-    @staticmethod
-    def _create_general_option_parser(usage, description):
+    def _parse_main_arguments(self, args):
+        description = "GDP, the Generic Device Programmer."
+        usage = "usage: %prog [options] COMMAND"
+
         parser = OptionParser(usage=usage, description=description)
         parser.disable_interspersed_args()
 
@@ -56,43 +58,51 @@ class InterfaceCLI(object):
         parser.add_option_group(comm_group)
         parser.add_option_group(override_group)
 
-        return parser
-
-
-    def parse(self, args):
-        description = "GDP, the Generic Device Programmer."
-        usage = "usage: %prog [options] COMMAND"
-        parser = self._create_general_option_parser(usage, description)
-
-        if len(args) == 1:
+        if len(args) == 0:
             print("%s\n\n%s" % (description, parser.get_usage()))
-            return 0
+            return None
         else:
-            (options, args) = parser.parse_args()
+            (self.options, args) = parser.parse_args(args=args)
+
+        return args
+
+
+    @staticmethod
+    def _build_command_list(args):
+        command_list = []
+
+        while len(args) > 0:
+            current_command = args[0]
+
+            try:
+                command_parser = InterfaceCLI.command_parsers[current_command]()
+                command_list.append(command_parser)
+
+                args = command_parser.parse_arguments(args[1 : ])
+            except KeyError:
+                raise SessionError("Unknown command \"%s\"." % current_command)
+
+        return command_list
+
+
+
+    def parse_arguments(self, args):
+        args = self._parse_main_arguments(args[1 : ])
+        if args is None:
+            return 0
 
         try:
-            session = Session(options)
+            session = Session(self.options)
 
             session.open()
 
-            command_list = []
-
-            while len(args) > 0:
-                current_command = args[0]
-
-                try:
-                    command_parser = InterfaceCLI.command_parsers[current_command](session)
-                    command_list.append(command_parser)
-                    args = command_parser.parse_arguments(args[1 : ])
-                except KeyError:
-                    raise SessionError("Unknown command \"%s\"." % current_command)
-
-            for cmd in command_list:
-                cmd.execute()
+            for cmd in self._build_command_list(args):
+                cmd.execute(session)
 
             session.close()
 
             print("Finished executing commands.")
+            return 0
         except (FormatError, SessionError, TransportError,
                 ToolError, ProtocolError) as gdp_error:
             error_type = type(gdp_error).__name__.split("Error")[0]
@@ -100,5 +110,3 @@ class InterfaceCLI(object):
 
             print("GDP Error (%s): %s" % (error_type, error_message))
             return 1
-
-        return 0

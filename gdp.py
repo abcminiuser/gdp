@@ -13,7 +13,7 @@ from core import *
 
 def main():
     interface = InterfaceCLI()
-    sys.exit(interface.parse(sys.argv))
+    sys.exit(interface.parse_arguments(sys.argv))
 
 
 if __name__ == "__main__":
