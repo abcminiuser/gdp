@@ -53,36 +53,39 @@ class CommandParserCLIProgram(CommandParser):
         return args
 
 
+    def _get_file_section(self, memory_type):
+        file_sections = self.format_reader.get_sections()
+
+        if len(file_sections) == 1:
+            return file_sections[None]
+
+        if memory_type in file_sections:
+            return file_sections[section_name]
+
+        section_name_override_map = {
+            "flash"  : "text",
+        }
+
+        try:
+            section_name = section_name_override_map[memory_type]
+            return file_sections[section_name]
+        except KeyError:
+            raise SessionError("Specified memory type \"%s\" was not "
+                               "found in the source file." % memory_type)
+
+
     def execute(self, session):
         protocol = session.get_protocol()
+
+        memory_type = self.options.memory_type.lower()
+
+        section = self._get_file_section(memory_type)
+        section_data  = section.get_data()
+        section_start = section.get_bounds()[0]
 
         if self.options.chiperase is True:
             print(" - Erasing chip...")
             protocol.erase_memory(None)
-
-
-        memory_type = self.options.memory_type.lower()
-        file_sections = self.format_reader.get_sections()
-
-        if len(file_sections) > 1:
-            if memory_type in file_sections:
-                section = file_sections[section_name]
-            else:
-                section_name_override_map = {
-                    "flash"  : "text",
-                }
-
-                try:
-                    section_name = section_name_override_map[memory_type]
-                    section = file_sections[section_name]
-                except KeyError:
-                    raise SessionError("Specified memory type \"%s\" was not "
-                                       "found in the source file." % memory_type)
-        else:
-            section = file_sections[None]
-
-        section_data  = section.get_data()
-        section_start = section.get_bounds()[0]
 
         print(" - Programming memory type \"%s\"..." % memory_type)
         protocol.write_memory(memory_type,
@@ -90,11 +93,11 @@ class CommandParserCLIProgram(CommandParser):
                               section_data)
 
         if self.options.verify is True:
+            print(" - Verifying written memory...")
             read_data = protocol.read_memory(memory_type,
                                              self.options.offset + section_start,
                                              len(section_data))
 
-            print(" - Verifying written memory...")
             for x in xrange(len(section_data)):
                 if section_data[x] != read_data[x]:
                     raise SessionError("Verify failed at address 0x%08x, "
