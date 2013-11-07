@@ -5,3 +5,5 @@
 '''
 
 from core.session import *
+
+from core.interface_cli import *
