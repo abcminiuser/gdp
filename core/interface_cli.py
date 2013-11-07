@@ -60,7 +60,6 @@ class InterfaceCLI(object):
 
         if len(args) == 0:
             print("%s\n\n%s" % (description, parser.get_usage()))
-            return None
         else:
             (self.options, args) = parser.parse_args(args=args)
 
@@ -88,7 +87,7 @@ class InterfaceCLI(object):
 
     def parse_arguments(self, args):
         args = self._parse_main_arguments(args[1 : ])
-        if args is None:
+        if len(args) == 0:
             return 0
 
         try:
@@ -101,7 +100,7 @@ class InterfaceCLI(object):
 
             session.close()
 
-            print("Finished executing commands.")
+            print("GDP finished executing commands.")
             return 0
         except (FormatError, SessionError, TransportError,
                 ToolError, ProtocolError) as gdp_error:
