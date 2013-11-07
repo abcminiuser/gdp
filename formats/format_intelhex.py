@@ -37,7 +37,7 @@ class FormatIntelHex(Format):
 
         self.sections = dict()
 
-        file_extension = os.path.splitext(filename)[1][1:].lower()
+        file_extension = os.path.splitext(filename)[1][1 : ].lower()
 
         try:
             hexfile = IntelHex()
@@ -51,8 +51,7 @@ class FormatIntelHex(Format):
                               (file_extension.upper(), filename))
 
         if hexfile.minaddr() != None:
-            section_name = "eeprom" if file_extension == "eep" else "text"
-            self.sections[section_name] = FormatIntelHex_Section(hexfile)
+            self.sections[None] = FormatIntelHex_Section(hexfile)
 
 
     def get_name():

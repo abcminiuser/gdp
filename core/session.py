@@ -4,9 +4,6 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
-import os.path
-
-
 from devices import *
 from formats import *
 from tools import *
@@ -75,55 +72,5 @@ class Session(object):
         self.tool.close()
 
 
-    def process_commands(self, command_args):
-        # TEST SESSION CODE
-        # FIXME
-
-        try:
-            file_name = command_args[0]
-            file_ext = os.path.splitext(file_name)[1][1:].lower()
-
-            format_reader = gdp_formats[file_ext](file_name)
-        except KeyError:
-            raise SessionError("Unrecognized input file type \"%s\"." % file_name)
-
-        for name, section in format_reader.get_sections().items():
-            section_bounds = section.get_bounds()
-            print("Section %s - 0x%08x-0x%08x" %
-                  (name, section_bounds[0], section_bounds[1]))
-
-
-        flash_section = format_reader.get_sections()["text"]
-        flash_section_bounds = flash_section.get_bounds()
-        flash_section_data   = flash_section.get_data()
-
-        print("Erasing device memory...")
-        self.protocol.erase_memory(None)
-
-        print("Programming %d bytes of data to %s at 0x%08x-0x%08x..." %
-              (len(flash_section_data), "flash",
-               flash_section_bounds[0], flash_section_bounds[1]))
-        self.protocol.write_memory("flash", flash_section_bounds[0], flash_section_data)
-
-        print("Reading %d bytes of data from %s at 0x%08x-0x%08x..." %
-              (len(flash_section_data), "flash",
-               flash_section_bounds[0], flash_section_bounds[1]))
-
-        read_flash_section_data = self.protocol.read_memory("flash", flash_section_bounds[0], len(flash_section_data))
-        for x in xrange(len(flash_section_data)):
-            if read_flash_section_data[x] != flash_section_data[x]:
-                raise SessionError("Verification failed at location 0x%08x" % x)
-
-        """
-        lockbits = self.protocol.read_memory("lockbits", 0, 1)
-        if not lockbits is None:
-            print("Lockbits: [%s]" % ' '.join('0x%02X' % b for b in lockbits))
-
-        fusebits = self.protocol.read_memory("fuses", 0, 3)
-        if not fusebits is None:
-            print("Fusebits: [%s]" % ' '.join('0x%02X' % b for b in fusebits))
-
-        self.protocol.erase_memory(None)
-        self.protocol.write_memory("flash", 2, [0xDC] * 4)
-        print(self.protocol.read_memory("flash", 2, 4))
-        """
+    def get_protocol(self):
+        return self.protocol
