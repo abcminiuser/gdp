@@ -12,7 +12,26 @@ from optparse import OptionParser, OptionGroup
 from core import *
 
 
-def _create_option_parser(usage, description):
+class CommandParser_ChipErase(object):
+    def __init__(self, session):
+        self.session = session
+
+    def parse_arguments(self, args):
+        return args
+
+    def execute(self):
+        protocol = self.session.get_protocol()
+
+        print(" - Erasing chip...")
+        protocol.erase_memory(None)
+
+
+gdp_cmd_parsers = {
+    "chiperase" : CommandParser_ChipErase
+}
+
+
+def _create_general_option_parser(usage, description):
     parser = OptionParser(usage=usage, description=description)
     parser.disable_interspersed_args()
 
@@ -25,7 +44,7 @@ def _create_option_parser(usage, description):
     comm_group.add_option("-t", "--tool",
                           action="store", type="string", dest="tool",
                           help="target device selection")
-    comm_group.add_option("-p", "--port",
+    comm_group.add_option("-c", "--comport",
                           action="store", type="string", dest="port",
                           help="communication port (for serial tools)")
     comm_group.add_option("-i", "--interface",
@@ -54,7 +73,7 @@ def _create_option_parser(usage, description):
 def main():
     description = "GDP, the Generic Device Programmer."
     usage = "usage: %prog [options] COMMAND"
-    parser = _create_option_parser(usage, description)
+    parser = _create_general_option_parser(usage, description)
     (options, args) = parser.parse_args()
 
     if len(sys.argv) == 1:
@@ -65,8 +84,25 @@ def main():
         session = Session(options)
 
         session.open()
-        session.process_commands(args)
+
+        command_list = []
+
+        while len(args) > 0:
+            current_command = args[0]
+
+            try:
+                command_parser_inst = gdp_cmd_parsers[current_command](session)
+                command_list.append(command_parser_inst)
+                args = command_parser_inst.parse_arguments(args[1 : ])
+            except KeyError:
+                raise SessionError("Unknown command \"%s\"." % current_command)
+
+        for cmd in command_list:
+            cmd.execute()
+
         session.close()
+
+        print("Finished executing commands.")
     except (FormatError, SessionError, TransportError,
             ToolError, ProtocolError) as gdp_error:
         error_type = type(gdp_error).__name__.split("Error")[0]
