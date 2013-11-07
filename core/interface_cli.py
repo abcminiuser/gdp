@@ -20,8 +20,9 @@ class InterfaceCLI(object):
 
 
     def _parse_main_arguments(self, args):
-        description = "GDP, the Generic Device Programmer."
-        usage = "usage: %prog [options] COMMAND"
+        description = "GDP, the Generic Device Programmer.\n" \
+                      "Copyright (C) 2013 Dean Camera (dean [at] fourwalledcubicle [dot] com)."
+        usage = "usage: %prog [general options] COMMAND [command options]"
 
         parser = OptionParser(usage=usage, description=description)
         parser.disable_interspersed_args()
@@ -40,10 +41,11 @@ class InterfaceCLI(object):
                               help="communication port (for serial tools)")
         comm_group.add_option("-i", "--interface",
                               action="store", type="string", dest="interface",
-                              help="communication interface to use to the target")
+                              help="target communication interface")
         comm_group.add_option("-f", "--frequency",
-                              action="store", type="int", dest="frequency", default=250000,
-                              help="communication interface frequency to use to the target")
+                              action="store", type="int", dest="frequency",
+                              default=250000,
+                              help="target communication interface frequency (Hz)")
 
         override_group = OptionGroup(parser,
                                      "Sanity Check Overrides",
@@ -66,12 +68,11 @@ class InterfaceCLI(object):
         return args
 
 
-    @staticmethod
-    def _build_command_list(args):
+    def _build_command_list(self, args):
         command_list = []
 
         while len(args) > 0:
-            current_command = args[0]
+            current_command = args[0].lower()
 
             try:
                 command_parser = InterfaceCLI.command_parsers[current_command]()
@@ -82,7 +83,6 @@ class InterfaceCLI(object):
                 raise SessionError("Unknown command \"%s\"." % current_command)
 
         return command_list
-
 
 
     def parse_arguments(self, args):
