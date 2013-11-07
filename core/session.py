@@ -4,9 +4,6 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
-import os.path
-
-
 from devices import *
 from formats import *
 from tools import *

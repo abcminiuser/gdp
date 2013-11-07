@@ -16,8 +16,10 @@ class CommandParser_ChipErase(object):
     def __init__(self, session):
         self.session = session
 
+
     def parse_arguments(self, args):
         return args
+
 
     def execute(self):
         protocol = self.session.get_protocol()
@@ -26,9 +28,69 @@ class CommandParser_ChipErase(object):
         protocol.erase_memory(None)
 
 
-gdp_cmd_parsers = {
-    "chiperase" : CommandParser_ChipErase
-}
+class CommandParser_Program(object):
+    def __init__(self, session):
+        self.session = session
+
+
+    def parse_arguments(self, args):
+        parser = OptionParser(description="PROGRAM command")
+        parser.disable_interspersed_args()
+
+        parser.add_option("-m", "--memory",
+                          action="store", dest="memory_type", metavar="TYPE",
+                          default="flash",
+                          help="program target address space TYPE")
+        parser.add_option("-f", "--file", metavar="FILE",
+                          action="store", type="string", dest="filename",
+                          help="file to program into the device")
+        parser.add_option("", "--format",
+                          action="store", type="string", dest="format",
+                          help="format to interpret the input file as")
+        parser.add_option("-o", "--offset",
+                          action="store", type="int", dest="offset", default=0,
+                          help="offset in the target address space to write from")
+        parser.add_option("-c", "--chiperase",
+                          action="store_true", dest="chiperase",
+                          help="perform chip erase before programming")
+        (self.options, args) = parser.parse_args(args)
+
+        try:
+            file_name = self.options.filename
+
+            if self.options.format:
+                file_ext = self.options.format
+            else:
+                file_ext = os.path.splitext(file_name)[1][1 : ].lower()
+
+            self.format_reader = gdp_formats[file_ext](file_name)
+        except KeyError:
+            raise SessionError("Unrecognized input file type \"%s\"." % file_name)
+
+        return args
+
+
+    def execute(self):
+        protocol = self.session.get_protocol()
+
+
+        if self.options.chiperase:
+            print(" - Erasing chip...")
+            protocol.erase_memory(None)
+
+        section_name_map = {
+            "flash"  : "text",
+            "eeprom" : "eeprom",
+        }
+
+        memory_type = self.options.memory_type.lower()
+        section_name = section_name_map[memory_type]
+        section = self.format_reader.get_sections()[section_name]
+
+        print(" - Programming memory type \"%s\"..." % memory_type)
+        protocol.write_memory(memory_type,
+                              self.options.offset + section.get_bounds()[0],
+                              section.get_data())
 
 
 def _create_general_option_parser(usage, description):
@@ -44,7 +106,7 @@ def _create_general_option_parser(usage, description):
     comm_group.add_option("-t", "--tool",
                           action="store", type="string", dest="tool",
                           help="target device selection")
-    comm_group.add_option("-c", "--comport",
+    comm_group.add_option("-p", "--port",
                           action="store", type="string", dest="port",
                           help="communication port (for serial tools)")
     comm_group.add_option("-i", "--interface",
@@ -87,11 +149,16 @@ def main():
 
         command_list = []
 
+        cmd_parsers = {
+            "chiperase" : CommandParser_ChipErase,
+            "program"   : CommandParser_Program
+        }
+
         while len(args) > 0:
             current_command = args[0]
 
             try:
-                command_parser_inst = gdp_cmd_parsers[current_command](session)
+                command_parser_inst = cmd_parsers[current_command](session)
                 command_list.append(command_parser_inst)
                 args = command_parser_inst.parse_arguments(args[1 : ])
             except KeyError:
