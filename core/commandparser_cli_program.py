@@ -62,11 +62,11 @@ class CommandParserCLIProgram(CommandParser):
         if memory_type in file_sections:
             return file_sections[section_name]
 
-        section_name_override_map = {
-            "flash"  : "text",
-        }
-
         try:
+            section_name_override_map = {
+                "flash" : "text",
+            }
+
             section_name = section_name_override_map[memory_type]
             return file_sections[section_name]
         except KeyError:

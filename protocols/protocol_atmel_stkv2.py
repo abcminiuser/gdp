@@ -275,15 +275,18 @@ class ProtocolAtmelSTKV2(Protocol):
                     page_address = start_address + (block * blocksize)
 
                     if memory_space == "eeprom":
+                        self._set_address(page_address)
+
                         packet = [AtmelSTKV2Defs.commands["READ_EEPROM_ISP"]]
                         packet.extend([blocksize >> 8, blocksize & 0xFF])
                         packet.append(0xA0)
                     else:
+                        self._set_address(page_address >> 1)
+
                         packet = [AtmelSTKV2Defs.commands["READ_FLASH_ISP"]]
                         packet.extend([blocksize >> 8, blocksize & 0xFF])
                         packet.append(0x20)
 
-                    self._set_address(page_address)
                     resp = self._trancieve(packet)
 
                     page_data = resp[2 : -1]
@@ -352,8 +355,12 @@ class ProtocolAtmelSTKV2(Protocol):
                         page_data.extend(self.read_memory(memory_space, page_address + len(page_data), blocksize - len(page_data)))
 
                     if memory_space == "eeprom":
+                        self._set_address(page_address)
+
                         packet = [AtmelSTKV2Defs.commands["PROGRAM_EEPROM_ISP"]]
                     else:
+                        self._set_address(page_address >> 1)
+
                         packet = [AtmelSTKV2Defs.commands["PROGRAM_FLASH_ISP"]]
                     packet.extend([blocksize >> 8, blocksize & 0xFF])
                     packet.append(self.device.get_param("isp_interface", "IspProgram%s_mode" % memory_space.capitalize()) | 0x80)
@@ -365,7 +372,6 @@ class ProtocolAtmelSTKV2(Protocol):
                     packet.append(self.device.get_param("isp_interface", "IspProgram%s_pollVal2" % memory_space.capitalize()))
                     packet.extend(page_data)
 
-                    self._set_address(page_address)
                     self._trancieve(packet)
             else:
                 raise NotImplementedError()
