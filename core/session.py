@@ -108,7 +108,11 @@ class Session(object):
         print("Reading %d bytes of data from %s at 0x%08x-0x%08x..." %
               (len(flash_section_data), "flash",
                flash_section_bounds[0], flash_section_bounds[1]))
-        print([hex(x) for x in self.protocol.read_memory("flash", flash_section_bounds[0], len(flash_section_data))])
+
+        read_flash_section_data = self.protocol.read_memory("flash", flash_section_bounds[0], len(flash_section_data))
+        for x in xrange(len(flash_section_data)):
+            if read_flash_section_data[x] != flash_section_data[x]:
+                raise SessionError("Verification failed at location 0x%08x" % x)
 
         """
         lockbits = self.protocol.read_memory("lockbits", 0, 1)
