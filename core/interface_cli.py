@@ -93,6 +93,8 @@ class InterfaceCLI(object):
         try:
             session = Session(self.options)
 
+            print("GDP starting to execute commands.")
+
             session.open()
 
             for cmd in self._build_command_list(args):

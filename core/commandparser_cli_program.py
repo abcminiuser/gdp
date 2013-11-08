@@ -87,13 +87,15 @@ class CommandParserCLIProgram(CommandParser):
             print(" - Erasing chip...")
             protocol.erase_memory(None)
 
-        print(" - Programming memory type \"%s\"..." % memory_type)
+        print(" - Programming memory type \"%s\" (%d bytes, offset %d)..." %
+              (memory_type, len(section_data), self.options.offset))
         protocol.write_memory(memory_type,
                               self.options.offset + section_start,
                               section_data)
 
         if self.options.verify is True:
-            print(" - Verifying written memory...")
+            print(" - Verifying memory type \"%s\" (%d bytes, offset %d)..." %
+                  (memory_type, len(section_data), self.options.offset))
             read_data = protocol.read_memory(memory_type,
                                              self.options.offset + section_start,
                                              len(section_data))
