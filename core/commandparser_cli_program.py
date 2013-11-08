@@ -38,6 +38,11 @@ class CommandParserCLIProgram(CommandParser):
                           help="verify result after programming")
         (self.options, args) = parser.parse_args(args=args)
 
+
+        if self.options.filename is None:
+            raise SessionError("No filename specified for PROGRAM command.")
+
+
         try:
             file_name = self.options.filename
 
