@@ -22,7 +22,11 @@ class InterfaceCLI(object):
     def _create_main_parser(self, description):
         usage = "usage: %prog [general options] COMMAND [command options] ..."
 
-        parser = OptionParser(usage=usage, description=description)
+        epilog = "For help on each command, use the -h or --help flag after " \
+                 "the command name. Known commands are: %s." % \
+                 ", ".join([c.upper() for c in InterfaceCLI.command_parsers.iterkeys()])
+
+        parser = OptionParser(usage=usage, description=description, epilog=epilog)
         parser.disable_interspersed_args()
 
         comm_group = OptionGroup(parser,
