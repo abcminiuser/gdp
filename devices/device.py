@@ -38,3 +38,8 @@ class Device(object):
     @abstractmethod
     def get_signature(self, interface):
         pass
+
+
+    @abstractmethod
+    def get_page_size(self, memory_type):
+        pass

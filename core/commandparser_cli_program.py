@@ -79,14 +79,59 @@ class CommandParserCLIProgram(CommandParser):
                                "found in the source file." % memory_type)
 
 
+    def _write_data(self, protocol, device, memory_type, start, data):
+        page_size   = device.get_page_size(memory_type)
+        page_offset = start % page_size
+
+        aligned_data = []
+
+        if start % page_size != 0:
+            start -= page_offset
+
+            first_page_data = protocol.read_memory(memory_type, start, page_size)
+            aligned_data.extend(first_page_data[0 : page_offset])
+
+        aligned_data.extend(data)
+
+        if len(aligned_data) % page_size != 0:
+            last_page_offset = len(aligned_data) % page_size
+
+            last_page_data = protocol.read_memory(memory_type,
+                                                  start + len(aligned_data) - last_page_offset,
+                                                  page_size)
+            aligned_data.extend(last_page_data[last_page_offset : ])
+
+        for (address, chunk) in Protocol.chunk_data(aligned_data, page_size, start):
+            protocol.write_memory(memory_type, address, chunk)
+
+
+    def _read_data(self, protocol, device, memory_type, start, length):
+        page_size   = device.get_page_size(memory_type)
+        page_offset = start % page_size
+
+        aligned_data = []
+
+        start -= page_offset
+
+        length_aligned = length + (page_size - (length % page_size))
+
+        for (address, chunklen) in Protocol.chunk_address(length_aligned, page_size, start):
+            aligned_data.extend(protocol.read_memory(memory_type,
+                                                     address,
+                                                     page_size))
+
+        return aligned_data[page_offset : page_offset + length]
+
+
     def execute(self, session):
         protocol = session.get_protocol()
+        device = session.get_device()
 
         memory_type = self.options.memory_type.lower()
 
         section = self._get_file_section(memory_type)
         section_data  = section.get_data()
-        section_start = section.get_bounds()[0]
+        section_start = section.get_bounds()[0] + self.options.offset
 
         if self.options.chiperase is True:
             print(" - Erasing chip...")
@@ -94,16 +139,18 @@ class CommandParserCLIProgram(CommandParser):
 
         print(" - Programming memory type \"%s\" (%d bytes, offset %d)..." %
               (memory_type, len(section_data), self.options.offset))
-        protocol.write_memory(memory_type,
-                              self.options.offset + section_start,
-                              section_data)
+
+        self._write_data(protocol, device,
+                         memory_type,
+                         section_start, section_data)
 
         if self.options.verify is True:
             print(" - Verifying memory type \"%s\" (%d bytes, offset %d)..." %
                   (memory_type, len(section_data), self.options.offset))
-            read_data = protocol.read_memory(memory_type,
-                                             self.options.offset + section_start,
-                                             len(section_data))
+
+            read_data = self._read_data(protocol, device,
+                                        memory_type,
+                                        section_start, len(section_data))
 
             for x in xrange(len(section_data)):
                 if section_data[x] != read_data[x]:

@@ -25,11 +25,10 @@ class Protocol(object):
 
     @staticmethod
     def chunk_address(length, chunksize, startaddress):
+        length += chunksize - (length % chunksize)
+
         for i in xrange(0, length, chunksize):
             yield (i + startaddress, chunksize)
-
-        rem_bytes = length % chunksize
-        yield (startaddress + (length - rem_bytes), chunksize)
 
 
     @abstractmethod

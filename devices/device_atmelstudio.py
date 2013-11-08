@@ -64,3 +64,16 @@ class DeviceAtmelStudio(Device):
                                          "SIGNATURE%d" % len(dev_signature)))
             finally:
                 return dev_signature
+
+
+    def get_page_size(self, memory_type):
+        mem_segment = self.device_tree.find("devices/device[1]/address-spaces/address-space/memory-segment[@type='%s']" % memory_type.lower())
+        if mem_segment is None:
+            raise DeviceError("Memory segment type \"%s\" not found in the selected device." % memory_type)
+
+        page_size_value = mem_segment.get("pagesize")
+
+        if page_size_value is None:
+            return 1
+        else:
+            return int(page_size_value, 16)

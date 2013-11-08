@@ -112,39 +112,26 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
         elif memory_space in ["eeprom", "flash"]:
             blocksize = self.device.get_param("isp_interface", "IspRead%s_blockSize" % memory_space.capitalize())
 
-            alignment_bytes = offset % blocksize
-            start_address = offset - alignment_bytes
-
-            blocks_to_read = int(math.ceil(length / float(blocksize)))
-
-            for block in xrange(blocks_to_read):
-                page_address = start_address + (block * blocksize)
-
+            for (address, chunklen) in Protocol.chunk_address(length, blocksize, offset):
                 if memory_space == "eeprom":
-                    self._set_address(page_address)
+                    self._set_address(address)
 
                     packet = [AtmelSTKV2Defs.commands["READ_EEPROM_ISP"]]
-                    packet.extend([blocksize >> 8, blocksize & 0xFF])
+                    packet.extend([chunklen >> 8, chunklen & 0xFF])
                     packet.append(0xA0)
                 else:
-                    self._set_address(page_address >> 1)
+                    self._set_address(address >> 1)
 
                     packet = [AtmelSTKV2Defs.commands["READ_FLASH_ISP"]]
-                    packet.extend([blocksize >> 8, blocksize & 0xFF])
+                    packet.extend([chunklen >> 8, chunklen & 0xFF])
                     packet.append(0x20)
 
                 resp = self._trancieve(packet)
 
                 page_data = resp[2 : -1]
+                mem_contents.extend(page_data[0 : chunklen])
 
-                if length < blocksize:
-                    mem_contents.extend(page_data[alignment_bytes : alignment_bytes + length])
-                    length = 0
-                else:
-                    mem_contents.extend(page_data[alignment_bytes : ])
-                    length -= blocksize - alignment_bytes
-
-                alignment_bytes = 0
+            mem_contents = mem_contents[0 : length]
         else:
             raise NotImplementedError()
 
@@ -173,32 +160,14 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
         elif memory_space in ["eeprom", "flash"]:
             blocksize = self.device.get_param("isp_interface", "IspProgram%s_blockSize" % memory_space.capitalize())
 
-            alignment_bytes = offset % blocksize
-            start_address = offset - alignment_bytes
-
-            blocks_to_write = int(math.ceil(len(data) / float(blocksize)))
-
-            for block in xrange(blocks_to_write):
-                page_address = start_address + (block * blocksize)
-                page_data = []
-
-                if alignment_bytes > 0:
-                    page_data.extend(self.read_memory(memory_space, page_address, alignment_bytes))
-                    alignment_bytes = 0
-
-                page_data.extend(data[block * blocksize : (block + 1) * blocksize])
-
-                if (len(page_data) < blocksize):
-                    page_data.extend(self.read_memory(memory_space, page_address + len(page_data), blocksize - len(page_data)))
-
+            for (address, chunk) in Protocol.chunk_data(data, blocksize, offset):
                 if memory_space == "eeprom":
-                    self._set_address(page_address)
-
+                    self._set_address(address)
                     packet = [AtmelSTKV2Defs.commands["PROGRAM_EEPROM_ISP"]]
                 else:
-                    self._set_address(page_address >> 1)
-
+                    self._set_address(address >> 1)
                     packet = [AtmelSTKV2Defs.commands["PROGRAM_FLASH_ISP"]]
+
                 packet.extend([blocksize >> 8, blocksize & 0xFF])
                 packet.append(self.device.get_param("isp_interface", "IspProgram%s_mode" % memory_space.capitalize()) | 0x80)
                 packet.append(self.device.get_param("isp_interface", "IspProgram%s_delay" % memory_space.capitalize()))
@@ -207,7 +176,7 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
                 packet.append(self.device.get_param("isp_interface", "IspProgram%s_cmd3" % memory_space.capitalize()))
                 packet.append(self.device.get_param("isp_interface", "IspProgram%s_pollVal1" % memory_space.capitalize()))
                 packet.append(self.device.get_param("isp_interface", "IspProgram%s_pollVal2" % memory_space.capitalize()))
-                packet.extend(page_data)
+                packet.extend(chunk)
 
                 self._trancieve(packet)
         else:

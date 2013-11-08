@@ -74,3 +74,11 @@ class Session(object):
 
     def get_protocol(self):
         return self.protocol
+
+
+    def get_device(self):
+        return self.device
+
+
+    def get_tool(self):
+        return self.tool
