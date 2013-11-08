@@ -10,12 +10,14 @@ from core import *
 from core.commandparser import *
 from core.commandparser_cli_chiperase import *
 from core.commandparser_cli_program import *
+from core.commandparser_cli_verify import *
 
 
 class InterfaceCLI(object):
     command_parsers = {
         "chiperase" : CommandParserCLIChipErase,
-        "program"   : CommandParserCLIProgram
+        "program"   : CommandParserCLIProgram,
+        "verify"    : CommandParserCLIVerify
     }
 
 
