@@ -19,9 +19,7 @@ class InterfaceCLI(object):
     }
 
 
-    def _parse_main_arguments(self, args):
-        description = "GDP, the Generic Device Programmer.\n" \
-                      "Copyright (C) 2013 Dean Camera (dean [at] fourwalledcubicle [dot] com)."
+    def _create_main_parser(self, description):
         usage = "usage: %prog [general options] COMMAND [command options]"
 
         parser = OptionParser(usage=usage, description=description)
@@ -60,12 +58,7 @@ class InterfaceCLI(object):
         parser.add_option_group(comm_group)
         parser.add_option_group(override_group)
 
-        if len(args) == 0:
-            print("%s\n\n%s" % (description, parser.get_usage()))
-        else:
-            (self.options, args) = parser.parse_args(args=args)
-
-        return args
+        return parser
 
 
     def _build_command_list(self, args):
@@ -86,8 +79,19 @@ class InterfaceCLI(object):
 
 
     def parse_arguments(self, args):
-        args = self._parse_main_arguments(args[1 : ])
+        description = "GDP, the Generic Device Programmer.\n" \
+                      "Copyright (C) 2013 Dean Camera (dean [at] fourwalledcubicle [dot] com)."
+
+        parser = self._create_main_parser(description)
+
+        if len(args) == 1:
+            print("%s\n\n%s" % (description, parser.get_usage()))
+            return 0
+
+        (self.options, args) = parser.parse_args(args=args[1 : ])
+
         if len(args) == 0:
+            print("No commands specified.")
             return 0
 
         try:
