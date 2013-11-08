@@ -20,7 +20,7 @@ class InterfaceCLI(object):
 
 
     def _create_main_parser(self, description):
-        usage = "usage: %prog [general options] COMMAND [command options]"
+        usage = "usage: %prog [general options] COMMAND [command options] ..."
 
         parser = OptionParser(usage=usage, description=description)
         parser.disable_interspersed_args()
@@ -96,18 +96,14 @@ class InterfaceCLI(object):
 
         try:
             session = Session(self.options)
+            session.open()
 
             print("GDP starting to execute commands.")
-
-            session.open()
 
             for cmd in self._build_command_list(args):
                 cmd.execute(session)
 
-            session.close()
-
             print("GDP finished executing commands.")
-            return 0
         except (FormatError, SessionError, TransportError,
                 ToolError, ProtocolError) as gdp_error:
             error_type = type(gdp_error).__name__.split("Error")[0]
@@ -115,3 +111,10 @@ class InterfaceCLI(object):
 
             print("GDP Error (%s): %s" % (error_type, error_message))
             return 1
+        finally:
+            try:
+                session.close()
+            except:
+                pass
+
+        return 0
