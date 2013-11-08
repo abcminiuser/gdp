@@ -33,8 +33,8 @@ class ToolAtmelSTK500(Tool):
     def _fromarray(data):
         value = 0
 
-        for x in xrange(len(data)):
-            value = (value << 8) | data[x]
+        for d in data:
+            value = (value << 8) | d
 
         return value
 
