@@ -15,6 +15,23 @@ class Protocol(object):
     __metaclass__ = ABCMeta
 
 
+    @staticmethod
+    def _chunk_data(data, chunksize, startaddress):
+        for i, c in enumerate(data[ : : chunksize]):
+            current_address = i * chunksize
+            yield (startaddress + current_address,
+                   data[current_address : current_address + chunksize])
+
+
+    @staticmethod
+    def _chunk_address(length, chunksize, startaddress):
+        for i in xrange(0, length, chunksize):
+            yield (i + startaddress, chunksize)
+
+        rem_bytes = length % chunksize
+        yield (startaddress + (length - rem_bytes), chunksize)
+
+
     @abstractmethod
     def get_vtarget(self):
         pass
