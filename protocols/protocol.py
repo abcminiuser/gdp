@@ -16,7 +16,7 @@ class Protocol(object):
 
 
     @staticmethod
-    def _chunk_data(data, chunksize, startaddress):
+    def chunk_data(data, chunksize, startaddress):
         for i, c in enumerate(data[ : : chunksize]):
             current_address = i * chunksize
             yield (startaddress + current_address,
@@ -24,7 +24,7 @@ class Protocol(object):
 
 
     @staticmethod
-    def _chunk_address(length, chunksize, startaddress):
+    def chunk_address(length, chunksize, startaddress):
         for i in xrange(0, length, chunksize):
             yield (i + startaddress, chunksize)
 
