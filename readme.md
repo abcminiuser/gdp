@@ -73,5 +73,7 @@ Contact
 ---------------------
 
 Source Code:    http://github.com/abcminiuser/gdp
+
 Author's Site:  http://www.fourwalledcubicle.com
+
 Author's Email: dean [at] fourwalledcubicle [dot] com
