@@ -51,7 +51,7 @@ Tools:
 Protocols:
 
 + Atmel DFUV1 Protocol
-+ Atmel STKV2 Protocol (ISP interface only)
++ Atmel STKV2 Protocol (ISP, HVSP, HVPP interfaces only)
 + Atmel JTAGV2 Protocol (stub only)
 
 
