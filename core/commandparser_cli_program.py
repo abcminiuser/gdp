@@ -101,7 +101,7 @@ class CommandParserCLIProgram(CommandParser):
                                                   page_size)
             aligned_data.extend(last_page_data[last_page_offset : ])
 
-        for (address, chunk) in Protocol.chunk_data(aligned_data, page_size, start):
+        for (address, chunk) in Util.chunk_data(aligned_data, page_size, start):
             protocol.write_memory(memory_type, address, chunk)
 
 
@@ -115,7 +115,7 @@ class CommandParserCLIProgram(CommandParser):
 
         length_aligned = length + (page_size - (length % page_size))
 
-        for (address, chunklen) in Protocol.chunk_address(length_aligned, page_size, start):
+        for (address, chunklen) in Util.chunk_address(length_aligned, page_size, start):
             aligned_data.extend(protocol.read_memory(memory_type,
                                                      address,
                                                      page_size))

@@ -4,6 +4,7 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+from core import *
 from protocols import *
 from protocols.protocol_atmel_dfuv1.atmel_dfuv1_defs import *
 
@@ -94,7 +95,7 @@ class ProtocolAtmelDFUV1(Protocol):
         elif memory_space in ["fuses", "lockbits"]:
             raise ProtocolError("Protocol does not support reading from memory \"%s\"." % memory_space)
         elif memory_space in ["flash", "eeprom"]:
-            for (address, chunklen) in Protocol.chunk_address(length, 512, offset):
+            for (address, chunklen) in Util.chunk_address(length, 512, offset):
                 self._select_64kb_bank(address >> 16)
 
                 packet = [0x03]
@@ -112,7 +113,7 @@ class ProtocolAtmelDFUV1(Protocol):
 
     def write_memory(self, memory_space, offset, data):
         if memory_space in ["flash", "eeprom"]:
-            for (address, chunk) in Protocol.chunk_data(data, 512, offset):
+            for (address, chunk) in Util.chunk_data(data, 512, offset):
                 self._select_64kb_bank(address >> 16)
 
                 packet = [0x01]

@@ -4,6 +4,7 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+from core import *
 from protocols import *
 from protocols.protocol_atmel_stkv2.atmel_stkv2_base import *
 
@@ -112,7 +113,7 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
         elif memory_space in ["eeprom", "flash"]:
             blocksize = self.device.get_param("isp_interface", "IspRead%s_blockSize" % memory_space.capitalize())
 
-            for (address, chunklen) in Protocol.chunk_address(length, blocksize, offset):
+            for (address, chunklen) in Util.chunk_address(length, blocksize, offset):
                 if memory_space == "eeprom":
                     self._set_address(address)
 
@@ -160,7 +161,7 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
         elif memory_space in ["eeprom", "flash"]:
             blocksize = self.device.get_param("isp_interface", "IspProgram%s_blockSize" % memory_space.capitalize())
 
-            for (address, chunk) in Protocol.chunk_data(data, blocksize, offset):
+            for (address, chunk) in Util.chunk_data(data, blocksize, offset):
                 if memory_space == "eeprom":
                     self._set_address(address)
                     packet = [AtmelSTKV2Defs.commands["PROGRAM_EEPROM_ISP"]]
