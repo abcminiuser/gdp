@@ -8,6 +8,7 @@ from protocols import *
 from protocols.protocol_atmel_stkv2.atmel_stkv2_isp import *
 from protocols.protocol_atmel_stkv2.atmel_stkv2_hvpp import *
 from protocols.protocol_atmel_stkv2.atmel_stkv2_hvsp import *
+from protocols.protocol_atmel_stkv2.atmel_stkv2_xprog import *
 
 
 class ProtocolAtmelSTKV2(Protocol):
@@ -15,7 +16,9 @@ class ProtocolAtmelSTKV2(Protocol):
         interface_implementations = {
             "isp"  : ProtocolAtmelSTKV2_ISP,
             "hvsp" : ProtocolAtmelSTKV2_HVSP,
-            "hvpp" : ProtocolAtmelSTKV2_HVPP
+            "hvpp" : ProtocolAtmelSTKV2_HVPP,
+            "pdi"  : ProtocolAtmelSTKV2_XPROG,
+            "tpi"  : ProtocolAtmelSTKV2_XPROG
         }
 
         try:
