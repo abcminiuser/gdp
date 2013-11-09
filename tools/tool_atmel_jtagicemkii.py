@@ -67,8 +67,8 @@ class ToolAtmelJTAGICEMKII(Tool):
     def _fromarray(data):
         value = 0
 
-        for x in data:
-            value |= d << (8 * x)
+        for x in xrange(len(data)):
+            value |= data[x] << (8 * x)
 
         return value
 
