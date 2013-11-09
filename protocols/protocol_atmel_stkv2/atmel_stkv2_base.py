@@ -7,8 +7,13 @@
 from protocols import *
 from protocols.protocol_atmel_stkv2.atmel_stkv2_defs import *
 
+from abc import ABCMeta, abstractmethod
+
 
 class ProtocolAtmelSTKV2_Base(object):
+    __metaclass__ = ABCMeta
+
+
     def __init__(self, tool, device):
         self.tool = tool
         self.device = device
@@ -65,6 +70,7 @@ class ProtocolAtmelSTKV2_Base(object):
         if "AVRISP" in self.tool_sign_on_string:
             self._trancieve([AtmelSTKV2Defs.commands["RESET_PROTECTION"]])
 
+
     def _set_control_stack(self):
         if "STK500" in self.tool_sign_on_string:
             if self.interface == "hvpp":
@@ -94,4 +100,34 @@ class ProtocolAtmelSTKV2_Base(object):
 
 
     def close(self):
+        pass
+
+
+    @abstractmethod
+    def set_interface_frequency(self, target_frequency):
+        pass
+
+
+    @abstractmethod
+    def enter_session(self):
+        pass
+
+
+    @abstractmethod
+    def exit_session(self):
+        pass
+
+
+    @abstractmethod
+    def erase_memory(self, memory_space):
+        pass
+
+
+    @abstractmethod
+    def read_memory(self, memory_space, offset, length):
+        pass
+
+
+    @abstractmethod
+    def write_memory(self, memory_space, offset, data):
         pass
