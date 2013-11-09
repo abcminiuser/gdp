@@ -69,6 +69,24 @@ Input File Formats:
 + Executable and Linkable Format (ELF)
 
 
+Prerequisites
+---------------------
+
+The following is required to use GDP currently in its original Python form:
+
++ Python 2.7
++ PyUSB Library
++ PySerial Library
++ PyELFTools Library
++ IntelHex Library
+
+If compiled with the PyInstaller toolkit, the above is not required as all
+dependencies are converted into a native platform executable.
+
+In addition, the device files from Atmel Studio are required for the current
+device backend.
+
+
 Contact
 ---------------------
 
