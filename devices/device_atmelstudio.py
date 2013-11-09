@@ -43,12 +43,14 @@ class DeviceAtmelStudio(Device):
         if param_info is None:
             raise DeviceError("Device group \"%s\" parameter \"%s\" not found in the selected device." % (group, param))
 
-        param_value = param_info.get("value")
+        param_ints = []
+        for p in param_info.get("value").split():
+            if p[0 : 2] == "0x":
+                param_ints.append(int(p, 16))
+            else:
+                param_ints.append(int(p, 10))
 
-        if param_value[0 : 2] == "0x":
-            return int(param_value, 16)
-        else:
-            return int(param_value, 10)
+        return param_ints[0] if len(param_ints) == 1 else param_ints
 
 
     def get_signature(self, interface):

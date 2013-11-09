@@ -96,6 +96,7 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
             packet.append(self.device.get_param("isp_interface", "IspReadLock_pollIndex"))
             packet.extend([0x58, 0x00, 0x00, 0x00])
             resp = self._trancieve(packet)
+
             mem_contents.append(resp[2])
         elif memory_space == "fuses":
             fuse_commands = {
@@ -109,6 +110,7 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
                 packet.append(self.device.get_param("isp_interface", "IspReadFuse_pollIndex"))
                 packet.extend(fuse_commands[offset + x])
                 resp = self._trancieve(packet)
+
                 mem_contents.append(resp[2])
         elif memory_space in ["eeprom", "flash"]:
             blocksize = self.device.get_param("isp_interface", "IspRead%s_blockSize" % memory_space.capitalize())

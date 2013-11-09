@@ -65,6 +65,19 @@ class ProtocolAtmelSTKV2_Base(object):
         if "AVRISP" in self.tool_sign_on_string:
             self._trancieve([AtmelSTKV2Defs.commands["RESET_PROTECTION"]])
 
+    def _set_control_stack(self):
+        if "STK500" in self.tool_sign_on_string:
+            if self.interface == "hvpp":
+                control_stack = self.device.get_param("pp_interface", "PpControlStack")
+            elif self.interface == "hvsp":
+                control_stack = self.device.get_param("hvsp_interface", "HvspControlStack")
+            else:
+                return
+
+            packet = [AtmelSTKV2Defs.commands["CMD_SET_CONTROL_STACK"]]
+            packet.extend(control_stack)
+            self._trancieve(packet)
+
 
     def get_vtarget(self):
         vtarget_raw = self._get_param(AtmelSTKV2Defs.params["VTARGET"])
@@ -77,6 +90,7 @@ class ProtocolAtmelSTKV2_Base(object):
         self._sign_on()
         self._set_param(AtmelSTKV2Defs.params["RESET_POLARITY"], 1)
         self._reset_protection()
+        self._set_control_stack()
 
 
     def close(self):
