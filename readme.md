@@ -43,6 +43,7 @@ Tools:
 
 + Atmel AVR8 DFU Bootloader
 + STK500
++ STK600
 + AVRISP
 + AVRISP-MKII
 + JTAG-ICE MKII

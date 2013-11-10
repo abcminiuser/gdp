@@ -10,6 +10,7 @@ from tools.tool_atmel_avrisp import *
 from tools.tool_atmel_avrispmkii import *
 from tools.tool_atmel_jtagicemkii import *
 from tools.tool_atmel_stk500 import *
+from tools.tool_atmel_stk600 import *
 
 
 gdp_tools = {
@@ -17,5 +18,6 @@ gdp_tools = {
         'avrispmkii'    :   ToolAtmelAVRISPMKII,
         'jtagicemkii'   :   ToolAtmelJTAGICEMKII,
         'stk500'        :   ToolAtmelSTK500,
+        'stk600'        :   ToolAtmelSTK600,
         'avr8dfu'       :   ToolAtmelAVR8DFU
     }
