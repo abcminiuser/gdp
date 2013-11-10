@@ -10,6 +10,9 @@ from protocols.protocol_atmel_stkv2.atmel_stkv2_base import *
 
 
 class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
+    MEMORY_MODE_FLAG_ERASE   = 0x01
+    MEMORY_MODE_FLAG_PROGRAM = 0x02
+
     def _trancieve_xprog(self, packet_out):
         xprog_packet_out = [AtmelSTKV2Defs.commands["XPROG"]]
         xprog_packet_out.extend(packet_out)
@@ -153,10 +156,21 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
         except KeyError:
             raise NotImplementedError()
 
+        start_address = offset
+        end_address   = start_address + len(data)
+
         for (address, chunk) in Util.chunk_data(data, 256, offset):
+            memory_mode = 0
+
+            if address == start_address:
+                memory_mode |= ProtocolAtmelSTKV2_XPROG.MEMORY_MODE_FLAG_ERASE
+
+            if address == end_address - len(chunk):
+                memory_mode |= ProtocolAtmelSTKV2_XPROG.MEMORY_MODE_FLAG_PROGRAM
+
             packet = [AtmelSTKV2Defs.xprog_commands["WRITE_MEMORY"]]
             packet.append(memory_type)
-            packet.append(0x03)
+            packet.append(memory_mode)
             packet.append((address >> 24) & 0xFF)
             packet.append((address >> 16) & 0xFF)
             packet.append((address >> 8) & 0xFF)
