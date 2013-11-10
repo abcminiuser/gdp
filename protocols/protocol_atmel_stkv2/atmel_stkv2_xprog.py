@@ -48,6 +48,24 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
         self._trancieve(packet)
 
 
+    def _get_memory_base_offset(self, memory_space):
+        pdi_memory_baseaddr_map = {
+            "application"         : 0x00800000,
+            "eeprom"              : 0x008C0000,
+            "fuses"               : 0x008F0020,
+            "user_signature"      : 0x008E0400,
+            "user_signature"      : 0x008E0400,
+
+            "flash"               : 0x00800000,
+            "signature"           : 0x01000090
+        }
+
+        if not memory_space in pdi_memory_baseaddr_map:
+            raise NotImplementedError()
+
+        return pdi_memory_baseaddr_map[memory_space]
+
+
     def set_interface_frequency(self, target_frequency):
         pass
 
@@ -96,9 +114,12 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
     def read_memory(self, memory_space, offset, length):
         mem_contents = []
 
-        if memory_space == "signature":
+        offset += self._get_memory_base_offset(memory_space)
+
+        if memory_space == "flash":
+            memory_space = "application"
+        elif memory_space == "signature":
             memory_space = "factory_calibration"
-            offset += 0x01000090
 
         try:
             memory_type = AtmelSTKV2Defs.xprog_memory_types[memory_space.upper()]
@@ -122,6 +143,11 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
 
 
     def write_memory(self, memory_space, offset, data):
+        offset += self._get_memory_base_offset(memory_space)
+
+        if memory_space == "flash":
+            memory_space = "application"
+
         try:
             memory_type = AtmelSTKV2Defs.xprog_memory_types[memory_space.upper()]
         except KeyError:
