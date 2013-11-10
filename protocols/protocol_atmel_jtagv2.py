@@ -55,7 +55,7 @@ class ProtocolAtmelJTAGV2(Protocol):
         raise NotImplementedError
 
 
-    def erase_memory(self, memory_space):
+    def erase_memory(self, memory_space, offset):
         raise NotImplementedError()
 
 

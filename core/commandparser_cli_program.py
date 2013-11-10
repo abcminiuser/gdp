@@ -135,7 +135,7 @@ class CommandParserCLIProgram(CommandParser):
 
         if self.options.chiperase is True:
             print(" - Erasing chip...")
-            protocol.erase_memory(None)
+            protocol.erase_memory(None, 0)
 
         print(" - Programming memory type \"%s\" (%d bytes, offset %d)..." %
               (memory_type, len(section_data), self.options.offset))

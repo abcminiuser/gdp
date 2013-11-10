@@ -72,13 +72,13 @@ class DeviceAtmelStudio(Device):
 
     def get_signature(self, interface):
         if interface == "jtag":
-            return self.get_param("signatures", "JTAGID")
+            return self.get_property("signatures", "JTAGID")
         else:
             dev_signature = []
 
             try:
                 while True:
-                    dev_signature.append(self.get_param("signatures", "SIGNATURE%d" % len(dev_signature)))
+                    dev_signature.append(self.get_property("signatures", "SIGNATURE%d" % len(dev_signature)))
             finally:
                 return dev_signature
 

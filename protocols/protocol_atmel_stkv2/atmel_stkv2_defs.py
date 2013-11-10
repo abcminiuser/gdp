@@ -66,8 +66,8 @@ class AtmelSTKV2Defs(object):
         "ENTER_PROGMODE"       : 0x01,
         "LEAVE_PROGMODE"       : 0x02,
         "ERASE"                : 0x03,
-        "WRITE_MEM"            : 0x04,
-        "READ_MEM"             : 0x05,
+        "WRITE_MEMORY"         : 0x04,
+        "READ_MEMORY"          : 0x05,
         "CRC"                  : 0x06,
         "SET_PARAMETER"        : 0x07
     }
@@ -85,6 +85,27 @@ class AtmelSTKV2Defs(object):
         "NVMCMD_REG"           : 0x03,
         "NVMCSR_REG"           : 0x04,
         "UNKNOWN_1"            : 0x05
+    }
+
+    xprog_memory_types = {
+        "APPLICATION"          : 0x01,
+        "BOOTLOADER"           : 0x02,
+        "EEPROM"               : 0x03,
+        "FUSES"                : 0x04,
+        "LOCKBITS"             : 0x05,
+        "USER_SIGNATURE"       : 0x06,
+        "FACTORY_CALIBRATION"  : 0x07
+    }
+
+    xprog_erase_types = {
+        "CHIP"                 : 0x01,
+        "APPLICATION"          : 0x02,
+        "BOOT"                 : 0x03,
+        "EEPROM"               : 0x04,
+        "APPLICATION_PAGE"     : 0x05,
+        "BOOTLOADER_PAGE"      : 0x06,
+        "EEPROM_PAGE"          : 0x07,
+        "USER_SIGNATURE"       : 0x08
     }
 
 

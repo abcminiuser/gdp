@@ -76,7 +76,7 @@ class ProtocolAtmelDFUV1(Protocol):
         pass
 
 
-    def erase_memory(self, memory_space):
+    def erase_memory(self, memory_space, offset):
         self._download([0x04, 0x00, 0xFF])
 
 

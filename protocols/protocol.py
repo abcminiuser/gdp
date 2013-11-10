@@ -36,7 +36,7 @@ class Protocol(object):
 
 
     @abstractmethod
-    def erase_memory(self, memory_space):
+    def erase_memory(self, memory_space, offset):
         pass
 
 

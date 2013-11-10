@@ -16,4 +16,4 @@ class CommandParserCLIChipErase(CommandParser):
         protocol = session.get_protocol()
 
         print(" - Erasing chip...")
-        protocol.erase_memory(None)
+        protocol.erase_memory(None, 0)

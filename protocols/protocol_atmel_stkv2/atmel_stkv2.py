@@ -46,8 +46,8 @@ class ProtocolAtmelSTKV2(Protocol):
         self.handler.exit_session()
 
 
-    def erase_memory(self, memory_space):
-        self.handler.erase_memory(memory_space)
+    def erase_memory(self, memory_space, offset):
+        self.handler.erase_memory(memory_space, offset)
 
 
     def read_memory(self, memory_space, offset, length):

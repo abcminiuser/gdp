@@ -33,7 +33,7 @@ class ProtocolAtmelSTKV2_HVPP(ProtocolAtmelSTKV2_Base):
         self._trancieve(packet)
 
 
-    def erase_memory(self, memory_space):
+    def erase_memory(self, memory_space, offset):
         if memory_space is None:
             packet = [AtmelSTKV2Defs.commands["CHIP_ERASE_PP"]]
             packet.append(self.device.get_property("pp_interface", "PpChipErase_pulseWidth"))
