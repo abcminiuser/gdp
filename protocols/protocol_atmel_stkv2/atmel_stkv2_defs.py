@@ -62,6 +62,31 @@ class AtmelSTKV2Defs(object):
         "DISCHARGEDELAY"       : 0xA4
     }
 
+    xprog_commands = {
+        "ENTER_PROGMODE"       : 0x01,
+        "LEAVE_PROGMODE"       : 0x02,
+        "ERASE"                : 0x03,
+        "WRITE_MEM"            : 0x04,
+        "READ_MEM"             : 0x05,
+        "CRC"                  : 0x06,
+        "SET_PARAM"            : 0x07
+    }
+
+    xprog_status_codes = {
+        "OK"                   : 0x00,
+        "FAILED"               : 0x01,
+        "COLLISION"            : 0x02,
+        "TIMEOUT"              : 0x03
+    }
+
+    xprog_params = {
+        "NVMBASE"              : 0x01,
+        "EEPPAGESIZE"          : 0x02,
+        "NVMCMD_REG"           : 0x03,
+        "NVMCSR_REG"           : 0x04,
+        "UNKNOWN_1"            : 0x05
+    }
+
 
     @staticmethod
     def find(dictionary, find_value):
@@ -69,5 +94,5 @@ class AtmelSTKV2Defs(object):
             if value == find_value:
                 return key
 
-        return None
+        return ("UNKNOWN (0x%02x)" % find_value)
 

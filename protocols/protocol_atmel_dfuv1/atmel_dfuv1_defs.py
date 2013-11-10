@@ -61,4 +61,4 @@ class AtmelDFUV1Defs(object):
             if value == find_value:
                 return key
 
-        return None
+        return ("UNKNOWN (0x%02x)" % find_value)
