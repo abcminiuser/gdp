@@ -13,6 +13,7 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
     MEMORY_MODE_FLAG_ERASE   = 0x01
     MEMORY_MODE_FLAG_PROGRAM = 0x02
 
+
     def _trancieve_xprog(self, packet_out):
         xprog_packet_out = [AtmelSTKV2Defs.commands["XPROG"]]
         xprog_packet_out.extend(packet_out)

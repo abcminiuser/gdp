@@ -52,8 +52,8 @@ Tools:
 Protocols:
 
 + Atmel DFUV1 Protocol
-+ Atmel STKV2 Protocol (ISP, HVSP, HVPP interfaces only)
-+ Atmel JTAGV2 Protocol (stub only)
++ Atmel STKV2 Protocol (ISP, HVSP, HVPP, PDI, TPI and XMEGA JTAG interfaces only)
++ Atmel JTAGV2 Protocol (Stub only, no implementation)
 
 
 Transports:
@@ -68,6 +68,11 @@ Input File Formats:
 + Intel HEX (HEX, EEP)
 + Binary (BIN)
 + Executable and Linkable Format (ELF)
+
+
+User Interfaces:
+
++ CLI (PROGRAM, VERIFY, CHIPERASE and ERASE commands)
 
 
 Prerequisites
