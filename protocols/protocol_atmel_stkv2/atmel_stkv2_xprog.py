@@ -108,10 +108,10 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
         for (address, chunklen) in Util.chunk_address(length, min(length, 256), offset):
             packet = [AtmelSTKV2Defs.xprog_commands["READ_MEMORY"]]
             packet.append(memory_type)
-            packet.append((offset >> 24) & 0xFF)
-            packet.append((offset >> 16) & 0xFF)
-            packet.append((offset >> 8) & 0xFF)
-            packet.append(offset & 0xFF)
+            packet.append((address >> 24) & 0xFF)
+            packet.append((address >> 16) & 0xFF)
+            packet.append((address >> 8) & 0xFF)
+            packet.append(address & 0xFF)
             packet.append((chunklen >> 8) & 0xFF)
             packet.append(chunklen & 0xFF)
             resp = self._trancieve_xprog(packet)
