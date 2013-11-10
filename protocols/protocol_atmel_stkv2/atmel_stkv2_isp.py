@@ -49,29 +49,29 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
 
     def enter_session(self):
         packet = [AtmelSTKV2Defs.commands["ENTER_PROGMODE_ISP"]]
-        packet.append(self.device.get_param("isp_interface", "IspEnterProgMode_timeout"))
-        packet.append(self.device.get_param("isp_interface", "IspEnterProgMode_stabDelay"))
-        packet.append(self.device.get_param("isp_interface", "IspEnterProgMode_cmdexeDelay"))
-        packet.append(self.device.get_param("isp_interface", "IspEnterProgMode_synchLoops"))
-        packet.append(self.device.get_param("isp_interface", "IspEnterProgMode_byteDelay"))
-        packet.append(self.device.get_param("isp_interface", "IspEnterProgMode_pollValue"))
-        packet.append(self.device.get_param("isp_interface", "IspEnterProgMode_pollIndex"))
+        packet.append(self.device.get_property("isp_interface", "IspEnterProgMode_timeout"))
+        packet.append(self.device.get_property("isp_interface", "IspEnterProgMode_stabDelay"))
+        packet.append(self.device.get_property("isp_interface", "IspEnterProgMode_cmdexeDelay"))
+        packet.append(self.device.get_property("isp_interface", "IspEnterProgMode_synchLoops"))
+        packet.append(self.device.get_property("isp_interface", "IspEnterProgMode_byteDelay"))
+        packet.append(self.device.get_property("isp_interface", "IspEnterProgMode_pollValue"))
+        packet.append(self.device.get_property("isp_interface", "IspEnterProgMode_pollIndex"))
         packet.extend([0xAC, 0x53, 0x00, 0x00])
         self._trancieve(packet)
 
 
     def exit_session(self):
         packet = [AtmelSTKV2Defs.commands["LEAVE_PROGMODE_ISP"]]
-        packet.append(self.device.get_param("isp_interface", "IspLeaveProgMode_preDelay"))
-        packet.append(self.device.get_param("isp_interface", "IspLeaveProgMode_postDelay"))
+        packet.append(self.device.get_property("isp_interface", "IspLeaveProgMode_preDelay"))
+        packet.append(self.device.get_property("isp_interface", "IspLeaveProgMode_postDelay"))
         self._trancieve(packet)
 
 
     def erase_memory(self, memory_space):
         if memory_space is None:
             packet = [AtmelSTKV2Defs.commands["CHIP_ERASE_ISP"]]
-            packet.append(self.device.get_param("isp_interface", "IspChipErase_eraseDelay"))
-            packet.append(self.device.get_param("isp_interface", "IspChipErase_pollMethod"))
+            packet.append(self.device.get_property("isp_interface", "IspChipErase_eraseDelay"))
+            packet.append(self.device.get_property("isp_interface", "IspChipErase_pollMethod"))
             packet.extend([0xAC, 0x80, 0x00, 0x00])
             self._trancieve(packet)
         else:
@@ -86,14 +86,14 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
         elif memory_space == "signature":
             for x in xrange(length):
                 packet = [AtmelSTKV2Defs.commands["READ_SIGNATURE_ISP"]]
-                packet.append(self.device.get_param("isp_interface", "IspReadSign_pollIndex"))
+                packet.append(self.device.get_property("isp_interface", "IspReadSign_pollIndex"))
                 packet.extend([0x30, 0x80, offset + x, 0x00])
                 resp = self._trancieve(packet)
 
                 mem_contents.append(resp[2])
         elif memory_space == "lockbits":
             packet = [AtmelSTKV2Defs.commands["READ_LOCK_ISP"]]
-            packet.append(self.device.get_param("isp_interface", "IspReadLock_pollIndex"))
+            packet.append(self.device.get_property("isp_interface", "IspReadLock_pollIndex"))
             packet.extend([0x58, 0x00, 0x00, 0x00])
             resp = self._trancieve(packet)
 
@@ -107,13 +107,13 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
 
             for x in xrange(length):
                 packet = [AtmelSTKV2Defs.commands["READ_FUSE_ISP"]]
-                packet.append(self.device.get_param("isp_interface", "IspReadFuse_pollIndex"))
+                packet.append(self.device.get_property("isp_interface", "IspReadFuse_pollIndex"))
                 packet.extend(fuse_commands[offset + x])
                 resp = self._trancieve(packet)
 
                 mem_contents.append(resp[2])
         elif memory_space in ["eeprom", "flash"]:
-            blocksize = self.device.get_param("isp_interface", "IspRead%s_blockSize" % memory_space.capitalize())
+            blocksize = self.device.get_property("isp_interface", "IspRead%s_blockSize" % memory_space.capitalize())
 
             for (address, chunklen) in Util.chunk_address(length, blocksize, offset):
                 if memory_space == "eeprom":
@@ -161,7 +161,7 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
                 packet[-1] = data[offset + x]
                 self._trancieve(packet)
         elif memory_space in ["eeprom", "flash"]:
-            blocksize = self.device.get_param("isp_interface", "IspProgram%s_blockSize" % memory_space.capitalize())
+            blocksize = self.device.get_property("isp_interface", "IspProgram%s_blockSize" % memory_space.capitalize())
 
             for (address, chunk) in Util.chunk_data(data, blocksize, offset):
                 if memory_space == "eeprom":
@@ -172,13 +172,13 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
                     packet = [AtmelSTKV2Defs.commands["PROGRAM_FLASH_ISP"]]
 
                 packet.extend([blocksize >> 8, blocksize & 0xFF])
-                packet.append(self.device.get_param("isp_interface", "IspProgram%s_mode" % memory_space.capitalize()) | 0x80)
-                packet.append(self.device.get_param("isp_interface", "IspProgram%s_delay" % memory_space.capitalize()))
-                packet.append(self.device.get_param("isp_interface", "IspProgram%s_cmd1" % memory_space.capitalize()))
-                packet.append(self.device.get_param("isp_interface", "IspProgram%s_cmd2" % memory_space.capitalize()))
-                packet.append(self.device.get_param("isp_interface", "IspProgram%s_cmd3" % memory_space.capitalize()))
-                packet.append(self.device.get_param("isp_interface", "IspProgram%s_pollVal1" % memory_space.capitalize()))
-                packet.append(self.device.get_param("isp_interface", "IspProgram%s_pollVal2" % memory_space.capitalize()))
+                packet.append(self.device.get_property("isp_interface", "IspProgram%s_mode" % memory_space.capitalize()) | 0x80)
+                packet.append(self.device.get_property("isp_interface", "IspProgram%s_delay" % memory_space.capitalize()))
+                packet.append(self.device.get_property("isp_interface", "IspProgram%s_cmd1" % memory_space.capitalize()))
+                packet.append(self.device.get_property("isp_interface", "IspProgram%s_cmd2" % memory_space.capitalize()))
+                packet.append(self.device.get_property("isp_interface", "IspProgram%s_cmd3" % memory_space.capitalize()))
+                packet.append(self.device.get_property("isp_interface", "IspProgram%s_pollVal1" % memory_space.capitalize()))
+                packet.append(self.device.get_property("isp_interface", "IspProgram%s_pollVal2" % memory_space.capitalize()))
                 packet.extend(chunk)
 
                 self._trancieve(packet)

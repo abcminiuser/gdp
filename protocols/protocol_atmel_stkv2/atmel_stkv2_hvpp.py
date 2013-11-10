@@ -16,28 +16,28 @@ class ProtocolAtmelSTKV2_HVPP(ProtocolAtmelSTKV2_Base):
 
     def enter_session(self):
         packet = [AtmelSTKV2Defs.commands["ENTER_PROGMODE_PP"]]
-        packet.append(self.device.get_param("pp_interface", "PpEnterProgMode_stabDelay"))
-        packet.append(self.device.get_param("pp_interface", "PpEnterProgMode_progModeDelay"))
-        packet.append(self.device.get_param("pp_interface", "PpEnterProgMode_latchCycles"))
-        packet.append(self.device.get_param("pp_interface", "PpEnterProgMode_toggleVtg"))
-        packet.append(self.device.get_param("pp_interface", "PpEnterProgMode_powoffDelay"))
-        packet.append(self.device.get_param("pp_interface", "PpEnterProgMode_resetDelayMs"))
-        packet.append(self.device.get_param("pp_interface", "PpEnterProgMode_resetDelayUs"))
+        packet.append(self.device.get_property("pp_interface", "PpEnterProgMode_stabDelay"))
+        packet.append(self.device.get_property("pp_interface", "PpEnterProgMode_progModeDelay"))
+        packet.append(self.device.get_property("pp_interface", "PpEnterProgMode_latchCycles"))
+        packet.append(self.device.get_property("pp_interface", "PpEnterProgMode_toggleVtg"))
+        packet.append(self.device.get_property("pp_interface", "PpEnterProgMode_powoffDelay"))
+        packet.append(self.device.get_property("pp_interface", "PpEnterProgMode_resetDelayMs"))
+        packet.append(self.device.get_property("pp_interface", "PpEnterProgMode_resetDelayUs"))
         self._trancieve(packet)
 
 
     def exit_session(self):
         packet = [AtmelSTKV2Defs.commands["LEAVE_PROGMODE_PP"]]
-        packet.append(self.device.get_param("pp_interface", "PpLeaveProgMode_stabDelay"))
-        packet.append(self.device.get_param("pp_interface", "PpLeaveProgMode_resetDelay"))
+        packet.append(self.device.get_property("pp_interface", "PpLeaveProgMode_stabDelay"))
+        packet.append(self.device.get_property("pp_interface", "PpLeaveProgMode_resetDelay"))
         self._trancieve(packet)
 
 
     def erase_memory(self, memory_space):
         if memory_space is None:
             packet = [AtmelSTKV2Defs.commands["CHIP_ERASE_PP"]]
-            packet.append(self.device.get_param("pp_interface", "PpChipErase_pulseWidth"))
-            packet.append(self.device.get_param("pp_interface", "PpChipErase_pollTimeout"))
+            packet.append(self.device.get_property("pp_interface", "PpChipErase_pulseWidth"))
+            packet.append(self.device.get_property("pp_interface", "PpChipErase_pollTimeout"))
             self._trancieve(packet)
         else:
             raise ProtocolError("The specified tool cannot erase the requested memory space.")
@@ -62,7 +62,7 @@ class ProtocolAtmelSTKV2_HVPP(ProtocolAtmelSTKV2_Base):
                 resp = self._trancieve(packet)
                 mem_contents.append(resp[2])
         elif memory_space in ["eeprom", "flash"]:
-            blocksize = self.device.get_param("pp_interface", "PpRead%s_blockSize" % memory_space.capitalize())
+            blocksize = self.device.get_property("pp_interface", "PpRead%s_blockSize" % memory_space.capitalize())
 
             for (address, chunklen) in Util.chunk_address(length, blocksize, offset):
                 if memory_space == "eeprom":
@@ -95,19 +95,19 @@ class ProtocolAtmelSTKV2_HVPP(ProtocolAtmelSTKV2_Base):
             packet = [AtmelSTKV2Defs.commands["PROGRAM_LOCK_PP"]]
             packet.append(offset)
             packet.append(data[0])
-            packet.append(self.device.get_param("pp_interface", "PpProgramLock_pulseWidth"))
-            packet.append(self.device.get_param("pp_interface", "PpProgramLock_pollTimeout"))
+            packet.append(self.device.get_property("pp_interface", "PpProgramLock_pulseWidth"))
+            packet.append(self.device.get_property("pp_interface", "PpProgramLock_pollTimeout"))
             self._trancieve(packet)
         elif memory_space == "fuses":
             for x in xrange(length):
                 packet = [AtmelSTKV2Defs.commands["PROGRAM_FUSE_PP"]]
                 packet.append(offset)
                 packet.append(data[offset + x])
-                packet.append(self.device.get_param("pp_interface", "PpProgramFuse_pulseWidth"))
-                packet.append(self.device.get_param("pp_interface", "PpProgramFuse_pollTimeout"))
+                packet.append(self.device.get_property("pp_interface", "PpProgramFuse_pulseWidth"))
+                packet.append(self.device.get_property("pp_interface", "PpProgramFuse_pollTimeout"))
                 self._trancieve(packet)
         elif memory_space in ["eeprom", "flash"]:
-            blocksize = self.device.get_param("pp_interface", "PpProgram%s_blockSize" % memory_space.capitalize())
+            blocksize = self.device.get_property("pp_interface", "PpProgram%s_blockSize" % memory_space.capitalize())
 
             for (address, chunk) in Util.chunk_data(data, blocksize, offset):
                 if memory_space == "eeprom":
@@ -118,8 +118,8 @@ class ProtocolAtmelSTKV2_HVPP(ProtocolAtmelSTKV2_Base):
                     packet = [AtmelSTKV2Defs.commands["PROGRAM_FLASH_PP"]]
 
                 packet.extend([blocksize >> 8, blocksize & 0xFF])
-                packet.append(self.device.get_param("pp_interface", "PpProgram%s_mode" % memory_space.capitalize()) | 0x80)
-                packet.append(self.device.get_param("pp_interface", "PpProgram%s_pollTimeout" % memory_space.capitalize()))
+                packet.append(self.device.get_property("pp_interface", "PpProgram%s_mode" % memory_space.capitalize()) | 0x80)
+                packet.append(self.device.get_property("pp_interface", "PpProgram%s_pollTimeout" % memory_space.capitalize()))
                 packet.extend(chunk)
 
                 self._trancieve(packet)

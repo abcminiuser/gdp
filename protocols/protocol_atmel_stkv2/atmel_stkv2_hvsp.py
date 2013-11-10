@@ -16,29 +16,29 @@ class ProtocolAtmelSTKV2_HVSP(ProtocolAtmelSTKV2_Base):
 
     def enter_session(self):
         packet = [AtmelSTKV2Defs.commands["ENTER_PROGMODE_HVSP"]]
-        packet.append(self.device.get_param("hvsp_interface", "HvspEnterProgMode_stabDelay"))
-        packet.append(self.device.get_param("hvsp_interface", "HvspEnterProgMode_cmdexeDelay"))
-        packet.append(self.device.get_param("hvsp_interface", "HvspEnterProgMode_synchCycles"))
-        packet.append(self.device.get_param("hvsp_interface", "HvspEnterProgMode_latchCycles"))
-        packet.append(self.device.get_param("hvsp_interface", "HvspEnterProgMode_toggleVtg"))
-        packet.append(self.device.get_param("hvsp_interface", "HvspEnterProgMode_powoffDelay"))
-        packet.append(self.device.get_param("hvsp_interface", "HvspEnterProgMode_resetDelay1"))
-        packet.append(self.device.get_param("hvsp_interface", "HvspEnterProgMode_resetDelay2"))
+        packet.append(self.device.get_property("hvsp_interface", "HvspEnterProgMode_stabDelay"))
+        packet.append(self.device.get_property("hvsp_interface", "HvspEnterProgMode_cmdexeDelay"))
+        packet.append(self.device.get_property("hvsp_interface", "HvspEnterProgMode_synchCycles"))
+        packet.append(self.device.get_property("hvsp_interface", "HvspEnterProgMode_latchCycles"))
+        packet.append(self.device.get_property("hvsp_interface", "HvspEnterProgMode_toggleVtg"))
+        packet.append(self.device.get_property("hvsp_interface", "HvspEnterProgMode_powoffDelay"))
+        packet.append(self.device.get_property("hvsp_interface", "HvspEnterProgMode_resetDelay1"))
+        packet.append(self.device.get_property("hvsp_interface", "HvspEnterProgMode_resetDelay2"))
         self._trancieve(packet)
 
 
     def exit_session(self):
         packet = [AtmelSTKV2Defs.commands["LEAVE_PROGMODE_HVSP"]]
-        packet.append(self.device.get_param("hvsp_interface", "HvspLeaveProgMode_stabDelay"))
-        packet.append(self.device.get_param("hvsp_interface", "HvspLeaveProgMode_resetDelay"))
+        packet.append(self.device.get_property("hvsp_interface", "HvspLeaveProgMode_stabDelay"))
+        packet.append(self.device.get_property("hvsp_interface", "HvspLeaveProgMode_resetDelay"))
         self._trancieve(packet)
 
 
     def erase_memory(self, memory_space):
         if memory_space is None:
             packet = [AtmelSTKV2Defs.commands["CHIP_ERASE_HVSP"]]
-            packet.append(self.device.get_param("hvsp_interface", "HvspChipErase_pollTimeout"))
-            packet.append(self.device.get_param("hvsp_interface", "HvspChipErase_eraseTime"))
+            packet.append(self.device.get_property("hvsp_interface", "HvspChipErase_pollTimeout"))
+            packet.append(self.device.get_property("hvsp_interface", "HvspChipErase_eraseTime"))
             self._trancieve(packet)
         else:
             raise ProtocolError("The specified tool cannot erase the requested memory space.")
@@ -63,7 +63,7 @@ class ProtocolAtmelSTKV2_HVSP(ProtocolAtmelSTKV2_Base):
                 resp = self._trancieve(packet)
                 mem_contents.append(resp[2])
         elif memory_space in ["eeprom", "flash"]:
-            blocksize = self.device.get_param("hvsp_interface", "HvspRead%s_blockSize" % memory_space.capitalize())
+            blocksize = self.device.get_property("hvsp_interface", "HvspRead%s_blockSize" % memory_space.capitalize())
 
             for (address, chunklen) in Util.chunk_address(length, blocksize, offset):
                 if memory_space == "eeprom":
@@ -96,19 +96,19 @@ class ProtocolAtmelSTKV2_HVSP(ProtocolAtmelSTKV2_Base):
             packet = [AtmelSTKV2Defs.commands["PROGRAM_LOCK_HVSP"]]
             packet.append(offset)
             packet.append(data[0])
-            packet.append(self.device.get_param("hvsp_interface", "HvspProgramLock_pulseWidth"))
-            packet.append(self.device.get_param("hvsp_interface", "HvspProgramLock_pollTimeout"))
+            packet.append(self.device.get_property("hvsp_interface", "HvspProgramLock_pulseWidth"))
+            packet.append(self.device.get_property("hvsp_interface", "HvspProgramLock_pollTimeout"))
             self._trancieve(packet)
         elif memory_space == "fuses":
             for x in xrange(length):
                 packet = [AtmelSTKV2Defs.commands["PROGRAM_FUSE_HVSP"]]
                 packet.append(offset)
                 packet.append(data[offset + x])
-                packet.append(self.device.get_param("hvsp_interface", "HvspProgramFuse_pulseWidth"))
-                packet.append(self.device.get_param("hvsp_interface", "HvspProgramFuse_pollTimeout"))
+                packet.append(self.device.get_property("hvsp_interface", "HvspProgramFuse_pulseWidth"))
+                packet.append(self.device.get_property("hvsp_interface", "HvspProgramFuse_pollTimeout"))
                 self._trancieve(packet)
         elif memory_space in ["eeprom", "flash"]:
-            blocksize = self.device.get_param("hvsp_interface", "HvspProgram%s_blockSize" % memory_space.capitalize())
+            blocksize = self.device.get_property("hvsp_interface", "HvspProgram%s_blockSize" % memory_space.capitalize())
 
             for (address, chunk) in Util.chunk_data(data, blocksize, offset):
                 if memory_space == "eeprom":
@@ -119,8 +119,8 @@ class ProtocolAtmelSTKV2_HVSP(ProtocolAtmelSTKV2_Base):
                     packet = [AtmelSTKV2Defs.commands["PROGRAM_FLASH_HVSP"]]
 
                 packet.extend([blocksize >> 8, blocksize & 0xFF])
-                packet.append(self.device.get_param("hvsp_interface", "HvspProgram%s_mode" % memory_space.capitalize()) | 0x80)
-                packet.append(self.device.get_param("hvsp_interface", "HvspProgram%s_pollTimeout" % memory_space.capitalize()))
+                packet.append(self.device.get_property("hvsp_interface", "HvspProgram%s_mode" % memory_space.capitalize()) | 0x80)
+                packet.append(self.device.get_property("hvsp_interface", "HvspProgram%s_pollTimeout" % memory_space.capitalize()))
                 packet.extend(chunk)
 
                 self._trancieve(packet)

@@ -21,6 +21,16 @@ class Device(object):
 
 
     @abstractmethod
+    def get_family(self):
+        pass
+
+
+    @abstractmethod
+    def get_architecture(self):
+        pass
+
+
+    @abstractmethod
     def get_vcc_range(self):
         pass
 
@@ -31,7 +41,7 @@ class Device(object):
 
 
     @abstractmethod
-    def get_param(self, group, param):
+    def get_property(self, group, param):
         pass
 
 

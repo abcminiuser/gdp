@@ -74,9 +74,9 @@ class ProtocolAtmelSTKV2_Base(object):
     def _set_control_stack(self):
         if "STK500" in self.tool_sign_on_string:
             if self.interface == "hvpp":
-                control_stack = self.device.get_param("pp_interface", "PpControlStack")
+                control_stack = self.device.get_property("pp_interface", "PpControlStack")
             elif self.interface == "hvsp":
-                control_stack = self.device.get_param("hvsp_interface", "HvspControlStack")
+                control_stack = self.device.get_property("hvsp_interface", "HvspControlStack")
             else:
                 return
 
