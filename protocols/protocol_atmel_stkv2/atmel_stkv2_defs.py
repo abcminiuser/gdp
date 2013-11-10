@@ -69,7 +69,7 @@ class AtmelSTKV2Defs(object):
         "WRITE_MEM"            : 0x04,
         "READ_MEM"             : 0x05,
         "CRC"                  : 0x06,
-        "SET_PARAM"            : 0x07
+        "SET_PARAMETER"        : 0x07
     }
 
     xprog_status_codes = {
@@ -90,9 +90,12 @@ class AtmelSTKV2Defs(object):
 
     @staticmethod
     def find(dictionary, find_value):
+        friendly_name = "<UNKNOWN>"
+
         for key, value in dictionary.iteritems():
             if value == find_value:
-                return key
+                friendly_name = key
+                break
 
-        return ("UNKNOWN (0x%02x)" % find_value)
+        return ("%s (0x%02x)" % (friendly_name, find_value))
 

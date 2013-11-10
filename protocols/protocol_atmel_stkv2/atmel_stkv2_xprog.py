@@ -27,7 +27,7 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
 
 
     def _set_param_xprog(self, param, value, length):
-        packet = [AtmelSTKV2Defs.xprog_commands["SET_PARAM"]]
+        packet = [AtmelSTKV2Defs.xprog_commands["SET_PARAMETER"]]
         packet.append(param)
         for x in range(length):
             packet.append((value >> (8 * (length - x - 1))) & 0xFF)
