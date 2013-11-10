@@ -21,8 +21,11 @@ class ProtocolAtmelSTKV2(Protocol):
             "tpi"  : ProtocolAtmelSTKV2_XPROG
         }
 
+        if "XMEGA" in device.get_architecture():
+            interface_implementations["jtag"] = ProtocolAtmelSTKV2_XPROG
+
         try:
-            self.handler = interface_implementations[interface](tool, device)
+            self.handler = interface_implementations[interface](tool, device, interface)
         except KeyError:
             raise NotImplementedError
 

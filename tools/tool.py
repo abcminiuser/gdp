@@ -17,12 +17,12 @@ class Tool(object):
 
     @abstractmethod
     def get_name():
-        raise NotImplementedError
+        pass
 
 
     @abstractmethod
     def get_supported_interfaces():
-        raise NotImplementedError
+        pass
 
 
     @abstractmethod

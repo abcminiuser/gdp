@@ -14,9 +14,10 @@ class ProtocolAtmelSTKV2_Base(object):
     __metaclass__ = ABCMeta
 
 
-    def __init__(self, tool, device):
-        self.tool = tool
-        self.device = device
+    def __init__(self, tool, device, interface):
+        self.tool      = tool
+        self.device    = device
+        self.interface = interface
 
         self.tool_sign_on_string = None
 

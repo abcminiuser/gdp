@@ -12,7 +12,7 @@ from protocols import *
 class ToolAtmelSTK600(Tool):
     def __init__(self, device, port=None, interface="isp"):
         if port is None:
-            self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2104, read_ep=2, write_ep=2)
+            self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2106, read_ep=2, write_ep=2)
         else:
             raise ToolError("Unsupported port \"%s\" for the specified tool." % port)
 
