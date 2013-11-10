@@ -127,4 +127,15 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
         except KeyError:
             raise NotImplementedError()
 
-        return NotImplementedError()
+        for (address, chunk) in Util.chunk_data(data, 256, offset):
+            packet = [AtmelSTKV2Defs.xprog_commands["WRITE_MEMORY"]]
+            packet.append(memory_type)
+            packet.append(0x03)
+            packet.append((address >> 24) & 0xFF)
+            packet.append((address >> 16) & 0xFF)
+            packet.append((address >> 8) & 0xFF)
+            packet.append(address & 0xFF)
+            packet.append((len(chunk) >> 8) & 0xFF)
+            packet.append(len(chunk) & 0xFF)
+            packet.extend(chunk)
+            self._trancieve_xprog(packet)
