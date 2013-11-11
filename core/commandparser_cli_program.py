@@ -51,16 +51,19 @@ class CommandParserCLIProgram(CommandParser):
             else:
                 file_ext = os.path.splitext(file_name)[1][1 : ].lower()
 
-            self.format_reader = gdp_formats[file_ext](file_name)
+            self.format_reader = gdp_formats[file_ext]
         except KeyError:
             raise SessionError("Unrecognized input file type \"%s\"." % file_name)
 
         return args
 
 
-    def _get_file_sections(self, device, memory_type):
-        file_sections = self.format_reader.get_sections()
+    def _get_file_sections(self, file_data, device, memory_type):
+        file_sections   = file_data.get_sections()
         device_segments = device.get_section_bounds(memory_type)
+
+        if None in file_sections:
+            return [("<Anonymous>", file_sections[None])]
 
         matched_sections = []
 
@@ -70,8 +73,6 @@ class CommandParserCLIProgram(CommandParser):
             for segment_bounds in device_segments:
                 if section_bounds[0] >= segment_bounds[0] and \
                    section_bounds[1] <= segment_bounds[1]:
-                    if section_name is None:
-                        section_name = "<Anonymous>"
 
                     matched_sections.append((section_name, section_data))
                     break
@@ -129,12 +130,18 @@ class CommandParserCLIProgram(CommandParser):
 
         memory_type = self.options.memory_type.lower()
 
+        try:
+            file_data = self.format_reader(self.options.filename)
+        except:
+            raise SessionError("Unable to parse input file \"%s\"." % self.options.filename)
+
+
         if self.options.chiperase is True:
             print(" - Erasing chip...")
             protocol.erase_memory(None, 0)
 
 
-        for section_name, section in self._get_file_sections(device, memory_type):
+        for section_name, section in self._get_file_sections(file_data, device, memory_type):
             section_data  = section.get_data()
             section_start = section.get_bounds()[0] + self.options.offset
 
