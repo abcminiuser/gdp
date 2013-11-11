@@ -58,21 +58,29 @@ class CommandParserCLIProgram(CommandParser):
         return args
 
 
+    @staticmethod
+    def _apply_arch_offsets(device, memory_type, bounds):
+        if memory_type == "eeprom" and "AVR8" in device.get_architecture():
+            return (bounds[0] - 0x810000, bounds[1] - 0x810000)
+        else:
+            return bounds
+
+
     def _get_file_sections(self, file_data, device, memory_type):
         file_sections   = file_data.get_sections()
         device_segments = device.get_section_bounds(memory_type)
 
-        if None in file_sections:
-            return [("<Anonymous>", file_sections[None])]
-
         matched_sections = []
 
         for section_name, section_data in file_sections.iteritems():
-            section_bounds = section_data.get_bounds()
+            section_bounds = self._apply_arch_offsets(device, memory_type, section_data.get_bounds())
 
             for segment_bounds in device_segments:
                 if section_bounds[0] >= segment_bounds[0] and \
                    section_bounds[1] <= segment_bounds[1]:
+
+                    if section_name is None:
+                        section_name = "<Anonymous>"
 
                     matched_sections.append((section_name, section_data))
                     break
@@ -142,8 +150,9 @@ class CommandParserCLIProgram(CommandParser):
 
 
         for section_name, section in self._get_file_sections(file_data, device, memory_type):
-            section_data  = section.get_data()
-            section_start = section.get_bounds()[0] + self.options.offset
+            section_data   = section.get_data()
+            section_bounds = self._apply_arch_offsets(device, memory_type, section.get_bounds())
+            section_start  = section_bounds[0] + self.options.offset
 
             print(" - Programming memory \"%s\" type \"%s\" (%d bytes, offset %d)..." %
                   (section_name, memory_type, len(section_data), section_start))
