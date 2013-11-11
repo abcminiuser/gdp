@@ -62,21 +62,21 @@ class CommandParserCLIProgram(CommandParser):
         file_sections = self.format_reader.get_sections()
         device_segments = device.get_section_bounds(memory_type)
 
-        relevant_sections = []
+        matched_sections = []
 
-        for name in file_sections:
-            section_data = file_sections[name]
-            file_sec_bounds = section_data.get_bounds()
+        for section_name, section_data in file_sections.iteritems():
+            section_bounds = section_data.get_bounds()
 
-            for segment in device_segments:
-                if file_sec_bounds[0] >= segment[0] and file_sec_bounds[1] <= segment[1]:
-                    if name is None:
-                        name = "<Anonymous>"
+            for segment_bounds in device_segments:
+                if section_bounds[0] >= segment_bounds[0] and \
+                   section_bounds[1] <= segment_bounds[1]:
+                    if section_name is None:
+                        section_name = "<Anonymous>"
 
-                    relevant_sections.append((name, section_data))
+                    matched_sections.append((section_name, section_data))
                     break
 
-        return relevant_sections
+        return matched_sections
 
 
     def _write_data(self, protocol, device, memory_type, start, data):
