@@ -18,13 +18,14 @@ from formats.formatsection import *
 
 
 class FormatELF_Section(FormatSection):
-    def __init__(self, instance=None):
+    def __init__(self, instance=None, segment_offset=0):
         self.instance = instance
+        self.lma  = segment_offset
+        self.size = self.instance["sh_size"]
 
 
     def get_bounds(self):
-        return (self.instance["sh_addr"],
-                self.instance["sh_addr"] + self.instance["sh_size"])
+        return (self.lma, self.lma + self.size)
 
 
     def get_data(self):
@@ -43,15 +44,28 @@ class FormatELF(Format):
         except:
             raise FormatError("Could not open ELF file \"%s\"." % filename)
 
+        section_lma_map = dict()
+
         for section in elffile.iter_sections():
             if section["sh_type"] != "SHT_PROGBITS":
                 continue
 
             if section["sh_flags"] & SH_FLAGS.SHF_ALLOC:
-                new_section = FormatELF_Section(section)
+                for segment in elffile.iter_segments():
+                    if segment.section_in_segment(section):
+                        if not segment in section_lma_map:
+                            section_lma_map[segment] = segment["p_paddr"]
+
+                        segment_offset = section_lma_map[segment]
+
+                        section_lma_map[segment] += section["sh_size"]
+                        break
+
+                new_section = FormatELF_Section(section, segment_offset)
 
                 section_name = section.name[1 : ]
                 self.sections[section_name] = new_section
+
 
         if len(self.sections) == 0:
             raise FormatError("ELF file \"%s\" contains no data." % filename)

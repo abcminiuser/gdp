@@ -58,25 +58,25 @@ class CommandParserCLIProgram(CommandParser):
         return args
 
 
-    def _get_file_section(self, memory_type):
+    def _get_file_sections(self, device, memory_type):
         file_sections = self.format_reader.get_sections()
+        device_segments = device.get_section_bounds(memory_type)
 
-        if len(file_sections) == 1:
-            return file_sections[None]
+        relevant_sections = []
 
-        if memory_type in file_sections:
-            return file_sections[section_name]
+        for name in file_sections:
+            section_data = file_sections[name]
+            file_sec_bounds = section_data.get_bounds()
 
-        try:
-            section_name_override_map = {
-                "flash" : "text",
-            }
+            for segment in device_segments:
+                if file_sec_bounds[0] >= segment[0] and file_sec_bounds[1] <= segment[1]:
+                    if name is None:
+                        name = "<Anonymous>"
 
-            section_name = section_name_override_map[memory_type]
-            return file_sections[section_name]
-        except KeyError:
-            raise SessionError("Specified memory type \"%s\" was not "
-                               "found in the source file." % memory_type)
+                    relevant_sections.append((name, section_data))
+                    break
+
+        return relevant_sections
 
 
     def _write_data(self, protocol, device, memory_type, start, data):
@@ -129,31 +129,32 @@ class CommandParserCLIProgram(CommandParser):
 
         memory_type = self.options.memory_type.lower()
 
-        section = self._get_file_section(memory_type)
-        section_data  = section.get_data()
-        section_start = section.get_bounds()[0] + self.options.offset
-
         if self.options.chiperase is True:
             print(" - Erasing chip...")
             protocol.erase_memory(None, 0)
 
-        print(" - Programming memory type \"%s\" (%d bytes, offset %d)..." %
-              (memory_type, len(section_data), self.options.offset))
 
-        self._write_data(protocol, device,
-                         memory_type,
-                         section_start, section_data)
+        for section_name, section in self._get_file_sections(device, memory_type):
+            section_data  = section.get_data()
+            section_start = section.get_bounds()[0] + self.options.offset
 
-        if self.options.verify is True:
-            print(" - Verifying memory type \"%s\" (%d bytes, offset %d)..." %
-                  (memory_type, len(section_data), self.options.offset))
+            print(" - Programming memory \"%s\" type \"%s\" (%d bytes, offset %d)..." %
+                  (section_name, memory_type, len(section_data), section_start))
 
-            read_data = self._read_data(protocol, device,
-                                        memory_type,
-                                        section_start, len(section_data))
+            self._write_data(protocol, device,
+                             memory_type,
+                             section_start, section_data)
 
-            for x in xrange(len(section_data)):
-                if section_data[x] != read_data[x]:
-                    raise SessionError("Verify failed at address 0x%08x, "
-                                       "expected 0x%02x got 0x%02x." %
-                                       (x, section_data[x], read_data[x]))
+            if self.options.verify is True:
+                print(" - Verifying memory \"%s\" type \"%s\" (%d bytes, offset %d)..." %
+                      (section_name, memory_type, len(section_data), section_start))
+
+                read_data = self._read_data(protocol, device,
+                                            memory_type,
+                                            section_start, len(section_data))
+
+                for x in xrange(len(section_data)):
+                    if section_data[x] != read_data[x]:
+                        raise SessionError("Verify failed at address 0x%08x, "
+                                           "expected 0x%02x got 0x%02x." %
+                                           (x, section_data[x], read_data[x]))

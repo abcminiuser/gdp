@@ -83,6 +83,22 @@ class DeviceAtmelStudio(Device):
                 return dev_signature
 
 
+    def get_section_bounds(self, memory_type):
+        mem_segments = self.device_info.findall("address-spaces/address-space/memory-segment[@type='%s']" % memory_type.lower())
+        if mem_segments is None:
+            raise DeviceError("Memory segment type \"%s\" not found in the selected device." % memory_type)
+
+        segment_info = []
+
+        for segment in mem_segments:
+            seg_start = self._param_to_int(segment.get("start"))
+            seg_end   = seg_start + self._param_to_int(segment.get("size"))
+
+            segment_info.append((seg_start, seg_end))
+
+        return segment_info
+
+
     def get_page_size(self, memory_type):
         mem_segment = self.device_info.find("address-spaces/address-space/memory-segment[@type='%s']" % memory_type.lower())
         if mem_segment is None:

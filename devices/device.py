@@ -51,5 +51,10 @@ class Device(object):
 
 
     @abstractmethod
+    def get_section_bounds(self, memory_type):
+        pass
+
+
+    @abstractmethod
     def get_page_size(self, memory_type):
         pass
