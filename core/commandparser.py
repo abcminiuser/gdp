@@ -6,6 +6,9 @@
 
 from abc import ABCMeta, abstractmethod
 
+class CommandParserError(Exception):
+    pass
+
 
 class CommandParser(object):
     __metaclass__ = ABCMeta

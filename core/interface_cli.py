@@ -106,14 +106,16 @@ class InterfaceCLI(object):
             session = Session(self.options)
             session.open()
 
+            command_list = self._build_command_list(args)
+
             print("GDP starting to execute commands.")
 
-            for cmd in self._build_command_list(args):
+            for cmd in command_list:
                 cmd.execute(session)
 
             print("GDP finished executing commands.")
         except (FormatError, SessionError, TransportError,
-                ToolError, ProtocolError) as gdp_error:
+                ToolError, ProtocolError, CommandParserError) as gdp_error:
             error_type = type(gdp_error).__name__.split("Error")[0]
             error_message = gdp_error.message
 

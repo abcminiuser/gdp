@@ -10,8 +10,13 @@ from core.commandparser import *
 
 
 class CommandParserCLIErase(CommandParser):
+    def _parser_error(self, message):
+        raise CommandParserError("ERASE command invalid, %s" % message)
+
+
     def parse_arguments(self, args):
         parser = OptionParser(description="ERASE command")
+        parser.error = self._parser_error
         parser.disable_interspersed_args()
 
         parser.add_option("-m", "--memory",

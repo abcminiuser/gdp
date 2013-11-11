@@ -13,8 +13,13 @@ from formats import *
 
 
 class CommandParserCLIProgram(CommandParser):
+    def _parser_error(self, message):
+        raise CommandParserError("PROGRAM command invalid, %s" % message)
+
+
     def parse_arguments(self, args):
         parser = OptionParser(description="PROGRAM command")
+        parser.error = self._parser_error
         parser.disable_interspersed_args()
 
         parser.add_option("-m", "--memory",
@@ -69,6 +74,9 @@ class CommandParserCLIProgram(CommandParser):
     def _get_file_sections(self, file_data, device, memory_type):
         file_sections   = file_data.get_sections()
         device_segments = device.get_section_bounds(memory_type)
+
+        if len(device_segments) == 0:
+            raise SessionError("Memory type \"%s\" does not exist in the selected device." % memory_type)
 
         matched_sections = []
 
@@ -141,7 +149,8 @@ class CommandParserCLIProgram(CommandParser):
         try:
             file_data = self.format_reader(self.options.filename)
         except:
-            raise SessionError("Unable to parse input file \"%s\"." % self.options.filename)
+            raise SessionError("Unable to parse input file \"%s\"." %
+                               self.options.filename)
 
 
         if self.options.chiperase is True:
