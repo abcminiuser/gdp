@@ -154,17 +154,19 @@ class CommandParserCLIProgram(CommandParser):
             section_bounds = self._apply_arch_offsets(device, memory_type, section.get_bounds())
             section_start  = section_bounds[0] + self.options.offset
 
-            print(" - Programming memory \"%s\" type \"%s\" (%d bytes, offset %d)..." %
-                  (section_name, memory_type, len(section_data), section_start))
+            memory_info_string = "\"%s\" type \"%s\" (%d bytes, offset 0x%08x)" % \
+                                 (section_name, memory_type,
+                                  len(section_data), section_start)
 
+
+            print(" - Programming memory %s..." % memory_info_string)
             self._write_data(protocol, device,
                              memory_type,
                              section_start, section_data)
 
-            if self.options.verify is True:
-                print(" - Verifying memory \"%s\" type \"%s\" (%d bytes, offset %d)..." %
-                      (section_name, memory_type, len(section_data), section_start))
 
+            if self.options.verify is True:
+                print(" - Verifying memory %s..." % memory_info_string)
                 read_data = self._read_data(protocol, device,
                                             memory_type,
                                             section_start, len(section_data))

@@ -46,7 +46,7 @@ class CommandParserCLIVerify(CommandParserCLIProgram):
             else:
                 file_ext = os.path.splitext(file_name)[1][1 : ].lower()
 
-            self.format_reader = gdp_formats[file_ext](file_name)
+            self.format_reader = gdp_formats[file_ext]
         except KeyError:
             raise SessionError("Unrecognized input file type \"%s\"." % file_name)
 
@@ -59,19 +59,30 @@ class CommandParserCLIVerify(CommandParserCLIProgram):
 
         memory_type = self.options.memory_type.lower()
 
-        section = self._get_file_section(memory_type)
-        section_data  = section.get_data()
-        section_start = section.get_bounds()[0] + self.options.offset
+        try:
+            file_data = self.format_reader(self.options.filename)
+        except:
+            raise SessionError("Unable to parse input file \"%s\"." % self.options.filename)
 
-        print(" - Verifying memory type \"%s\" (%d bytes, offset %d)..." %
-              (memory_type, len(section_data), self.options.offset))
 
-        read_data = self._read_data(protocol, device,
-                                    memory_type,
-                                    section_start, len(section_data))
+        for section_name, section in self._get_file_sections(file_data, device, memory_type):
+            section_data   = section.get_data()
+            section_bounds = self._apply_arch_offsets(device, memory_type, section.get_bounds())
+            section_start  = section_bounds[0] + self.options.offset
 
-        for x in xrange(len(section_data)):
-            if section_data[x] != read_data[x]:
-                raise SessionError("Verify failed at address 0x%08x, "
-                                   "expected 0x%02x got 0x%02x." %
-                                   (x, section_data[x], read_data[x]))
+            memory_info_string = "\"%s\" type \"%s\" (%d bytes, offset 0x%08x)" % \
+                                 (section_name, memory_type,
+                                  len(section_data), section_start)
+
+
+            print(" - Verifying memory %s..." % memory_info_string)
+            read_data = self._read_data(protocol, device,
+                                        memory_type,
+                                        section_start, len(section_data))
+
+            for x in xrange(len(section_data)):
+                if section_data[x] != read_data[x]:
+                    raise SessionError("Verify failed at address 0x%08x, "
+                                       "expected 0x%02x got 0x%02x." %
+                                       (x, section_data[x], read_data[x]))
+
