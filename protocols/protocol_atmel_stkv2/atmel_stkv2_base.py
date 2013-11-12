@@ -4,6 +4,7 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+from core import *
 from protocols import *
 from protocols.protocol_atmel_stkv2.atmel_stkv2_defs import *
 
@@ -42,10 +43,7 @@ class ProtocolAtmelSTKV2_Base(object):
 
     def _set_address(self, address):
         packet = [AtmelSTKV2Defs.commands["LOAD_ADDRESS"]]
-        packet.append(address >> 24)
-        packet.append(address >> 16)
-        packet.append(address >> 8)
-        packet.append(address & 0xFF)
+        packet.extend(Util.array_encode(address, 4, "big"))
         self._trancieve(packet)
 
 

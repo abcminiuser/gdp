@@ -14,6 +14,10 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
     MEMORY_MODE_FLAG_PROGRAM = 0x02
 
 
+    def set_interface_frequency(self, target_frequency):
+        pass
+
+
     def _trancieve_xprog(self, packet_out):
         xprog_packet_out = [AtmelSTKV2Defs.commands["XPROG"]]
         xprog_packet_out.extend(packet_out)
@@ -32,13 +36,6 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
         return xprog_packet_in[1 : ]
 
 
-    def _set_param_xprog(self, param, value, length):
-        packet = [AtmelSTKV2Defs.xprog_commands["SET_PARAMETER"]]
-        packet.append(param)
-        packet.extend(Util.array_encode(value, length, "big"))
-        self._trancieve_xprog(packet)
-
-
     def _set_interface_mode_xprog(self):
         interface_map = {
             "pdi"  : 0,
@@ -49,6 +46,13 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
         packet = [AtmelSTKV2Defs.commands["XPROG_SETMODE"]]
         packet.append(interface_map[self.interface])
         self._trancieve(packet)
+
+
+    def _set_param_xprog(self, param, value, length):
+        packet = [AtmelSTKV2Defs.xprog_commands["SET_PARAMETER"]]
+        packet.append(param)
+        packet.extend(Util.array_encode(value, length, "big"))
+        self._trancieve_xprog(packet)
 
 
     def _get_memory_base_offset(self, memory_space):
@@ -67,10 +71,6 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
             raise NotImplementedError()
 
         return pdi_memory_baseaddr_map[memory_space]
-
-
-    def set_interface_frequency(self, target_frequency):
-        pass
 
 
     def enter_session(self):
@@ -107,10 +107,7 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
 
         packet = [AtmelSTKV2Defs.xprog_commands["ERASE"]]
         packet.append(erase_type)
-        packet.append((offset >> 24) & 0xFF)
-        packet.append((offset >> 16) & 0xFF)
-        packet.append((offset >> 8) & 0xFF)
-        packet.append(offset & 0xFF)
+        packet.extend(Util.array_encode(offset, 4, "big"))
         self._trancieve_xprog(packet)
 
 
@@ -132,12 +129,8 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
         for (address, chunklen) in Util.chunk_address(length, min(length, 256), offset):
             packet = [AtmelSTKV2Defs.xprog_commands["READ_MEMORY"]]
             packet.append(memory_type)
-            packet.append((address >> 24) & 0xFF)
-            packet.append((address >> 16) & 0xFF)
-            packet.append((address >> 8) & 0xFF)
-            packet.append(address & 0xFF)
-            packet.append((chunklen >> 8) & 0xFF)
-            packet.append(chunklen & 0xFF)
+            packet.extend(Util.array_encode(address, 4, "big"))
+            packet.extend(Util.array_encode(chunklen, 2, "big"))
             resp = self._trancieve_xprog(packet)
 
             mem_contents.extend(resp[2 : ])
@@ -171,11 +164,7 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
             packet = [AtmelSTKV2Defs.xprog_commands["WRITE_MEMORY"]]
             packet.append(memory_type)
             packet.append(memory_mode)
-            packet.append((address >> 24) & 0xFF)
-            packet.append((address >> 16) & 0xFF)
-            packet.append((address >> 8) & 0xFF)
-            packet.append(address & 0xFF)
-            packet.append((len(chunk) >> 8) & 0xFF)
-            packet.append(len(chunk) & 0xFF)
+            packet.extend(Util.array_encode(address, 4, "big"))
+            packet.extend(Util.array_encode(len(chunk), 2, "big"))
             packet.extend(chunk)
             self._trancieve_xprog(packet)

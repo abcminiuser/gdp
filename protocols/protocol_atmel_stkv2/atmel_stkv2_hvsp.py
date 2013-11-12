@@ -70,12 +70,12 @@ class ProtocolAtmelSTKV2_HVSP(ProtocolAtmelSTKV2_Base):
                     self._set_address(address)
 
                     packet = [AtmelSTKV2Defs.commands["READ_EEPROM_HVSP"]]
-                    packet.extend([chunklen >> 8, chunklen & 0xFF])
+                    packet.extend(Util.array_encode(chunklen, 2, "big"))
                 else:
                     self._set_address(address >> 1)
 
                     packet = [AtmelSTKV2Defs.commands["READ_FLASH_HVSP"]]
-                    packet.extend([chunklen >> 8, chunklen & 0xFF])
+                    packet.extend(Util.array_encode(chunklen, 2, "big"))
 
                 resp = self._trancieve(packet)
 
@@ -118,7 +118,7 @@ class ProtocolAtmelSTKV2_HVSP(ProtocolAtmelSTKV2_Base):
                     self._set_address(address >> 1)
                     packet = [AtmelSTKV2Defs.commands["PROGRAM_FLASH_HVSP"]]
 
-                packet.extend([blocksize >> 8, blocksize & 0xFF])
+                packet.extend(Util.array_encode(blocksize, 2, "big"))
                 packet.append(self.device.get_property("hvsp_interface", "HvspProgram%s_mode" % memory_space.capitalize()) | 0x80)
                 packet.append(self.device.get_property("hvsp_interface", "HvspProgram%s_pollTimeout" % memory_space.capitalize()))
                 packet.extend(chunk)

@@ -100,8 +100,8 @@ class ProtocolAtmelDFUV1(Protocol):
 
                 packet = [0x03]
                 packet.append(0x00 if memory_space == "flash" else 0x02)
-                packet.extend([address >> 8, address & 0xFF])
-                packet.extend([(address + chunklen - 1) >> 8, (address + chunklen - 1) & 0xFF])
+                packet.extend(Util.array_encode(address, 2, "big"))
+                packet.extend(Util.array_encode((address + chunklen - 1), 2, "big"))
 
                 resp = self._upload(packet, chunklen)
                 mem_contents.extend(resp)
@@ -118,8 +118,8 @@ class ProtocolAtmelDFUV1(Protocol):
 
                 packet = [0x01]
                 packet.append(0x00 if memory_space == "flash" else 0x01)
-                packet.extend([address >> 8, address & 0xFF])
-                packet.extend([(address + len(chunk) - 1) >> 8, (address + len(chunk) - 1) & 0xFF])
+                packet.extend(Util.array_encode(address, 2, "big"))
+                packet.extend(Util.array_encode((address + len(chunk) - 1), 2, "big"))
                 packet.extend([0x00] * AtmelDFUV1Defs.DFU_DNLOAD_ALIGNMENT_LENGTH)
                 packet.extend([0x00] * (address % 32))
                 packet.extend(chunk)

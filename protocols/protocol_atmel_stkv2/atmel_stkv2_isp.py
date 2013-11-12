@@ -120,13 +120,13 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
                     self._set_address(address)
 
                     packet = [AtmelSTKV2Defs.commands["READ_EEPROM_ISP"]]
-                    packet.extend([chunklen >> 8, chunklen & 0xFF])
+                    packet.extend(Util.array_encode(chunklen, 2, "big"))
                     packet.append(0xA0)
                 else:
                     self._set_address(address >> 1)
 
                     packet = [AtmelSTKV2Defs.commands["READ_FLASH_ISP"]]
-                    packet.extend([chunklen >> 8, chunklen & 0xFF])
+                    packet.extend(Util.array_encode(chunklen, 2, "big"))
                     packet.append(0x20)
 
                 resp = self._trancieve(packet)
@@ -171,7 +171,7 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
                     self._set_address(address >> 1)
                     packet = [AtmelSTKV2Defs.commands["PROGRAM_FLASH_ISP"]]
 
-                packet.extend([blocksize >> 8, blocksize & 0xFF])
+                packet.extend(Util.array_encode(blocksize, 2, "big"))
                 packet.append(self.device.get_property("isp_interface", "IspProgram%s_mode" % memory_space.capitalize()) | 0x80)
                 packet.append(self.device.get_property("isp_interface", "IspProgram%s_delay" % memory_space.capitalize()))
                 packet.append(self.device.get_property("isp_interface", "IspProgram%s_cmd1" % memory_space.capitalize()))
