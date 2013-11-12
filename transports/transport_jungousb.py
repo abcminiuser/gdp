@@ -26,10 +26,10 @@ class TransportJungoUSB(Transport):
 
     def open(self):
         if self.vid is None or self.pid is None:
-            raise TransportError("Transport VID or PID are not set.")
+            raise TransportMissingParamError("VID or PID")
 
         if self.read_ep is None or self.write_ep is None:
-            raise TransportError("Transport Read or Write Endpoint indexes are not set.")
+            raise TransportMissingParamError("read/write endpoint")
 
         self.dev_handle = usb.core.find(idVendor=self.vid, idProduct=self.pid)
         if self.dev_handle is None:

@@ -14,7 +14,7 @@ from formats import *
 
 class CommandParserCLIProgram(CommandParser):
     def _parser_error(self, message):
-        raise CommandParserError("PROGRAM command invalid, %s" % message)
+        raise CommandParserError("PROGRAM", message)
 
 
     def parse_arguments(self, args):
@@ -45,7 +45,7 @@ class CommandParserCLIProgram(CommandParser):
 
 
         if self.options.filename is None:
-            raise SessionError("No filename specified for PROGRAM command.")
+            self._parser_error("no input filename specified")
 
 
         try:
@@ -58,7 +58,7 @@ class CommandParserCLIProgram(CommandParser):
 
             self.format_reader = gdp_formats[file_ext]
         except KeyError:
-            raise SessionError("Unrecognized input file type \"%s\"." % file_name)
+            self._parser_error("unrecognized input file type \"%s\"." % file_name)
 
         return args
 

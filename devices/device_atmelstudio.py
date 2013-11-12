@@ -61,11 +61,11 @@ class DeviceAtmelStudio(Device):
     def get_property(self, group, param):
         param_group = self.device_info.find("property-groups/property-group[@name='%s']" % group.upper())
         if param_group is None:
-            raise DeviceError("Property group \"%s\" not found in the selected device." % group)
+            raise DeviceMissingInfoError("property group", group)
 
         param_info = param_group.find("property[@name='%s']" % param)
         if param_info is None:
-            raise DeviceError("Device group \"%s\" parameter \"%s\" not found in the selected device." % (group, param))
+            raise DeviceMissingInfoError("group \"%s\" parameter" % group, param)
 
         return self._param_to_int(param_info.get("value"))
 
@@ -86,7 +86,7 @@ class DeviceAtmelStudio(Device):
     def get_section_bounds(self, memory_type):
         mem_segments = self.device_info.findall("address-spaces/address-space/memory-segment[@type='%s']" % memory_type.lower())
         if mem_segments is None:
-            raise DeviceError("Memory segment type \"%s\" not found in the selected device." % memory_type)
+            raise DeviceMissingInfoError("memory segment", memory_type)
 
         segment_info = []
 
@@ -102,7 +102,7 @@ class DeviceAtmelStudio(Device):
     def get_page_size(self, memory_type):
         mem_segment = self.device_info.find("address-spaces/address-space/memory-segment[@type='%s']" % memory_type.lower())
         if mem_segment is None:
-            raise DeviceError("Memory segment type \"%s\" not found in the selected device." % memory_type)
+            raise DeviceMissingInfoError("memory segment", memory_type)
 
         page_size_value = mem_segment.get("pagesize")
         if page_size_value is None:

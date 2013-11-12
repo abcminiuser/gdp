@@ -14,12 +14,14 @@ class ToolAtmelAVRISPMKII(Tool):
         if port is None:
             self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2104, read_ep=2, write_ep=2)
         else:
-            raise ToolError("Unsupported port \"%s\" for the specified tool." % port)
+            raise ToolSupportError("tool", "port", port)
 
         if not interface in device.get_supported_interfaces():
-            raise ToolError("Unsupported interface \"%s\" for the specified device." % interface)
+            raise ToolSupportError("device", "interface", interface,
+                                   device.get_supported_interfaces())
         elif not interface in self.get_supported_interfaces():
-            raise ToolError("Unsupported interface \"%s\" for the specified tool." % interface)
+            raise ToolSupportError("tool", "interface", interface,
+                                   self.get_supported_interfaces())
         else:
             self.interface = interface
 

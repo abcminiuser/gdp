@@ -6,8 +6,10 @@
 
 from abc import ABCMeta, abstractmethod
 
+
 class CommandParserError(Exception):
-    pass
+    def __init__(self, command, reason):
+        self.message = "%s command invalid: %s" % (command, reason)
 
 
 class CommandParser(object):

@@ -11,6 +11,11 @@ class TransportError(Exception):
     pass
 
 
+class TransportMissingParamError(TransportError):
+    def __init__(self, paramtype):
+        self.message = "Transport %s not specified." % paramtype
+
+
 class Transport(object):
     __metaclass__ = ABCMeta
 

@@ -11,6 +11,12 @@ class DeviceError(Exception):
     pass
 
 
+class DeviceMissingInfoError(DeviceError):
+    def __init__(self, paramtype, requested):
+        self.message = "Device %s \"%s\" not found in the selected device." % \
+                       (paramtype, requested)
+
+
 class Device(object):
     __metaclass__ = ABCMeta
 

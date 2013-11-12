@@ -11,6 +11,18 @@ class ToolError(Exception):
     pass
 
 
+class ToolSupportError(ToolError):
+    def __init__(self, target, paramtype, requested, supportlist=None):
+        self.message = "Unsupported %s \"%s\" for the specified %s." % \
+                       (paramtype, requested, target)
+
+        if not supportlist is None:
+            self.message += "\n\nSupported %s %ss are:" % (target, paramtype)
+
+            for s in supportlist:
+                self.message += "\n  - %s" % s
+
+
 class Tool(object):
     __metaclass__ = ABCMeta
 

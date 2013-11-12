@@ -23,7 +23,7 @@ class TransportSerial(Transport):
 
     def open(self):
         if self.port is None or self.baud is None:
-            raise TransportError("Transport serial port or baudrate are not set.")
+            raise TransportMissingParamError("serial port or baud rate")
 
         try:
             self.dev_handle = serial.Serial(port=self.port,

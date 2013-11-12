@@ -30,7 +30,7 @@ class TransportDFUUSB(Transport):
 
     def open(self):
         if self.vid is None or self.pid is None:
-            raise TransportError("Transport VID or PID are not set.")
+            raise TransportMissingParamError("VID or PID")
 
         self.dev_handle = usb.core.find(idVendor=self.vid, idProduct=self.pid)
         if self.dev_handle is None:

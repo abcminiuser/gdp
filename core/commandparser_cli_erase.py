@@ -11,7 +11,7 @@ from core.commandparser import *
 
 class CommandParserCLIErase(CommandParser):
     def _parser_error(self, message):
-        raise CommandParserError("ERASE command invalid, %s" % message)
+        raise CommandParserError("ERASE", message)
 
 
     def parse_arguments(self, args):

@@ -13,28 +13,45 @@ class SessionError(Exception):
     pass
 
 
+class SessionMissingParamError(SessionError):
+    def __init__(self, paramtype):
+        self.message = "No %s specified." % paramtype
+
+
+class SessionSupportError(SessionError):
+    def __init__(self, paramtype, requested, supportlist=None):
+        self.message = "Unknown or unsupported %s \"%s\"." % \
+                       (paramtype, requested)
+
+        if not supportlist is None:
+            self.message += "\n\nSupported %ss are:" % paramtype
+
+            for s in supportlist:
+                self.message += "\n  - %s" % s
+
+
 class Session(object):
     def __init__(self, options):
         if options.device is None:
-            raise SessionError("No device specified.")
+            raise SessionMissingParamError("device")
 
         if options.tool is None:
-            raise SessionError("No tool specified.")
+            raise SessionMissingParamError("tool")
 
         if options.interface is None:
-            raise SessionError("No interface specified.")
+            raise SessionMissingParamError("interface")
 
         try:
             self.device = DeviceAtmelStudio(part=options.device)
         except DeviceError:
-            raise SessionError("Unknown device \"%s\"." % options.device)
+            raise SessionSupportError("device", options.device)
 
         try:
             self.tool = gdp_tools[options.tool](device=self.device,
                                                 port=options.port,
                                                 interface=options.interface)
         except KeyError:
-            raise SessionError("Unknown tool \"%s\"." % options.tool)
+            raise SessionSupportError("tool", options.tool, gdp_tools.iterkeys())
 
         self.protocol = self.tool.get_protocol()
         self.options = options

@@ -15,7 +15,7 @@ from formats import *
 
 class CommandParserCLIVerify(CommandParserCLIProgram):
     def _parser_error(self, message):
-        raise CommandParserError("VERIFY command invalid, %s" % message)
+        raise CommandParserError("VERIFY", message)
 
 
     def parse_arguments(self, args):
@@ -40,7 +40,7 @@ class CommandParserCLIVerify(CommandParserCLIProgram):
 
 
         if self.options.filename is None:
-            raise SessionError("No filename specified for VERIFY command.")
+            self._parser_error("no input filename specified")
 
 
         try:
@@ -53,7 +53,7 @@ class CommandParserCLIVerify(CommandParserCLIProgram):
 
             self.format_reader = gdp_formats[file_ext]
         except KeyError:
-            raise SessionError("Unrecognized input file type \"%s\"." % file_name)
+            self._parser_error("unrecognized input file type \"%s\"." % file_name)
 
         return args
 

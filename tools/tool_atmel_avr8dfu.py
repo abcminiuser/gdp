@@ -15,12 +15,12 @@ class ToolAtmelAVR8DFU(Tool):
         "at90usb647"  : 0x2FF9,
         "at90usb1286" : 0x2FFB,
         "at90usb646"  : 0x2FF9,
-        "atmega32U4"  : 0x2FF4,
-        "atmega16U4"  : 0x2FF3,
-        "atmega32U2"  : 0x2FF0,
-        "atmega16U2"  : 0x2FEF,
+        "atmega32u4"  : 0x2FF4,
+        "atmega16u4"  : 0x2FF3,
+        "atmega32u2"  : 0x2FF0,
+        "atmega16u2"  : 0x2FEF,
         "at90usb162"  : 0x2FFA,
-        "atmega8U2"   : 0x2FEE,
+        "atmega8u2"   : 0x2FEE,
         "at90usb82"   : 0x2FF7,
     }
 
@@ -29,15 +29,17 @@ class ToolAtmelAVR8DFU(Tool):
         try:
             pid = ToolAtmelAVR8DFU.device_to_pid[device.get_name().lower()]
         except KeyError:
-            raise ToolError("Unsupported device for the specified tool.")
+            raise ToolSupportError("tool", "device", device.get_name().lower(),
+                                   ToolAtmelAVR8DFU.device_to_pid.iterkeys())
 
         if port is None:
             self.transport = TransportDFUUSB(vid=0x03EB, pid=pid)
         else:
-            raise ToolError("Unsupported port for the specified tool.")
+            raise ToolSupportError("tool", "port", port)
 
         if not interface in self.get_supported_interfaces():
-            raise ToolError("Unsupported interface \"%s\" for the specified tool." % interface)
+            raise ToolSupportError("tool", "interface", interface,
+                                   self.get_supported_interfaces())
         else:
             self.interface = interface
 
