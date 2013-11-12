@@ -21,3 +21,25 @@ class Util(Exception):
 
         for i in xrange(0, length, chunksize):
             yield (i + startaddress, chunksize)
+
+
+    @staticmethod
+    def array_encode(data, length, endian="little"):
+        if endian == "little":
+            return [((data >> (8 * x)) & 0xFF) for x in xrange(length)]
+        else:
+            return [((data >> (8 * (length - x - 1))) & 0xFF) for x in xrange(length)]
+
+
+    @staticmethod
+    def array_decode(data, endian="little"):
+        value = 0
+
+        if endian == "little":
+            for x in xrange(len(data)):
+                value |= data[x] << (8 * x)
+        else:
+            for x in xrange(len(data)):
+                value = (value << 8) | data[x]
+
+        return value

@@ -4,6 +4,7 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+from core import *
 from tools import *
 from transports import *
 from protocols import *
@@ -22,21 +23,6 @@ class ToolAtmelSTK500(Tool):
             checksum ^= byte
 
         return checksum
-
-
-    @staticmethod
-    def _toarray(data, length):
-        return [((data >> (8 * (length - x - 1))) & 0xFF) for x in xrange(length)]
-
-
-    @staticmethod
-    def _fromarray(data):
-        value = 0
-
-        for x in xrange(len(data)):
-            value = (value << 8) | data[x]
-
-        return value
 
 
     def __init__(self, device, port=None, interface="isp"):
@@ -111,7 +97,7 @@ class ToolAtmelSTK500(Tool):
         packet = []
         packet.append(ToolAtmelSTK500.STK500_PACKET_START)
         packet.append(self.sequence)
-        packet.extend(self._toarray(len(data), 2))
+        packet.extend(Util.array_encode(len(data), 2, "big"))
         packet.append(ToolAtmelSTK500.STK500_PACKET_TOKEN)
         packet.extend(data)
         packet.append(self._calc_checksum(packet))

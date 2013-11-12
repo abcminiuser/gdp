@@ -4,6 +4,7 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+from core import *
 from tools import *
 from transports import *
 from protocols import *
@@ -58,21 +59,6 @@ class ToolAtmelJTAGICEMKII(Tool):
         return crc
 
 
-    @staticmethod
-    def _toarray(data, length):
-        return [((data >> (8 * x)) & 0xFF) for x in xrange(length)]
-
-
-    @staticmethod
-    def _fromarray(data):
-        value = 0
-
-        for x in xrange(len(data)):
-            value |= data[x] << (8 * x)
-
-        return value
-
-
     def __init__(self, device, port=None, interface="isp"):
         if port is not None:
             self.transport = TransportSerial(port=port, baud=19200)
@@ -123,7 +109,7 @@ class ToolAtmelJTAGICEMKII(Tool):
         if packet[0] != ToolAtmelJTAGICEMKII.JTAG_ICE_MKII_PACKET_START:
             return None
 
-        rec_sequence = self._fromarray(packet[1 : 2])
+        rec_sequence = Util.array_decode(packet[1 : 2], "little")
         if rec_sequence != self.sequence:
             self.sequence = rec_sequence
             return None
@@ -131,7 +117,7 @@ class ToolAtmelJTAGICEMKII(Tool):
         if packet[7] != ToolAtmelJTAGICEMKII.JTAG_ICE_MKII_PACKET_TOKEN:
             return None
 
-        crc = self._fromarray(packet[-2 : ])
+        crc = Util.array_decode(packet[-2 : ], "little")
         crc_expected = self._calc_crc16(packet[0 : -2])
         if (crc != crc_expected):
             return None
@@ -146,10 +132,10 @@ class ToolAtmelJTAGICEMKII(Tool):
 
         packet = []
         packet.append(ToolAtmelJTAGICEMKII.JTAG_ICE_MKII_PACKET_START)
-        packet.extend(self._toarray(self.sequence, 2))
-        packet.extend(self._toarray(len(data), 4))
+        packet.extend(Util.array_encode(self.sequence, 2, "little"))
+        packet.extend(Util.array_encode(len(data), 4, "little"))
         packet.append(ToolAtmelJTAGICEMKII.JTAG_ICE_MKII_PACKET_TOKEN)
         packet.extend(data)
-        packet.extend(self._toarray(self._calc_crc16(packet), 2))
+        packet.extend(Util.array_encode(self._calc_crc16(packet), 2, "little"))
 
         self.transport.write(packet)
