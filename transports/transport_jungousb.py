@@ -45,7 +45,7 @@ class TransportJungoUSB(Transport):
             if len(found_devices) > 1:
                 raise TransportMultipleMatchError(found_devices.itervalues())
             else:
-                return found_devices.iterkeys()[0]
+                return found_devices.keys()[0]
 
         for device, serial in found_devices.iteritems():
             if self.serial in serial:
