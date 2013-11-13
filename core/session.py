@@ -49,6 +49,7 @@ class Session(object):
         try:
             self.tool = gdp_tools[options.tool](device=self.device,
                                                 port=options.port,
+                                                serial=options.serial,
                                                 interface=options.interface)
         except KeyError:
             raise SessionSupportError("tool", options.tool, gdp_tools.iterkeys())

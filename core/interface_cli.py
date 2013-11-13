@@ -43,7 +43,10 @@ class InterfaceCLI(object):
                               help="target device selection")
         comm_group.add_option("-t", "--tool",
                               action="store", type="string", dest="tool",
-                              help="target device selection")
+                              help="tool type to use")
+        comm_group.add_option("-s", "--serial",
+                              action="store", type="string", dest="serial",
+                              help="tool serial number to use (for USB tools)")
         comm_group.add_option("-p", "--port",
                               action="store", type="string", dest="port",
                               help="communication port (for serial tools)")

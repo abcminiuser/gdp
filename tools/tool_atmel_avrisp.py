@@ -12,8 +12,8 @@ from tools.tool_atmel_stk500 import ToolAtmelSTK500
 
 
 class ToolAtmelAVRISP(ToolAtmelSTK500):
-    def __init__(self, device, port=None, interface="isp"):
-        super(ToolAtmelAVRISP, self).__init__(device, port=port, interface=interface)
+    def __init__(self, device, serial=None, port=None, interface="isp"):
+        super(ToolAtmelAVRISP, self).__init__(device, serial=serial, port=port, interface=interface)
 
 
     @staticmethod

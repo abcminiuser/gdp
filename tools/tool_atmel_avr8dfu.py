@@ -25,7 +25,7 @@ class ToolAtmelAVR8DFU(Tool):
     }
 
 
-    def __init__(self, device, port=None, interface="dfu"):
+    def __init__(self, device, serial=None, port=None, interface="dfu"):
         try:
             pid = ToolAtmelAVR8DFU.device_to_pid[device.get_name().lower()]
         except KeyError:
@@ -33,7 +33,7 @@ class ToolAtmelAVR8DFU(Tool):
                                    ToolAtmelAVR8DFU.device_to_pid.iterkeys())
 
         if port is None:
-            self.transport = TransportDFUUSB(vid=0x03EB, pid=pid)
+            self.transport = TransportDFUUSB(vid=0x03EB, pid=pid, serial=serial)
         else:
             raise ToolSupportError("tool", "port", port)
 

@@ -21,7 +21,7 @@ class CommandParserCLIList(CommandParser):
         for tool in gdp_tools:
             tool_name = gdp_tools[tool].get_name()
 
-            for serial in gdp_tools[tool].find_connected():
+            for serial in set(gdp_tools[tool].find_connected()):
                 print("  + %s - %s" % (tool_name, serial))
 
 

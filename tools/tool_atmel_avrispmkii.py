@@ -10,9 +10,9 @@ from protocols import *
 
 
 class ToolAtmelAVRISPMKII(Tool):
-    def __init__(self, device, port=None, interface="isp"):
+    def __init__(self, device, serial=None, port=None, interface="isp"):
         if port is None:
-            self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2104, read_ep=2, write_ep=2)
+            self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2104, serial=serial)
         else:
             raise ToolSupportError("tool", "port", port)
 

@@ -59,11 +59,11 @@ class ToolAtmelJTAGICEMKII(Tool):
         return crc
 
 
-    def __init__(self, device, port=None, interface="isp"):
+    def __init__(self, device, serial=None, port=None, interface="isp"):
         if port is not None:
             self.transport = TransportSerial(port=port, baud=19200)
         else:
-            self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2103, read_ep=2, write_ep=2)
+            self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2103, serial=serial)
 
         if not interface in device.get_supported_interfaces():
             raise ToolSupportError("device", "interface", interface,

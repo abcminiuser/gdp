@@ -25,7 +25,7 @@ class ToolAtmelSTK500(Tool):
         return checksum
 
 
-    def __init__(self, device, port=None, interface="isp"):
+    def __init__(self, device, serial=None, port=None, interface="isp"):
         if port is None:
            raise ToolSupportError("tool", "port", port)
         else:

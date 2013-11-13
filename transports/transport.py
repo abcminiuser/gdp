@@ -16,6 +16,18 @@ class TransportMissingParamError(TransportError):
         self.message = "Transport %s not specified." % paramtype
 
 
+class TransportMultipleMatchError(TransportError):
+    def __init__(self, matchlist=None):
+        self.message = "Multiple identical tools are connected, please " \
+                       "specify the tool serial number."
+
+        if not matchlist is None:
+            self.message += "\n\nMatching connected tools:"
+
+            for t in matchlist:
+                self.message += "\n  - %s" % t
+
+
 class Transport(object):
     __metaclass__ = ABCMeta
 
