@@ -24,8 +24,6 @@ class CommandParserCLIChipErase(CommandParser):
 
         (self.options, args) = parser.parse_args(args=args)
 
-        self._show_connected_tools()
-
         return args
 
 
