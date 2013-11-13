@@ -19,7 +19,10 @@ class CommandParserCLIVerify(CommandParserCLIProgram):
 
 
     def parse_arguments(self, args):
-        parser = OptionParser(description="VERIFY command")
+        description = "VERIFY command: verifies the contents of an attached" \
+                      "target's memory section against a given file."
+
+        parser = OptionParser(description=description, usage="")
         parser.error = self._parser_error
         parser.disable_interspersed_args()
 
@@ -56,6 +59,10 @@ class CommandParserCLIVerify(CommandParserCLIProgram):
             self._parser_error("unrecognized input file type \"%s\"." % file_name)
 
         return args
+
+
+    def can_execute(self):
+        return True
 
 
     def execute(self, session):

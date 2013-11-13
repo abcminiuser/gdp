@@ -7,16 +7,27 @@
 from optparse import OptionParser
 
 from core.commandparser import *
+from tools import *
 
 
-class CommandParserCLIChipErase(CommandParser):
+class CommandParserCLIList(CommandParser):
     def _parser_error(self, message):
-        raise CommandParserError("CHIPERASE", message)
+        raise CommandParserError("LIST", message)
+
+
+    def _show_connected_tools(self):
+        print("Currently connected discoverable tools:")
+
+        for tool in gdp_tools:
+            tool_name = gdp_tools[tool].get_name()
+
+            for serial in gdp_tools[tool].find_connected():
+                print("  + %s - %s" % (tool_name, serial))
 
 
     def parse_arguments(self, args):
-        description = "CHIPERASE command: erases all memory spaces of an " \
-                      "attached device."
+        description = "LIST command: lists currently connected tools that " \
+                      "are on discoverable buses, such as USB."
 
         parser = OptionParser(description=description, usage="")
         parser.error = self._parser_error
@@ -30,11 +41,8 @@ class CommandParserCLIChipErase(CommandParser):
 
 
     def can_execute(self):
-        return True
+        return False
 
 
     def execute(self, session):
-        protocol = session.get_protocol()
-
-        print(" - Erasing chip...")
-        protocol.erase_memory(None, 0)
+        pass

@@ -12,6 +12,7 @@ from core.commandparser_cli_chiperase import *
 from core.commandparser_cli_erase import *
 from core.commandparser_cli_program import *
 from core.commandparser_cli_verify import *
+from core.commandparser_cli_list import *
 
 
 class InterfaceCLI(object):
@@ -19,7 +20,8 @@ class InterfaceCLI(object):
         "chiperase" : CommandParserCLIChipErase,
         "erase"     : CommandParserCLIErase,
         "program"   : CommandParserCLIProgram,
-        "verify"    : CommandParserCLIVerify
+        "verify"    : CommandParserCLIVerify,
+        "list"      : CommandParserCLIList
     }
 
 
@@ -77,7 +79,9 @@ class InterfaceCLI(object):
 
             try:
                 command_parser = InterfaceCLI.command_parsers[current_command]()
-                command_list.append(command_parser)
+
+                if command_parser.can_execute():
+                    command_list.append(command_parser)
 
                 args = command_parser.parse_arguments(args[1 : ])
             except KeyError:
@@ -103,17 +107,18 @@ class InterfaceCLI(object):
             return 0
 
         try:
-            session = Session(self.options)
-            session.open()
-
             command_list = self._build_command_list(args)
 
-            print("GDP starting to execute commands.")
+            if len(command_list) > 0:
+                print("GDP starting to execute commands.")
 
-            for cmd in command_list:
-                cmd.execute(session)
+                session = Session(self.options)
+                session.open()
 
-            print("GDP finished executing commands.")
+                for cmd in command_list:
+                    cmd.execute(session)
+
+                print("GDP finished executing commands.")
         except (FormatError, SessionError, TransportError,
                 ToolError, ProtocolError, CommandParserError) as gdp_error:
             error_type = type(gdp_error).__name__.split("Error")[0]

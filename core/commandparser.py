@@ -22,5 +22,10 @@ class CommandParser(object):
 
 
     @abstractmethod
+    def can_execute(self):
+        pass
+
+
+    @abstractmethod
     def execute(self, session):
         pass

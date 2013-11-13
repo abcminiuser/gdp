@@ -15,7 +15,10 @@ class CommandParserCLIErase(CommandParser):
 
 
     def parse_arguments(self, args):
-        parser = OptionParser(description="ERASE command")
+        description = "ERASE command: erases a specific memory section of an " \
+                      "attached device."
+
+        parser = OptionParser(description=description, usage="")
         parser.error = self._parser_error
         parser.disable_interspersed_args()
 
@@ -29,6 +32,10 @@ class CommandParserCLIErase(CommandParser):
         (self.options, args) = parser.parse_args(args=args)
 
         return args
+
+
+    def can_execute(self):
+        return True
 
 
     def execute(self, session):
