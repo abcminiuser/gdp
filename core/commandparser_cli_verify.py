@@ -19,8 +19,8 @@ class CommandParserCLIVerify(CommandParserCLIProgram):
 
 
     def parse_arguments(self, args):
-        description = "VERIFY command: verifies the contents of an attached" \
-                      "target's memory section against a given file."
+        description = "VERIFY command: verifies the contents of an attached " \
+                      "device's memory section against a given file."
 
         parser = OptionParser(description=description, usage="")
         parser.error = self._parser_error

@@ -18,7 +18,10 @@ class CommandParserCLIProgram(CommandParser):
 
 
     def parse_arguments(self, args):
-        parser = OptionParser(description="PROGRAM command")
+        description = "PROGRAM command: programs the contents of an attached " \
+                      "device's memory section from a given file."
+
+        parser = OptionParser(description=description, usage="")
         parser.error = self._parser_error
         parser.disable_interspersed_args()
 

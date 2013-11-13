@@ -16,18 +16,17 @@ class CommandParserCLIList(CommandParser):
 
 
     def _show_connected_tools(self):
-        print("Currently connected discoverable tools:")
+        print("Currently connected USB tools:")
 
         for tool in gdp_tools:
             tool_name = gdp_tools[tool].get_name()
 
             for serial in set(gdp_tools[tool].find_connected()):
-                print("  + %s - %s" % (tool_name, serial))
+                print("  - %s, serial number %s" % (tool_name, serial))
 
 
     def parse_arguments(self, args):
-        description = "LIST command: lists currently connected tools that " \
-                      "are on discoverable buses, such as USB."
+        description = "LIST command: lists currently connected USB tools."
 
         parser = OptionParser(description=description, usage="")
         parser.error = self._parser_error
