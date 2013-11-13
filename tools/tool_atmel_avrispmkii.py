@@ -29,6 +29,11 @@ class ToolAtmelAVRISPMKII(Tool):
 
 
     @staticmethod
+    def find_connected():
+        return TransportJungoUSB.find_connected(vid=0x03EB, pid=0x2104)
+
+
+    @staticmethod
     def get_name():
         return "Atmel AVRISP-MKII"
 

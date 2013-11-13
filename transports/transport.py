@@ -21,6 +21,11 @@ class Transport(object):
 
 
     @abstractmethod
+    def find_connected():
+        pass
+
+
+    @abstractmethod
     def open(self):
         pass
 

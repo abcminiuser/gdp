@@ -79,6 +79,11 @@ class ToolAtmelJTAGICEMKII(Tool):
 
 
     @staticmethod
+    def find_connected():
+        return TransportJungoUSB.find_connected(vid=0x03EB, pid=0x2103)
+
+
+    @staticmethod
     def get_name():
         return "Atmel JTAGICE-MKII"
 

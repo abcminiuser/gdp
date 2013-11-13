@@ -24,6 +24,13 @@ class TransportJungoUSB(Transport):
         self.write_ep = write_ep
 
 
+    @staticmethod
+    def find_connected(vid=0x03eb, pid=None):
+        found_devices = usb.core.find(idVendor=vid, idProduct=pid, find_all=True)
+        for device in found_devices:
+            yield usb.util.get_string(device, 256, device.iSerialNumber)
+
+
     def open(self):
         if self.vid is None or self.pid is None:
             raise TransportMissingParamError("VID or PID")

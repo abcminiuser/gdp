@@ -17,6 +17,11 @@ class ToolAtmelAVRISP(ToolAtmelSTK500):
 
 
     @staticmethod
+    def find_connected():
+        return []
+
+
+    @staticmethod
     def get_name():
         return "Atmel AVRISP"
 

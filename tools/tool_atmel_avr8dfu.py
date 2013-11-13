@@ -48,6 +48,15 @@ class ToolAtmelAVR8DFU(Tool):
 
 
     @staticmethod
+    def find_connected():
+        for pid in ToolAtmelAVR8DFU.device_to_pid.itervalues():
+            found_serials = TransportDFUUSB.find_connected(vid=0x03EB, pid=pid)
+
+            for serial in found_serials:
+                yield serial
+
+
+    @staticmethod
     def get_name():
         return "Atmel DFU Bootloader (AVR8)"
 

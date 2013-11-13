@@ -28,6 +28,11 @@ class Tool(object):
 
 
     @abstractmethod
+    def find_connected():
+        pass
+
+
+    @abstractmethod
     def get_name():
         pass
 

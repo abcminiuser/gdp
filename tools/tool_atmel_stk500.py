@@ -45,6 +45,11 @@ class ToolAtmelSTK500(Tool):
 
 
     @staticmethod
+    def find_connected():
+        return []
+
+
+    @staticmethod
     def get_name():
         return "Atmel STK500"
 

@@ -21,6 +21,11 @@ class TransportSerial(Transport):
         self.baud = baud
 
 
+    @staticmethod
+    def find_connected(vid=0x03eb, pid=None):
+        return None
+
+
     def open(self):
         if self.port is None or self.baud is None:
             raise TransportMissingParamError("serial port or baud rate")

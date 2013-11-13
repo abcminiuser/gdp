@@ -28,6 +28,13 @@ class TransportDFUUSB(Transport):
         self.sequence = 0
 
 
+    @staticmethod
+    def find_connected(vid=0x03eb, pid=None):
+        found_devices = usb.core.find(idVendor=vid, idProduct=pid, find_all=True)
+        for device in found_devices:
+            yield "%s:%s" % (device.bus, device.address)
+
+
     def open(self):
         if self.vid is None or self.pid is None:
             raise TransportMissingParamError("VID or PID")
