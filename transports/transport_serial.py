@@ -17,8 +17,8 @@ from transports import *
 class TransportSerial(Transport):
     def __init__(self, port=None, baud=115200):
         self.dev_handle = None
-        self.port = port
-        self.baud = baud
+        self.port       = port
+        self.baud       = baud
 
 
     @staticmethod

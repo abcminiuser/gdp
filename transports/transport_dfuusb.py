@@ -22,11 +22,11 @@ class TransportDFUUSB(Transport):
 
     def __init__(self, vid=0x03eb, pid=None, serial=None):
         self.dev_handle = None
-        self.vid = vid
-        self.pid = pid
-        self.serial = serial
+        self.vid        = vid
+        self.pid        = pid
+        self.serial     = serial
 
-        self.sequence = 0
+        self.sequence   = 0
 
 
     @staticmethod

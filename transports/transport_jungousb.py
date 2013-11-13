@@ -18,11 +18,11 @@ from transports import *
 class TransportJungoUSB(Transport):
     def __init__(self, vid=0x03eb, pid=None, serial=None, read_ep=2, write_ep=2):
         self.dev_handle = None
-        self.vid = vid
-        self.pid = pid
-        self.read_ep = read_ep
-        self.write_ep = write_ep
-        self.serial = serial
+        self.vid        = vid
+        self.pid        = pid
+        self.read_ep    = usb.util.ENDPOINT_IN | read_ep
+        self.write_ep   = usb.util.ENDPOINT_OUT | write_ep
+        self.serial     = serial
 
 
     @staticmethod
@@ -83,10 +83,11 @@ class TransportJungoUSB(Transport):
         data = []
 
         while len(data) % 64 == 0:
-            data.extend(self.dev_handle.read(usb.util.ENDPOINT_IN | self.read_ep, 64, 0, 1000))
+            chunk = self.dev_handle.read(self.read_ep, 64, 0, 1000)
+            data.extend(chunk)
 
         return data
 
 
     def write(self, data):
-        self.dev_handle.write(usb.util.ENDPOINT_OUT | self.write_ep, data, 0, 1000)
+        self.dev_handle.write(self.write_ep, data, 0, 1000)

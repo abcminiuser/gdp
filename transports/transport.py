@@ -22,7 +22,7 @@ class TransportMultipleMatchError(TransportError):
                        "specify the tool serial number."
 
         if not matchlist is None:
-            self.message += "\n\nMatching connected tools:"
+            self.message += "\n\nMatching connected tool serial numbers:"
 
             for t in matchlist:
                 self.message += "\n  - %s" % t
