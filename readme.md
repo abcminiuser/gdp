@@ -42,11 +42,12 @@ Device Definitions:
 Tools:
 
 + Atmel AVR8 DFU Bootloader
-+ STK500
-+ STK600
-+ AVRISP
-+ AVRISP-MKII
-+ JTAG-ICE MKII
++ Atmel STK500
++ Atmel STK600
++ Atmel AVRISP
++ Atmel AVRISP-MKII
++ Atmel JTAG-ICE MKII
++ Atmel Dragon
 
 
 Protocols:
@@ -72,7 +73,7 @@ Input File Formats:
 
 User Interfaces:
 
-+ CLI (PROGRAM, VERIFY, CHIPERASE and ERASE commands)
++ CLI (PROGRAM, VERIFY, CHIPERASE, ERASE and LIST commands)
 
 
 Prerequisites

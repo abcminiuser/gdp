@@ -8,15 +8,15 @@ from tools import *
 from transports import *
 from protocols import *
 
-from tools.tool_atmel_stk500 import ToolAtmelSTK500
+from tools.tool_atmel_jtagicemkii import ToolAtmelJTAGICEMKII
 
 
-class ToolAtmelAVRISP(ToolAtmelSTK500):
+class ToolAtmelDragon(ToolAtmelJTAGICEMKII):
     def __init__(self, device, serial=None, port=None, interface="isp"):
         if port is None:
-           raise ToolSupportError("tool", "port", port)
+            self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2107, serial=serial)
         else:
-            self.transport = TransportSerial(port=port, baud=115200)
+            raise ToolSupportError("tool", "port", port)
 
         if not interface in device.get_supported_interfaces():
             raise ToolSupportError("device", "interface", interface,
@@ -27,23 +27,23 @@ class ToolAtmelAVRISP(ToolAtmelSTK500):
         else:
             self.interface = interface
 
-        self.protocol = ProtocolAtmelSTKV2(self, device, interface)
-        self.sequence = 0x00
+        self.protocol = ProtocolAtmelJTAGV2(self, device, interface)
+        self.sequence = 0x0000
 
 
     @staticmethod
     def find_connected():
-        return []
+        return TransportJungoUSB.find_connected(vid=0x03EB, pid=0x2107)
 
 
     @staticmethod
     def get_name():
-        return "Atmel AVRISP"
+        return "Atmel AVR Dragon"
 
 
     @staticmethod
     def get_supported_interfaces():
-        return ["isp"]
+        return ["jtag", "isp", "pdi", "debugwire", "hvpp", "hvsp"]
 
 
     def get_protocol(self):
@@ -51,16 +51,17 @@ class ToolAtmelAVRISP(ToolAtmelSTK500):
 
 
     def open(self):
-        super(ToolAtmelAVRISP, self).open()
+        super(ToolAtmelDragon, self).open()
 
 
     def close(self):
-        super(ToolAtmelAVRISP, self).close()
+        super(ToolAtmelDragon, self).close()
 
 
     def read(self):
-        return super(ToolAtmelAVRISP, self).read()
+        return super(ToolAtmelDragon, self).read()
 
 
     def write(self, data):
-        super(ToolAtmelAVRISP, self).write(data)
+        super(ToolAtmelDragon, self).write(data)
+
