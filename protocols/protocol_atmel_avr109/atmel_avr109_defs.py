@@ -8,14 +8,22 @@ from protocols import *
 
 
 class AtmelAVR109Defs(object):
-    RESP_TERMINATOR_CHAR      = ord('\r')
+    RESP_TERMINATOR_CHAR         = ord('\r')
 
     commands = {
-        "ENTER_PROG_MODE"     : ord('P'),
-        "SET_LED"             : ord('x'),
-        "CLEAR_LED"           : ord('y'),
-        "CHIP_ERASE"          : ord('e'),
-        "READ_SIGNATURE"      : ord('s'),
+        "ENTER_PROG_MODE"        : ord('P'),
+        "SET_LED"                : ord('x'),
+        "CLEAR_LED"              : ord('y'),
+        "CHIP_ERASE"             : ord('e'),
+        "READ_SIGNATURE"         : ord('s'),
+        "ADDRESS_AUTO_INCREMENT" : ord('a'),
+        "CHECK_BLOCK_SUPPORT"    : ord('b'),
+        "READ_FLASH_WORD"        : ord('R'),
+        "READ_EEPROM_BYTE"       : ord('d'),
+        "READ_BLOCK"             : ord('g'),
+        "WRITE_BLOCK"            : ord('B'),
+        "SET_ADDRESS"            : ord('A'),
+
     }
 
 
