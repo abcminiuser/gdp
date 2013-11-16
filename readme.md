@@ -76,6 +76,16 @@ User Interfaces:
 + CLI (PROGRAM, VERIFY, CHIPERASE, ERASE and LIST commands)
 
 
+USB Drivers
+---------------------
+
+As proprietary USB drivers are difficult to interface with (for both technical
+and legal reasons) all USB transports use LibUSB as the driver backend. This
+means that USB tools must have LibUSB drivers (or the LibUSB filter driver)
+installed instead of their regular Jungo or other proprietary driver for GDP to
+be able to communicate with them.
+
+
 Prerequisites
 ---------------------
 
