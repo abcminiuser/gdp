@@ -25,7 +25,7 @@ class ToolAtmelAVR8DFU(Tool):
     }
 
 
-    def __init__(self, device, serial=None, port=None, interface="dfu"):
+    def __init__(self, device, serial, baud, port, interface):
         try:
             pid = ToolAtmelAVR8DFU.device_to_pid[device.get_name().lower()]
         except KeyError:
@@ -63,7 +63,7 @@ class ToolAtmelAVR8DFU(Tool):
 
     @staticmethod
     def get_aliases():
-        return ["dfu8avr8"]
+        return ["avr8dfu"]
 
 
     @staticmethod

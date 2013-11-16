@@ -9,43 +9,43 @@ from transports import *
 from protocols import *
 
 
-class ToolAtmelAVRISPMKII(Tool):
+class ToolAtmelAVR109(Tool):
     def __init__(self, device, serial, baud, port, interface):
-        if port is None:
-            self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2104, serial=serial)
-        else:
-            raise ToolSupportError("tool", "port", port)
+        if baud is None:
+            baud = 9600
 
-        if not interface in device.get_supported_interfaces():
-            raise ToolSupportError("device", "interface", interface,
-                                   device.get_supported_interfaces())
-        elif not interface in self.get_supported_interfaces():
+        if port is None:
+           raise ToolSupportError("tool", "port", port)
+        else:
+            self.transport = TransportSerial(port=port, baud=baud)
+
+        if not interface in self.get_supported_interfaces():
             raise ToolSupportError("tool", "interface", interface,
                                    self.get_supported_interfaces())
         else:
             self.interface = interface
 
-        self.protocol = ProtocolAtmelSTKV2(self, device, interface)
+        self.protocol = ProtocolAtmelAVR109(self, device, interface)
 
 
     @staticmethod
     def find_connected():
-        return TransportJungoUSB.find_connected(vid=0x03EB, pid=0x2104)
+        return []
 
 
     @staticmethod
     def get_name():
-        return "Atmel AVRISP-MKII"
+        return "Atmel AVR109 Bootloader"
 
 
     @staticmethod
     def get_aliases():
-        return ["avrisp-mk2", "avrispmk2", "avrisp-mkii", "avrispmkii"]
+        return ["avr109"]
 
 
     @staticmethod
     def get_supported_interfaces():
-        return ["isp", "pdi", "tpi"]
+        return ["avr109"]
 
 
     def get_protocol(self):

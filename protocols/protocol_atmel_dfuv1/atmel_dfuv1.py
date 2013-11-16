@@ -77,8 +77,10 @@ class ProtocolAtmelDFUV1(Protocol):
 
 
     def erase_memory(self, memory_space, offset):
-        self._download([0x04, 0x00, 0xFF])
-
+        if memory_space is None:
+            self._download([0x04, 0x00, 0xFF])
+        else:
+            raise ProtocolError("The specified tool cannot erase the requested memory space.")
 
     def read_memory(self, memory_space, offset, length):
         mem_contents = []

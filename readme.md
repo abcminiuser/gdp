@@ -41,6 +41,7 @@ Device Definitions:
 
 Tools:
 
++ Atmel AVR109 Bootloader
 + Atmel AVR8 DFU Bootloader
 + Atmel STK500
 + Atmel STK600
@@ -52,6 +53,7 @@ Tools:
 
 Protocols:
 
++ Atmel AVR109 Protocol
 + Atmel DFUV1 Protocol
 + Atmel STKV2 Protocol (ISP, HVSP, HVPP, PDI, TPI and XMEGA JTAG interfaces only)
 + Atmel JTAGV2 Protocol (Stub only, no implementation)

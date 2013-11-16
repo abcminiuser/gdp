@@ -47,6 +47,9 @@ class InterfaceCLI(object):
         comm_group.add_option("-s", "--serial",
                               action="store", type="string", dest="serial",
                               help="tool serial number to use (for USB tools)")
+        comm_group.add_option("-b", "--baud",
+                              action="store",  type="int", dest="baud",
+                              help="tool serial baud rate to use (for Serial tools)")
         comm_group.add_option("-p", "--port",
                               action="store", type="string", dest="port",
                               help="communication port (for serial tools)")

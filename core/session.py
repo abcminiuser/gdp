@@ -37,6 +37,12 @@ class SessionSupportError(SessionError):
 
 class Session(object):
     def __init__(self, options):
+        try:
+            tool_type = get_gdp_tool(options.tool)
+        except KeyError:
+            raise SessionSupportError("tool", options.tool,
+                                      get_gdp_tool_aliases())
+
         if options.device is None:
             raise SessionMissingParamError("device")
 
@@ -44,24 +50,23 @@ class Session(object):
             raise SessionMissingParamError("tool")
 
         if options.interface is None:
-            raise SessionMissingParamError("interface")
+            tool_supported_interfaces = tool_type.get_supported_interfaces()
+
+            if len(tool_supported_interfaces) == 1:
+                options.interface = tool_supported_interfaces[0]
+            else:
+                raise SessionMissingParamError("interface")
 
         try:
             self.device = DeviceAtmelStudio(part=options.device)
         except DeviceError:
             raise SessionSupportError("device", options.device)
 
-        try:
-            tool_type = get_gdp_tool(options.tool)
-
-            self.tool = tool_type(device=self.device,
-                                  port=options.port,
-                                  serial=options.serial,
-                                  interface=options.interface)
-        except KeyError:
-            raise SessionSupportError("tool", options.tool,
-                                      get_gdp_tool_aliases())
-
+        self.tool = tool_type(device=self.device,
+                              port=options.port,
+                              serial=options.serial,
+                              baud=options.baud,
+                              interface=options.interface)
         self.protocol = self.tool.get_protocol()
         self.options = options
 

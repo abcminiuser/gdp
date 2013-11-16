@@ -25,11 +25,14 @@ class ToolAtmelSTK500(Tool):
         return checksum
 
 
-    def __init__(self, device, serial=None, port=None, interface="isp"):
+    def __init__(self, device, serial, baud, port, interface):
+        if baud is None:
+            baud = 115200
+
         if port is None:
            raise ToolSupportError("tool", "port", port)
         else:
-            self.transport = TransportSerial(port=port, baud=115200)
+            self.transport = TransportSerial(port=port, baud=baud)
 
         if not interface in device.get_supported_interfaces():
             raise ToolSupportError("device", "interface", interface,

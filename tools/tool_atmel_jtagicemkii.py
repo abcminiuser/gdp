@@ -59,9 +59,12 @@ class ToolAtmelJTAGICEMKII(Tool):
         return crc
 
 
-    def __init__(self, device, serial=None, port=None, interface="isp"):
+    def __init__(self, device, serial, baud, port, interface):
+        if baud is None:
+            baud = 19200
+
         if port is not None:
-            self.transport = TransportSerial(port=port, baud=19200)
+            self.transport = TransportSerial(port=port, baud=baud)
         else:
             self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2103, serial=serial)
 

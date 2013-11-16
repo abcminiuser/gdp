@@ -6,6 +6,7 @@
 
 from core.util import *
 from tools.tool import *
+from tools.tool_atmel_avr109 import *
 from tools.tool_atmel_avr8dfu import *
 from tools.tool_atmel_avrisp import *
 from tools.tool_atmel_avrispmkii import *

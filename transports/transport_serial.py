@@ -33,7 +33,7 @@ class TransportSerial(Transport):
         try:
             self.dev_handle = serial.Serial(port=self.port,
                                             baudrate=self.baud,
-                                            timeout=.5,
+                                            timeout=5,
                                             interCharTimeout=.05)
         except:
             raise TransportError("Specified serial port could not be opened.")

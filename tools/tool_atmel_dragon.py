@@ -12,7 +12,7 @@ from tools.tool_atmel_jtagicemkii import ToolAtmelJTAGICEMKII
 
 
 class ToolAtmelDragon(ToolAtmelJTAGICEMKII):
-    def __init__(self, device, serial=None, port=None, interface="isp"):
+    def __init__(self, device, serial, baud, port, interface):
         if port is None:
             self.transport = TransportJungoUSB(vid=0x03EB, pid=0x2107, serial=serial)
         else:
