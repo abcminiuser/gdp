@@ -72,7 +72,7 @@ class CommandParserCLIProgram(CommandParser):
 
     @staticmethod
     def _apply_arch_offsets(device, memory_type, bounds):
-        if memory_type == "eeprom" and "AVR8" in device.get_architecture():
+        if memory_type == "eeprom" and "avr8" in device.get_architecture():
             return (bounds[0] - 0x810000, bounds[1] - 0x810000)
         else:
             return bounds

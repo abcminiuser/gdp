@@ -36,15 +36,15 @@ class DeviceAtmelStudio(Device):
 
 
     def get_name(self):
-        return self.device_info.get("name")
+        return self.device_info.get("name").lower()
 
 
     def get_family(self):
-        return self.device_info.get("family")
+        return self.device_info.get("family").lower()
 
 
     def get_architecture(self):
-        return self.device_info.get("architecture")
+        return self.device_info.get("architecture").lower()
 
 
     def get_vcc_range(self):
