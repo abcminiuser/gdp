@@ -5,4 +5,3 @@
 '''
 
 from protocols.protocol_atmel_stkv2.atmel_stkv2 import *
-from protocols.protocol_atmel_stkv2.atmel_stkv2_isp import *

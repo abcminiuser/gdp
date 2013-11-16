@@ -21,7 +21,7 @@ class ProtocolAtmelSTKV2(Protocol):
             "tpi"  : ProtocolAtmelSTKV2_XPROG
         }
 
-        if "XMEGA" in device.get_architecture():
+        if "xmega" in device.get_architecture():
             interface_implementations["jtag"] = ProtocolAtmelSTKV2_XPROG
 
         try:
