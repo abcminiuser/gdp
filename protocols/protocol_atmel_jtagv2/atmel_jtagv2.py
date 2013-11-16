@@ -5,13 +5,7 @@
 '''
 
 from protocols import *
-
-
-class AtmelJTAGV2Defs(object):
-    commands = {
-        "SIGN_OFF"             : 0x00,
-        "SIGN_ON"              : 0x01
-    }
+from protocols.protocol_atmel_jtagv2.atmel_jtagv2_defs import *
 
 
 class ProtocolAtmelJTAGV2(Protocol):
