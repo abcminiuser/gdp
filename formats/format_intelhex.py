@@ -54,9 +54,15 @@ class FormatIntelHex(Format):
             self.sections[None] = FormatIntelHex_Section(hexfile)
 
 
+    def get_sections(self):
+        return self.sections
+
+
+    @staticmethod
     def get_name():
         return "Intel HEX File Parser"
 
 
-    def get_sections(self):
-        return self.sections
+    @staticmethod
+    def get_extensions():
+        return ["hex", "eep"]

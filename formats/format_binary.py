@@ -17,5 +17,11 @@ class FormatBinary(FormatIntelHex):
         return super(FormatBinary, self).get_sections()
 
 
+    @staticmethod
     def get_name():
         return "Binary File Parser"
+
+
+    @staticmethod
+    def get_extensions():
+        return ["bin"]

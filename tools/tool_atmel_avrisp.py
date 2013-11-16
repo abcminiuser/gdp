@@ -42,6 +42,11 @@ class ToolAtmelAVRISP(ToolAtmelSTK500):
 
 
     @staticmethod
+    def get_aliases():
+        return ["avrisp"]
+
+
+    @staticmethod
     def get_supported_interfaces():
         return ["isp"]
 

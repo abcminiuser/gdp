@@ -39,6 +39,11 @@ class ToolAtmelSTK600(Tool):
 
 
     @staticmethod
+    def get_aliases():
+        return ["stk600"]
+
+
+    @staticmethod
     def get_supported_interfaces():
         return ["isp", "pdi", "tpi", "hvpp", "hvsp", "jtag"]
 

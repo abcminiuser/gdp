@@ -89,6 +89,11 @@ class ToolAtmelJTAGICEMKII(Tool):
 
 
     @staticmethod
+    def get_aliases():
+        return ["jtag-ice2", "jtagice2", "jtagice-mkii", "jtagicemkii"]
+
+
+    @staticmethod
     def get_supported_interfaces():
         return ["jtag", "isp", "pdi", "debugwire", "awire"]
 

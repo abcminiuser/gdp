@@ -16,11 +16,15 @@ class Format(object):
 
 
     @abstractmethod
-    def get_name():
-        raise NotImplementedError
-
-
-    @abstractmethod
     def get_sections(self):
         pass
 
+
+    @abstractmethod
+    def get_name():
+        pass
+
+
+    @abstractmethod
+    def get_extensions():
+        pass

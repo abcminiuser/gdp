@@ -38,6 +38,11 @@ class Tool(object):
 
 
     @abstractmethod
+    def get_aliases():
+        pass
+
+
+    @abstractmethod
     def get_supported_interfaces():
         pass
 

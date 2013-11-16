@@ -59,7 +59,7 @@ class CommandParserCLIProgram(CommandParser):
             else:
                 file_ext = os.path.splitext(file_name)[1][1 : ].lower()
 
-            self.format_reader = gdp_formats[file_ext]
+            self.format_reader = get_gdp_format(file_ext)
         except KeyError:
             self._parser_error("unrecognized input file type \"%s\"." % file_name)
 

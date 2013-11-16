@@ -42,6 +42,11 @@ class ToolAtmelDragon(ToolAtmelJTAGICEMKII):
 
 
     @staticmethod
+    def get_aliases():
+        return ["dragon", "avrdragon"]
+
+
+    @staticmethod
     def get_supported_interfaces():
         return ["jtag", "isp", "pdi", "debugwire", "hvpp", "hvsp"]
 

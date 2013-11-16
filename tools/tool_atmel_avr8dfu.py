@@ -62,6 +62,11 @@ class ToolAtmelAVR8DFU(Tool):
 
 
     @staticmethod
+    def get_aliases():
+        return ["dfu8avr8"]
+
+
+    @staticmethod
     def get_supported_interfaces():
         return ["dfu"]
 

@@ -4,6 +4,7 @@
     By Dean Camera (dean [at] fourwalledcubicle [dot] com)
 '''
 
+from core.util import *
 from tools.tool import *
 from tools.tool_atmel_avr8dfu import *
 from tools.tool_atmel_avrisp import *
@@ -14,12 +15,18 @@ from tools.tool_atmel_stk500 import *
 from tools.tool_atmel_stk600 import *
 
 
-gdp_tools = {
-        'avr8dfu'       :   ToolAtmelAVR8DFU,
-        'avrisp'        :   ToolAtmelAVRISP,
-        'avrispmkii'    :   ToolAtmelAVRISPMKII,
-        'dragon'        :   ToolAtmelDragon,
-        'jtagicemkii'   :   ToolAtmelJTAGICEMKII,
-        'stk500'        :   ToolAtmelSTK500,
-        'stk600'        :   ToolAtmelSTK600
-    }
+def get_gdp_tool_aliases():
+    aliases = dict()
+
+    for t in Util.get_subclasses(Tool):
+        aliases[t.get_name()] = t.get_aliases()
+
+    return aliases
+
+
+def get_gdp_tool(tool_alias):
+    for t in Util.get_subclasses(Tool):
+        if tool_alias in t.get_aliases():
+            return t
+
+    raise KeyError()

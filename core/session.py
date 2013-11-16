@@ -26,8 +26,13 @@ class SessionSupportError(SessionError):
         if not supportlist is None:
             self.message += "\n\nSupported %ss are:" % paramtype
 
-            for s in supportlist:
-                self.message += "\n  - %s" % s
+            if isinstance(supportlist, dict):
+                for k in supportlist:
+                    for v in supportlist[k]:
+                        self.message += "\n  - %s (%s)" % (v, k)
+            else:
+                for s in supportlist:
+                    self.message += "\n  - %s" % s
 
 
 class Session(object):
@@ -47,12 +52,15 @@ class Session(object):
             raise SessionSupportError("device", options.device)
 
         try:
-            self.tool = gdp_tools[options.tool](device=self.device,
-                                                port=options.port,
-                                                serial=options.serial,
-                                                interface=options.interface)
+            tool_type = get_gdp_tool(options.tool)
+
+            self.tool = tool_type(device=self.device,
+                                  port=options.port,
+                                  serial=options.serial,
+                                  interface=options.interface)
         except KeyError:
-            raise SessionSupportError("tool", options.tool, gdp_tools.iterkeys())
+            raise SessionSupportError("tool", options.tool,
+                                      get_gdp_tool_aliases())
 
         self.protocol = self.tool.get_protocol()
         self.options = options

@@ -43,3 +43,11 @@ class Util(Exception):
                 value = (value << 8) | data[x]
 
         return value
+
+
+    @staticmethod
+    def get_subclasses(c):
+        subclasses = c.__subclasses__()
+        for d in list(subclasses):
+            subclasses.extend(Util.get_subclasses(d))
+        return subclasses

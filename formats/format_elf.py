@@ -71,9 +71,15 @@ class FormatELF(Format):
             raise FormatError("ELF file \"%s\" contains no data." % filename)
 
 
+    def get_sections(self):
+        return self.sections
+
+
+    @staticmethod
     def get_name():
         return "ELF File Parser"
 
 
-    def get_sections(self):
-        return self.sections
+    @staticmethod
+    def get_extensions():
+        return ["elf"]

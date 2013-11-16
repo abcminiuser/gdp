@@ -39,6 +39,11 @@ class ToolAtmelAVRISPMKII(Tool):
 
 
     @staticmethod
+    def get_aliases():
+        return ["avrisp-mk2", "avrispmk2", "avrisp-mkii", "avrispmkii"]
+
+
+    @staticmethod
     def get_supported_interfaces():
         return ["isp", "pdi", "tpi"]
 
