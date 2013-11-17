@@ -80,7 +80,7 @@ class ProtocolAtmelDFUV1(Protocol):
         if memory_space is None:
             self._download([0x04, 0x00, 0xFF])
         else:
-            raise ProtocolError("The specified tool cannot erase the requested memory space.")
+            raise ProtocolMemoryActionError("erasing", memory_space)
 
     def read_memory(self, memory_space, offset, length):
         mem_contents = []
@@ -94,8 +94,6 @@ class ProtocolAtmelDFUV1(Protocol):
 
                 resp = self._upload(packet, 1)
                 mem_contents.append(resp[0])
-        elif memory_space in ["fuses", "lockbits"]:
-            raise ProtocolError("Protocol does not support reading from memory \"%s\"." % memory_space)
         elif memory_space in ["flash", "eeprom"]:
             for (address, chunklen) in Util.chunk_address(length, 512, offset):
                 self._select_64kb_bank(address >> 16)
@@ -108,7 +106,7 @@ class ProtocolAtmelDFUV1(Protocol):
                 resp = self._upload(packet, chunklen)
                 mem_contents.extend(resp)
         else:
-            raise NotImplementedError()
+            raise ProtocolMemoryActionError("reading", memory_space)
 
         return mem_contents
 
@@ -128,10 +126,8 @@ class ProtocolAtmelDFUV1(Protocol):
                 packet.extend([0xFF] * AtmelDFUV1Defs.DFU_DNLOAD_SUFFIX_LENGTH)
 
                 self._download(packet)
-        elif memory_space in ["signature", "fuses", "lockbits"]:
-            raise ProtocolError("Protocol does not support writing to memory \"%s\"." % memory_space)
         else:
-            raise NotImplementedError()
+            raise ProtocolMemoryActionError("writing", memory_space)
 
 
     def open(self):

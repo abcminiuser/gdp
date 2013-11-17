@@ -70,7 +70,7 @@ class ProtocolAtmelAVR109(Protocol):
             packet = [AtmelAVR109Defs.commands["CHIP_ERASE"]]
             self._transcieve(packet, has_terminator=True)
         else:
-            raise ProtocolError("The specified tool cannot erase the requested memory space.")
+            raise ProtocolMemoryActionError("erasing", memory_space)
 
 
     def read_memory(self, memory_space, offset, length):
@@ -80,6 +80,10 @@ class ProtocolAtmelAVR109(Protocol):
             packet = [AtmelAVR109Defs.commands["READ_SIGNATURE"]]
             resp = self._transcieve(packet, has_terminator=False)
             mem_contents.extend(resp[offset : offset + length : -1])
+        elif memory_space == "fuses":
+            raise NotImplementedError()
+        elif memory_space == "lockbits":
+            raise NotImplementedError()
         elif memory_space in ["flash", "eeprom"]:
             if self.block_support is True:
                 read_len = self.block_length
@@ -106,13 +110,17 @@ class ProtocolAtmelAVR109(Protocol):
                 resp = self._transcieve(packet, has_terminator=False)
                 mem_contents.extend(resp)
         else:
-            raise NotImplementedError()
+            raise ProtocolMemoryActionError("reading", memory_space)
 
         return mem_contents
 
 
     def write_memory(self, memory_space, offset, data):
-        if memory_space in ["flash", "eeprom"]:
+        if memory_space == "fuses":
+            raise NotImplementedError()
+        elif memory_space == "lockbits":
+            raise NotImplementedError()
+        elif memory_space in ["flash", "eeprom"]:
             if self.block_support is True:
                 write_len = self.block_length
             else:
@@ -145,7 +153,7 @@ class ProtocolAtmelAVR109(Protocol):
                 packet = [AtmelAVR109Defs.commands["PAGE_WRITE"]]
                 self._transcieve(packet, has_terminator=True)
         else:
-            raise NotImplementedError()
+            raise ProtocolMemoryActionError("writing", memory_space)
 
 
     def open(self):

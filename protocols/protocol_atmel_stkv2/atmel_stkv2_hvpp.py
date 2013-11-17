@@ -40,7 +40,7 @@ class ProtocolAtmelSTKV2_HVPP(ProtocolAtmelSTKV2_Base):
             packet.append(self.device.get_property("pp_interface", "PpChipErase_pollTimeout"))
             self._trancieve(packet)
         else:
-            raise ProtocolError("The specified tool cannot erase the requested memory space.")
+            raise ProtocolMemoryActionError("erasing", memory_space)
 
 
     def read_memory(self, memory_space, offset, length):
@@ -83,7 +83,7 @@ class ProtocolAtmelSTKV2_HVPP(ProtocolAtmelSTKV2_Base):
 
             mem_contents = mem_contents[0 : length]
         else:
-            raise NotImplementedError()
+            raise ProtocolMemoryActionError("reading", memory_space)
 
         return mem_contents
 
@@ -124,4 +124,4 @@ class ProtocolAtmelSTKV2_HVPP(ProtocolAtmelSTKV2_Base):
 
                 self._trancieve(packet)
         else:
-            raise NotImplementedError()
+            raise ProtocolMemoryActionError("writing", memory_space)

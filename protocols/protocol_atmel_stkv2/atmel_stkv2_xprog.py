@@ -103,7 +103,7 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
         try:
             erase_type = AtmelSTKV2Defs.xprog_erase_types[memory_space.upper()]
         except KeyError:
-            raise NotImplementedError()
+            raise ProtocolMemoryActionError("erasing", memory_space)
 
         packet = [AtmelSTKV2Defs.xprog_commands["ERASE"]]
         packet.append(erase_type)
@@ -124,7 +124,7 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
         try:
             memory_type = AtmelSTKV2Defs.xprog_memory_types[memory_space.upper()]
         except KeyError:
-            raise NotImplementedError()
+            raise ProtocolMemoryActionError("reading", memory_space)
 
         for (address, chunklen) in Util.chunk_address(length, min(length, 256), offset):
             packet = [AtmelSTKV2Defs.xprog_commands["READ_MEMORY"]]
@@ -147,7 +147,7 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
         try:
             memory_type = AtmelSTKV2Defs.xprog_memory_types[memory_space.upper()]
         except KeyError:
-            raise NotImplementedError()
+            raise ProtocolMemoryActionError("writing", memory_space)
 
         start_address = offset
         end_address   = start_address + len(data)
