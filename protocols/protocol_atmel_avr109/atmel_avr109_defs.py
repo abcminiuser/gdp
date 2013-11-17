@@ -12,6 +12,7 @@ class AtmelAVR109Defs(object):
 
     commands = {
         "ENTER_PROG_MODE"        : ord('P'),
+        "LEAVE_PROG_MODE"        : ord('L'),
         "SET_LED"                : ord('x'),
         "CLEAR_LED"              : ord('y'),
         "CHIP_ERASE"             : ord('e'),
@@ -20,8 +21,12 @@ class AtmelAVR109Defs(object):
         "CHECK_BLOCK_SUPPORT"    : ord('b'),
         "READ_FLASH_WORD"        : ord('R'),
         "READ_EEPROM_BYTE"       : ord('d'),
+        "WRITE_FLASH_BYTE_LOW"   : ord('c'),
+        "WRITE_FLASH_BYTE_HIGH"  : ord('C'),
+        "WRITE_EEPROM_BYTE"      : ord('D'),
         "READ_BLOCK"             : ord('g'),
         "WRITE_BLOCK"            : ord('B'),
+        "PAGE_WRITE"             : ord('m'),
         "SET_ADDRESS"            : ord('A'),
 
     }

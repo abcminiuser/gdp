@@ -16,68 +16,24 @@ class ProtocolAtmelAVR109(Protocol):
         self.interface = interface
 
 
-    def _send_command(self, packet, returns_data):
+    def _transcieve(self, packet, has_terminator):
         self.tool.write(packet)
         resp = self.tool.read()
 
-        if returns_data is True:
-            return resp
+        if has_terminator is True:
+            if resp[-1] != AtmelAVR109Defs.RESP_TERMINATOR_CHAR:
+                raise ProtocolError("Invalid %s response from device." %
+                                    AtmelAVR109Defs.find(AtmelAVR109Defs.commands,
+                                                         packet[0]))
+            return resp[0 : -1]
 
-        if resp[0] != AtmelAVR109Defs.RESP_TERMINATOR_CHAR:
-            raise ProtocolError("Invalid %s response from device." %
-                                AtmelAVR109Defs.find(AtmelAVR109Defs.commands,
-                                                     packet[0]))
+        return resp
 
 
     def _set_address(self, address):
         packet = [AtmelAVR109Defs.commands["SET_ADDRESS"]]
         packet.extend(Util.array_encode(address, 2, "big"))
-        self._send_command(packet, returns_data=False)
-
-
-    def _mem_read_block(self, memory_space, offset, length):
-        mem_contents = []
-
-        for (address, chunklen) in Util.chunk_address(length, self.block_length, offset):
-            packet = [AtmelAVR109Defs.commands["READ_BLOCK"]]
-            packet.extend(Util.array_encode(self.block_length, 2, "big"))
-            packet.append(ord('F') if memory_space == "flash" else ord('E'))
-
-            resp = self._send_command(packet, returns_data=True)
-            mem_contents.extend(resp)
-
-        return mem_contents
-
-
-    def _mem_read(self, memory_space, offset, length):
-        mem_contents = []
-
-        read_length  = 2 if memory_space is "flash" else 1
-        read_command = "READ_FLASH_WORD" if memory_space is "flash" else "READ_EEPROM_BYTE"
-
-        for (address, chunklen) in Util.chunk_address(length, read_length, offset):
-            if self.auto_address_increment == False:
-                self._set_address(address)
-
-            packet = [AtmelAVR109Defs.commands[read_command]]
-            resp = self._send_command(packet, returns_data=True)
-            mem_contents.extend(resp)
-
-        return mem_contents
-
-
-    def _mem_write_block(self, memory_space, offset, data):
-        for (address, chunk) in Util.chunk_data(data, self.block_length, offset):
-            packet = [AtmelAVR109Defs.commands["WRITE_BLOCK"]]
-            packet.extend(Util.array_encode(self.block_length, 2, "big"))
-            packet.append(ord('F') if memory_space == "flash" else ord('E'))
-            packet.extend(chunk)
-
-            self._send_command(packet, returns_data=False)
-
-
-    def _mem_write(self, memory_space, offset, data):
-        raise NotImplementedError()
+        self._transcieve(packet, has_terminator=True)
 
 
     def get_vtarget(self):
@@ -90,14 +46,14 @@ class ProtocolAtmelAVR109(Protocol):
 
     def enter_session(self):
         packet = [AtmelAVR109Defs.commands["ENTER_PROG_MODE"]]
-        self._send_command(packet, returns_data=False)
+        self._transcieve(packet, has_terminator=True)
 
         packet = [AtmelAVR109Defs.commands["ADDRESS_AUTO_INCREMENT"]]
-        resp = self._send_command(packet, returns_data=True)
+        resp = self._transcieve(packet, has_terminator=False)
         self.auto_address_increment = resp[0] == ord('Y')
 
         packet = [AtmelAVR109Defs.commands["CHECK_BLOCK_SUPPORT"]]
-        resp = self._send_command(packet, returns_data=True)
+        resp = self._transcieve(packet, has_terminator=False)
         self.block_support = resp[0] == ord('Y')
 
         if self.block_support is True:
@@ -105,13 +61,14 @@ class ProtocolAtmelAVR109(Protocol):
 
 
     def exit_session(self):
-        pass
+        packet = [AtmelAVR109Defs.commands["LEAVE_PROG_MODE"]]
+        self._transcieve(packet, has_terminator=True)
 
 
     def erase_memory(self, memory_space, offset):
         if memory_space is None:
             packet = [AtmelAVR109Defs.commands["CHIP_ERASE"]]
-            self._send_command(packet, returns_data=False)
+            self._transcieve(packet, has_terminator=True)
         else:
             raise ProtocolError("The specified tool cannot erase the requested memory space.")
 
@@ -121,15 +78,34 @@ class ProtocolAtmelAVR109(Protocol):
 
         if memory_space == "signature":
             packet = [AtmelAVR109Defs.commands["READ_SIGNATURE"]]
-            resp = self._send_command(packet, returns_data=True)
+            resp = self._transcieve(packet, has_terminator=False)
             mem_contents.extend(resp[offset : offset + length : -1])
         elif memory_space in ["flash", "eeprom"]:
-            self._set_address(offset)
-
-            if self.block_support == True:
-                mem_contents.extend(self._mem_read_block(memory_space, offset, length))
+            if self.block_support is True:
+                read_len = self.block_length
             else:
-                mem_contents.extend(self._mem_read(memory_space, offset, length))
+                read_len = 2 if memory_space == "flash" else 1
+
+            for (address, chunklen) in Util.chunk_address(length, read_len, offset):
+                if self.auto_address_increment is False or address == offset:
+                    if memory_space == "flash":
+                        self._set_address(address >> 1)
+                    else:
+                        self._set_address(address)
+
+                if self.block_support is True:
+                    packet = [AtmelAVR109Defs.commands["READ_BLOCK"]]
+                    packet.extend(Util.array_encode(chunklen, 2, "big"))
+                    packet.append(ord('F') if memory_space == "flash" else ord('E'))
+                else:
+                    if memory_space == "flash":
+                        packet = [AtmelAVR109Defs.commands["READ_FLASH_WORD"]]
+                    else:
+                        packet = [AtmelAVR109Defs.commands["READ_EEPROM_BYTE"]]
+
+                resp = self._transcieve(packet, has_terminator=False)
+                print resp
+                mem_contents.extend(resp)
         else:
             raise NotImplementedError()
 
@@ -138,23 +114,54 @@ class ProtocolAtmelAVR109(Protocol):
 
     def write_memory(self, memory_space, offset, data):
         if memory_space in ["flash", "eeprom"]:
-            self._set_address(offset)
-
-            if self.block_support == True:
-                self._mem_write_block(memory_space, offset, data)
+            if self.block_support is True:
+                write_len = self.block_length
             else:
-                self._mem_write(memory_space, offset, data)
+                write_len = 1
+
+            for (address, chunk) in Util.chunk_data(data, write_len, offset):
+                if self.auto_address_increment is False or address == offset:
+                    if memory_space == "flash":
+                        self._set_address(address >> 1)
+                    else:
+                        self._set_address(address)
+
+                if self.block_support is True:
+                    packet = [AtmelAVR109Defs.commands["WRITE_BLOCK"]]
+                    packet.extend(Util.array_encode(len(chunk), 2, "big"))
+                    packet.append(ord('F') if memory_space == "flash" else ord('E'))
+                else:
+                    if memory_space == "flash":
+                        packet = [AtmelAVR109Defs.commands["WRITE_FLASH_WORD_HIGH"
+                                                           if address & 1 else
+                                                           "WRITE_FLASH_WORD_LOW"]]
+                    else:
+                        packet = [AtmelAVR109Defs.commands["WRITE_EEPROM_BYTE"]]
+
+                packet.extend(chunk)
+                self._transcieve(packet, has_terminator=True)
+
+
+            if memory_space == "flash" and self.block_support is False:
+                packet = [AtmelAVR109Defs.commands["PAGE_WRITE"]]
+                self._transcieve(packet, has_terminator=True)
         else:
             raise NotImplementedError()
 
 
     def open(self):
-        packet = [AtmelAVR109Defs.commands["SET_LED"]]
-        packet.append(1)
-        self._send_command(packet, returns_data=False)
+        try:
+            packet = [AtmelAVR109Defs.commands["SET_LED"]]
+            packet.append(1)
+            self._transcieve(packet, has_terminator=True)
+        finally:
+            pass
 
 
     def close(self):
-        packet = [AtmelAVR109Defs.commands["CLEAR_LED"]]
-        packet.append(1)
-        self._send_command(packet, returns_data=False)
+        try:
+            packet = [AtmelAVR109Defs.commands["CLEAR_LED"]]
+            packet.append(1)
+            self._transcieve(packet, has_terminator=True)
+        finally:
+            pass
