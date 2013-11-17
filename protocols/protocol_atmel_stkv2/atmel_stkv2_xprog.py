@@ -64,7 +64,7 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
             "user_signature"      : 0x008E0400,
 
             "flash"               : 0x00800000,
-            "signature"           : 0x01000090
+            "signatures"          : 0x01000090
         }
 
         if not memory_space in pdi_memory_baseaddr_map:

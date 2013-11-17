@@ -83,7 +83,7 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
 
         if memory_space is None:
             raise ProtocolError("Read failed as memory space not set.")
-        elif memory_space == "signature":
+        elif memory_space == "signatures":
             for x in xrange(length):
                 packet = [AtmelSTKV2Defs.commands["READ_SIGNATURE_ISP"]]
                 packet.append(self.device.get_property("isp_interface", "IspReadSign_pollIndex"))

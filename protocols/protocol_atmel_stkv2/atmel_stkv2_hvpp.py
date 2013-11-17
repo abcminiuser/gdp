@@ -48,7 +48,7 @@ class ProtocolAtmelSTKV2_HVPP(ProtocolAtmelSTKV2_Base):
 
         if memory_space is None:
             raise ProtocolError("Read failed as memory space not set.")
-        elif memory_space in ["signature", "lockbits", "fuses"]:
+        elif memory_space in ["signatures", "lockbits", "fuses"]:
             mem_command_map = {
                 "signature" : AtmelSTKV2Defs.commands["READ_SIGNATURE_PP"],
                 "lockbits"  : AtmelSTKV2Defs.commands["READ_LOCK_PP"],

@@ -11,6 +11,7 @@ from core.commandparser import *
 from core.commandparser_cli_chiperase import *
 from core.commandparser_cli_erase import *
 from core.commandparser_cli_program import *
+from core.commandparser_cli_read import *
 from core.commandparser_cli_verify import *
 from core.commandparser_cli_list import *
 
@@ -20,6 +21,7 @@ class InterfaceCLI(object):
         "chiperase" : CommandParserCLIChipErase,
         "erase"     : CommandParserCLIErase,
         "program"   : CommandParserCLIProgram,
+        "read"      : CommandParserCLIRead,
         "verify"    : CommandParserCLIVerify,
         "list"      : CommandParserCLIList
     }

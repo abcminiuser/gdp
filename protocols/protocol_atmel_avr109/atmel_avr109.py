@@ -76,7 +76,7 @@ class ProtocolAtmelAVR109(Protocol):
     def read_memory(self, memory_space, offset, length):
         mem_contents = []
 
-        if memory_space == "signature":
+        if memory_space == "signatures":
             packet = [AtmelAVR109Defs.commands["READ_SIGNATURE"]]
             resp = self._transcieve(packet, has_terminator=False)
             mem_contents.extend(resp[offset : offset + length : -1])

@@ -137,9 +137,10 @@ class CommandParserCLIProgram(CommandParser):
 
         start -= page_offset
 
-        length_aligned = length + (page_size - (length % page_size))
+        if (length % page_size):
+            length += page_size - (length % page_size)
 
-        for (address, chunklen) in Util.chunk_address(length_aligned, page_size, start):
+        for (address, chunklen) in Util.chunk_address(length, page_size, start):
             aligned_data.extend(protocol.read_memory(memory_type,
                                                      address,
                                                      page_size))

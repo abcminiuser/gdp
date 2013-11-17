@@ -85,7 +85,7 @@ class ProtocolAtmelDFUV1(Protocol):
     def read_memory(self, memory_space, offset, length):
         mem_contents = []
 
-        if memory_space == "signature":
+        if memory_space == "signatures":
             sig_byte_addresses = [0x31, 0x60, 0x61]
 
             for x in xrange(min(length, 3)):

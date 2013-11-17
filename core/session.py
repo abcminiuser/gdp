@@ -89,7 +89,7 @@ class Session(object):
 
         if not self.options.no_verify_signature:
             expected_signature = self.device.get_signature(self.options.interface)
-            read_signature = self.protocol.read_memory("signature", 0, len(expected_signature))
+            read_signature = self.protocol.read_memory("signatures", 0, len(expected_signature))
 
             if expected_signature[0 : len(read_signature)] != read_signature:
                 raise SessionError("Read device signature [%s] does not match the "
