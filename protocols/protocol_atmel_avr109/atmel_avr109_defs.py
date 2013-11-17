@@ -28,7 +28,11 @@ class AtmelAVR109Defs(object):
         "WRITE_BLOCK"            : ord('B'),
         "PAGE_WRITE"             : ord('m'),
         "SET_ADDRESS"            : ord('A'),
-
+        "READ_LOCKBITS"          : ord('r'),
+        "WRITE_LOCKBITS"         : ord('l'),
+        "READ_FUSES_LOW"         : ord('F'),
+        "READ_FUSES_HIGH"        : ord('F'),
+        "READ_FUSES_EXTENDED"    : ord('Q')
     }
 
 

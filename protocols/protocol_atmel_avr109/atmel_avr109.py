@@ -81,9 +81,22 @@ class ProtocolAtmelAVR109(Protocol):
             resp = self._transcieve(packet, has_terminator=False)
             mem_contents.extend(resp[offset : offset + length : -1])
         elif memory_space == "fuses":
-            raise NotImplementedError()
+            fuse_commands = {
+                    0 : AtmelAVR109Defs.commands["READ_FUSES_LOW"],
+                    1 : AtmelAVR109Defs.commands["READ_FUSES_HIGH"],
+                    2 : AtmelAVR109Defs.commands["READ_FUSES_EXTENDED"]
+                }
+
+            for x in xrange(length):
+                packet = [fuse_commands[offset + x]]
+                resp = self._transcieve(packet, has_terminator=False)
+
+                mem_contents.append(resp[0])
         elif memory_space == "lockbits":
-            raise NotImplementedError()
+            packet = [AtmelAVR109Defs.commands["READ_LOCKBITS"]]
+            resp = self._transcieve(packet, has_terminator=False)
+
+            mem_contents.append(resp[0])
         elif memory_space in ["flash", "eeprom"]:
             if self.block_support is True:
                 read_len = self.block_length
@@ -116,10 +129,10 @@ class ProtocolAtmelAVR109(Protocol):
 
 
     def write_memory(self, memory_space, offset, data):
-        if memory_space == "fuses":
-            raise NotImplementedError()
-        elif memory_space == "lockbits":
-            raise NotImplementedError()
+        if memory_space == "lockbits":
+            packet = [AtmelAVR109Defs.commands["WRITE_LOCKBITS"]]
+            resp = self._transcieve(packet, has_terminator=True)
+            mem_contents.append(resp)
         elif memory_space in ["flash", "eeprom"]:
             if self.block_support is True:
                 write_len = self.block_length
