@@ -7,20 +7,21 @@
 
 class Util(Exception):
     @staticmethod
-    def chunk_data(data, chunksize, startaddress):
-        for i, c in enumerate(data[ : : chunksize]):
-            current_offset = i * chunksize
+    def chunk_data(data, chunk_size, start_address):
+        for i, c in enumerate(data[ : : chunk_size]):
+            current_offset = i * chunk_size
 
-            yield (startaddress + current_offset,
-                   data[current_offset : current_offset + chunksize])
+            yield (start_address + current_offset,
+                   data[current_offset : current_offset + chunk_size])
 
 
     @staticmethod
-    def chunk_address(length, chunksize, startaddress):
-        length += chunksize - (length % chunksize)
+    def chunk_address(length, chunk_size, start_address):
+        if (length % chunk_size):
+            length += chunk_size - (length % chunk_size)
 
-        for i in xrange(0, length, chunksize):
-            yield (i + startaddress, chunksize)
+        for i in xrange(0, length, chunk_size):
+            yield (i + start_address, chunk_size)
 
 
     @staticmethod

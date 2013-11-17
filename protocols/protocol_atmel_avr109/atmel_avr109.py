@@ -104,7 +104,6 @@ class ProtocolAtmelAVR109(Protocol):
                         packet = [AtmelAVR109Defs.commands["READ_EEPROM_BYTE"]]
 
                 resp = self._transcieve(packet, has_terminator=False)
-                print resp
                 mem_contents.extend(resp)
         else:
             raise NotImplementedError()
