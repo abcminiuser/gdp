@@ -83,14 +83,18 @@ class DeviceAtmelStudio(Device):
                 return dev_signature
 
 
-    def get_section_bounds(self, memory_type, segment_name=None):
-        mem_segments = self.device_info.findall("address-spaces/address-space/memory-segment[@type='%s']" % memory_type.lower())
+    def get_section_bounds(self, memory_type=None, segment_name=None):
+        mem_segments = self.device_info.findall("address-spaces/address-space/memory-segment")
         if mem_segments is None:
             raise DeviceMissingInfoError("memory segment", memory_type)
 
         segment_info = []
 
         for segment in mem_segments:
+            if not memory_type is None:
+                if not segment.get("type").lower() == memory_type:
+                    continue
+
             if not segment_name is None:
                 if not segment.get("name").lower() == segment_name:
                     continue
