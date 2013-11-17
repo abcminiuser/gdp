@@ -48,8 +48,10 @@ class TransportDFUUSB(Transport):
         if self.serial is None:
             if len(found_devices) > 1:
                 raise TransportMultipleMatchError(found_devices.itervalues())
-            else:
+            elif len(found_devices) != 0:
                 return found_devices.keys()[0]
+            else:
+                return None
 
         for device, serial in found_devices.iteritems():
             if self.serial in serial:
