@@ -57,7 +57,7 @@ class Device(object):
 
 
     @abstractmethod
-    def get_section_bounds(self, memory_type):
+    def get_section_bounds(self, memory_type, section_name):
         pass
 
 

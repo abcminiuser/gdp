@@ -75,7 +75,7 @@ Input File Formats:
 
 User Interfaces:
 
-+ CLI (PROGRAM, VERIFY, CHIPERASE, ERASE and LIST commands)
++ CLI (PROGRAM, READ, VERIFY, CHIPERASE, ERASE and LIST commands)
 
 
 USB Drivers
