@@ -107,7 +107,7 @@ class ToolAtmelSTK500(Tool):
 
 
     def write(self, data):
-        self.sequence += 1
+        self.sequence = (self.sequence + 1) & 0xFF
 
         packet = []
         packet.append(ToolAtmelSTK500.STK500_PACKET_START)
