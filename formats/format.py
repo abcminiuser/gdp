@@ -28,3 +28,26 @@ class Format(object):
     @abstractmethod
     def get_extensions():
         pass
+
+
+class FormatReader(Format):
+    __metaclass__ = ABCMeta
+
+
+    @abstractmethod
+    def load_file(self, filename):
+        pass
+
+
+class FormatWriter(Format):
+    __metaclass__ = ABCMeta
+
+
+    @abstractmethod
+    def add_section(self, name, data):
+        pass
+
+
+    @abstractmethod
+    def save_file(self, filename):
+        pass

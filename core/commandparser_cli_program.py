@@ -59,7 +59,7 @@ class CommandParserCLIProgram(CommandParser):
             else:
                 file_ext = os.path.splitext(file_name)[1][1 : ].lower()
 
-            self.format_reader = get_gdp_format(file_ext)
+            self.format_reader = get_gdp_format_reader(file_ext)
         except KeyError:
             self._parser_error("unrecognized input file type \"%s\"." % file_name)
 
@@ -155,7 +155,8 @@ class CommandParserCLIProgram(CommandParser):
         memory_type = self.options.memory_type.lower()
 
         try:
-            file_data = self.format_reader(self.options.filename)
+            file_data = self.format_reader()
+            file_data.load_file(self.options.filename)
         except:
             raise SessionError("Unable to parse input file \"%s\"." %
                                self.options.filename)

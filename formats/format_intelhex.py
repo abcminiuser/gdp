@@ -30,12 +30,14 @@ class FormatIntelHex_Section(FormatSection):
         return self.instance.tobinarray()
 
 
-class FormatIntelHex(Format):
-    def __init__(self, filename=None):
+class FormatIntelHex(FormatReader):
+    def __init__(self):
+        self.sections = dict()
+
+
+    def load_file(self, filename=None):
         if filename is None:
             raise FormatError("Filename not specified.")
-
-        self.sections = dict()
 
         file_extension = os.path.splitext(filename)[1][1 : ].lower()
 

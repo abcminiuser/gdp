@@ -32,12 +32,14 @@ class FormatELF_Section(FormatSection):
         return [ord(x) for x in self.instance.data()]
 
 
-class FormatELF(Format):
-    def __init__(self, filename=None):
+class FormatELF(FormatReader):
+    def __init__(self):
+        self.sections = dict()
+
+
+    def load_file(self, filename=None):
         if filename is None:
             raise FormatError("Filename not specified.")
-
-        self.sections = dict()
 
         try:
             elffile = ELFFile(open(filename, 'rb'))

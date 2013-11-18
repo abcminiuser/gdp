@@ -9,8 +9,12 @@ from formats.format_intelhex import *
 
 
 class FormatBinary(FormatIntelHex):
-    def __init__(self, filename=None):
-        super(FormatBinary, self).__init__(filename)
+    def __init__(self):
+        self.sections = dict()
+
+
+    def load_file(self, filename=None):
+        super(FormatBinary, self).load_file(filename)
 
 
     def get_sections(self):
