@@ -44,7 +44,7 @@ class FormatWriter(Format):
 
 
     @abstractmethod
-    def add_section(self, name, data):
+    def add_section(self, start, data):
         pass
 
 

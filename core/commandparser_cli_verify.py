@@ -75,7 +75,8 @@ class CommandParserCLIVerify(CommandParserCLIProgram):
             file_data = self.format_reader()
             file_data.load_file(self.options.filename)
         except:
-            raise SessionError("Unable to parse input file \"%s\"." % self.options.filename)
+            raise SessionError("Unable to parse input file \"%s\"." %
+                               self.options.filename)
 
 
         for section_name, section in self._get_file_sections(file_data, device, memory_type):

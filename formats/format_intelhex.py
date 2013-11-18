@@ -30,9 +30,9 @@ class FormatIntelHex_Section(FormatSection):
         return self.instance.tobinarray()
 
 
-class FormatIntelHex(FormatReader):
+class FormatIntelHex(FormatReader, FormatWriter):
     def __init__(self):
-        self.sections = dict()
+        self.hexinstance = IntelHex()
 
 
     def load_file(self, filename=None):
@@ -42,22 +42,42 @@ class FormatIntelHex(FormatReader):
         file_extension = os.path.splitext(filename)[1][1 : ].lower()
 
         try:
-            hexfile = IntelHex()
-
             if file_extension == "bin":
-                hexfile.loadbin(filename)
+                self.hexinstance.loadbin(filename)
             else:
-                hexfile.loadhex(filename)
+                self.hexinstance.loadhex(filename)
         except:
             raise FormatError("Could not open %s file \"%s\"." %
                               (file_extension.upper(), filename))
 
-        if hexfile.minaddr() != None:
-            self.sections[None] = FormatIntelHex_Section(hexfile)
+
+    def save_file(self, filename):
+        if filename is None:
+            raise FormatError("Filename not specified.")
+
+        file_extension = os.path.splitext(filename)[1][1 : ].lower()
+
+        try:
+            if file_extension == "bin":
+                self.hexinstance.tofile(filename, format="bin")
+            else:
+                self.hexinstance.tofile(filename, format="hex")
+        except:
+            raise FormatError("Could not save %s file \"%s\"." %
+                              (file_extension.upper(), filename))
+
+
+    def add_section(self, start, data):
+        self.hexinstance[start : start + len(data)] = data
 
 
     def get_sections(self):
-        return self.sections
+        sections = dict()
+
+        if self.hexinstance.minaddr() != None:
+            sections[None] = FormatIntelHex_Section(self.hexinstance)
+
+        return sections
 
 
     @staticmethod

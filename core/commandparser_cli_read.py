@@ -29,10 +29,31 @@ class CommandParserCLIRead(CommandParserCLIProgram):
                           action="store", dest="memory_type", metavar="TYPE",
                           default="flash",
                           help="read target address space TYPE")
+        parser.add_option("-f", "--file", metavar="FILE",
+                          action="store", type="string", dest="filename",
+                          help="file to store the read data from the device")
+        parser.add_option("", "--format",
+                          action="store", type="string", dest="format",
+                          help="format to save the output file as")
         parser.add_option("-o", "--offset",
                           action="store", type="int", dest="offset", default=0,
                           help="offset in the target address space to read from")
         (self.options, args) = parser.parse_args(args=args)
+
+        try:
+            file_name = self.options.filename
+
+            if not file_name is None:
+                if self.options.format:
+                    file_ext = self.options.format
+                else:
+                    file_ext = os.path.splitext(file_name)[1][1 : ].lower()
+
+                self.format_writer = get_gdp_format_writer(file_ext)
+            else:
+                self.format_writer = None
+        except KeyError:
+            self._parser_error("unrecognized output file type \"%s\"." % file_name)
 
         return args
 
@@ -44,6 +65,10 @@ class CommandParserCLIRead(CommandParserCLIProgram):
     def execute(self, session):
         protocol = session.get_protocol()
         device = session.get_device()
+
+        if not self.format_writer is None:
+            file_data = self.format_writer()
+
 
         memory_type = self.options.memory_type.lower()
 
@@ -64,4 +89,15 @@ class CommandParserCLIRead(CommandParserCLIProgram):
                                         memory_type,
                                         section_start, section_length)
 
-            print(", ".join(["%02X" % x for x in read_data]))
+            if self.format_writer is None:
+                print(", ".join(["%02X" % x for x in read_data]))
+            else:
+               file_data.add_section(section_start, read_data)
+
+
+        if not self.format_writer is None:
+            try:
+                file_data.save_file(self.options.filename)
+            except:
+                raise SessionError("Unable to save output file \"%s\"." %
+                                   self.options.filename)
