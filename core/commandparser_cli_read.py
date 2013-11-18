@@ -89,10 +89,10 @@ class CommandParserCLIRead(CommandParserCLIProgram):
                                         memory_type,
                                         section_start, section_length)
 
-            if self.format_writer is None:
-                print(", ".join(["%02X" % x for x in read_data]))
-            else:
+            if not self.format_writer is None:
                file_data.add_section(section_start, read_data)
+            else:
+                print(", ".join(["%02X" % x for x in read_data]))
 
 
         if not self.format_writer is None:
