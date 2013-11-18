@@ -36,6 +36,14 @@ class ProtocolAtmelAVR109(Protocol):
         self._transcieve(packet, has_terminator=True)
 
 
+    def reset_target(self, address):
+        if not address is None:
+            raise ProtocolError("Specified tool cannot reset the target to a user-defined address.")
+        else:
+            packet = [AtmelAVR109Defs.commands["EXIT_BOOTLOADER"]]
+            self._transcieve(packet, has_terminator=True)
+
+
     def get_vtarget(self):
         return None
 

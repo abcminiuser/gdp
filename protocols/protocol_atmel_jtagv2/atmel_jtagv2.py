@@ -33,6 +33,10 @@ class ProtocolAtmelJTAGV2(Protocol):
         self._trancieve([AtmelJTAGV2Defs.commands["SIGN_OFF"]])
 
 
+    def reset_target(self, address):
+        raise NotImplementedError
+
+
     def get_vtarget(self):
         raise NotImplementedError
 

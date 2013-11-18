@@ -16,6 +16,13 @@ class ProtocolAtmelDFUV1(Protocol):
         self.interface = interface
 
 
+    def reset_target(self, address):
+        if address is None:
+            self._download([0x04, 0x03, 0x00])
+        else:
+            self._download([0x04, 0x03, 0x01, address >> 8, address & 0xFF])
+
+
     def _abort(self):
         self.tool.write(AtmelDFUV1Defs.requests["ABORT"], None)
 
@@ -81,6 +88,7 @@ class ProtocolAtmelDFUV1(Protocol):
             self._download([0x04, 0x00, 0xFF])
         else:
             raise ProtocolMemoryActionError("erasing", memory_space)
+
 
     def read_memory(self, memory_space, offset, length):
         mem_contents = []

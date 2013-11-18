@@ -81,7 +81,7 @@ Output File Formats:
 
 User Interfaces:
 
-+ CLI (PROGRAM, READ, VERIFY, CHIPERASE, ERASE and LIST commands)
++ CLI (PROGRAM, READ, VERIFY, CHIPERASE, ERASE, LIST and RESET commands)
 
 
 USB Drivers

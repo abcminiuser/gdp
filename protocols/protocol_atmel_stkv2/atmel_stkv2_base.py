@@ -84,6 +84,13 @@ class ProtocolAtmelSTKV2_Base(object):
             self._trancieve(packet)
 
 
+    def reset_target(self, address):
+        if not address is None:
+            raise ProtocolError("Specified tool cannot reset the target to a user-defined address.")
+        else:
+            pass
+
+
     def get_vtarget(self):
         vtarget_raw = self._get_param(AtmelSTKV2Defs.params["VTARGET"])
 

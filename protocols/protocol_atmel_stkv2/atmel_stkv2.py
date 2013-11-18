@@ -30,6 +30,10 @@ class ProtocolAtmelSTKV2(Protocol):
             raise NotImplementedError
 
 
+    def reset_target(self, address):
+        self.handler.reset_target(address)
+
+
     def get_vtarget(self):
         return self.handler.get_vtarget()
 

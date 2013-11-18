@@ -14,6 +14,7 @@ from core.commandparser_cli_program import *
 from core.commandparser_cli_read import *
 from core.commandparser_cli_verify import *
 from core.commandparser_cli_list import *
+from core.commandparser_cli_reset import *
 
 
 class InterfaceCLI(object):
@@ -23,7 +24,8 @@ class InterfaceCLI(object):
         "program"   : CommandParserCLIProgram,
         "read"      : CommandParserCLIRead,
         "verify"    : CommandParserCLIVerify,
-        "list"      : CommandParserCLIList
+        "list"      : CommandParserCLIList,
+        "reset"     : CommandParserCLIReset
     }
 
 

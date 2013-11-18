@@ -32,7 +32,8 @@ class AtmelAVR109Defs(object):
         "WRITE_LOCKBITS"         : ord('l'),
         "READ_FUSES_LOW"         : ord('F'),
         "READ_FUSES_HIGH"        : ord('F'),
-        "READ_FUSES_EXTENDED"    : ord('Q')
+        "READ_FUSES_EXTENDED"    : ord('Q'),
+        "EXIT_BOOTLOADER"        : ord('E')
     }
 
 

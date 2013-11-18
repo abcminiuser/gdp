@@ -10,6 +10,7 @@ from abc import ABCMeta, abstractmethod
 class ProtocolError(Exception):
     pass
 
+
 class ProtocolMemoryActionError(ProtocolError):
     def __init__(self, action, memory_space):
         self.message = "Protocol does not support %s on memory \"%s\"." % (action, memory_space)
@@ -17,6 +18,11 @@ class ProtocolMemoryActionError(ProtocolError):
 
 class Protocol(object):
     __metaclass__ = ABCMeta
+
+
+    @abstractmethod
+    def reset_target(self, address):
+        pass
 
 
     @abstractmethod
