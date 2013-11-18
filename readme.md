@@ -73,6 +73,12 @@ Input File Formats:
 + Executable and Linkable Format (ELF)
 
 
+Output File Formats:
+
++ Intel HEX (HEX, EEP)
++ Binary (BIN)
+
+
 User Interfaces:
 
 + CLI (PROGRAM, READ, VERIFY, CHIPERASE, ERASE and LIST commands)
