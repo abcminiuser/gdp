@@ -6,6 +6,7 @@
 
 from optparse import OptionParser
 
+from core.util import *
 from core.commandparser import *
 from tools import *
 
@@ -18,10 +19,10 @@ class CommandParserCLIList(CommandParser):
     def _show_connected_tools(self):
         print("Currently connected USB tools:")
 
-        for tool in gdp_tools:
-            tool_name = gdp_tools[tool].get_name()
+        for tool in Util.get_subclasses(Tool):
+            tool_name = tool.get_name()
 
-            for serial in set(gdp_tools[tool].find_connected()):
+            for serial in set(tool.find_connected()):
                 print("  - %s, serial number %s" % (tool_name, serial))
 
 
