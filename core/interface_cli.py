@@ -131,8 +131,22 @@ class InterfaceCLI(object):
                 print("GDP finished executing commands.")
         except (FormatError, SessionError, TransportError,
                 ToolError, ProtocolError, CommandParserError) as gdp_error:
-            error_type = type(gdp_error).__name__.split("Error")[0]
+            error_types = {
+                FormatError        : "File Format",
+                SessionError       : "Session",
+                TransportError     : "Data Transport",
+                ToolError          : "Tool",
+                ProtocolError      : "Protocol",
+                CommandParserError : "CLI Parser",
+            }
+
+            error_type    = type(gdp_error).__name__
             error_message = gdp_error.message
+
+            for t, d in error_types.iteritems():
+                if isinstance(gdp_error, t):
+                    error_type = d
+                    break
 
             print("GDP Error (%s): %s" % (error_type, error_message))
             return 1
