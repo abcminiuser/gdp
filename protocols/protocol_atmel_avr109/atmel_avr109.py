@@ -139,8 +139,7 @@ class ProtocolAtmelAVR109(Protocol):
     def write_memory(self, memory_space, offset, data):
         if memory_space == "lockbits":
             packet = [AtmelAVR109Defs.commands["WRITE_LOCKBITS"]]
-            resp = self._transcieve(packet, has_terminator=True)
-            mem_contents.append(resp)
+            self._transcieve(packet, has_terminator=True)
         elif memory_space in ["flash", "eeprom"]:
             if self.block_support is True:
                 write_len = self.block_length
