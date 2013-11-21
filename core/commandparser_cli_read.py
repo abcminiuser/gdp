@@ -72,7 +72,7 @@ class CommandParserCLIRead(CommandParserCLIProgram):
 
         memory_type = self.options.memory_type.lower()
 
-        device_segments = device.get_section_bounds(memory_type, memory_type)
+        device_segments = device.get_section_bounds(memory_type)
         if len(device_segments) == 0:
             raise SessionError("Memory type \"%s\" does not exist in the selected device." % memory_type)
 
