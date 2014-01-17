@@ -20,24 +20,24 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
 
         if "AVRISP" in self.tool_sign_on_string:
             if target_frequency >= 921600:
-                sck_dur = 0;
+                sck_dur = 0
             elif target_frequency >= 230400:
-                sck_dur = 1;
+                sck_dur = 1
             elif target_frequency >= 57600:
-                sck_dur = 2;
+                sck_dur = 2
             elif target_frequency >= 28800:
-                sck_dur = 3;
+                sck_dur = 3
             else:
                 sck_dur = math.ceil(1.0 / (2 * 12.0 * target_frequency * 271.27e-9) - 10 / 12)
         else:
             if target_frequency >= 1843200:
-                sck_dur = 0;
+                sck_dur = 0
             elif target_frequency >= 460800:
-                sck_dur = 1;
+                sck_dur = 1
             elif target_frequency >= 115200:
-                sck_dur = 2;
+                sck_dur = 2
             elif target_frequency >= 57600:
-                sck_dur = 3;
+                sck_dur = 3
             else:
                 sck_dur = math.ceil(1.0 / (2 * 12.0 * target_frequency * 135.63e-9) - 10 / 12)
 
@@ -103,7 +103,7 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
                     0 : [0x50, 0x00, 0x00, 0x00],
                     1 : [0x50, 0x08, 0x00, 0x00],
                     2 : [0x58, 0x00, 0x00, 0x00]
-                }
+            }
 
             for x in xrange(length):
                 packet = [AtmelSTKV2Defs.commands["READ_FUSE_ISP"]]
@@ -153,7 +153,7 @@ class ProtocolAtmelSTKV2_ISP(ProtocolAtmelSTKV2_Base):
                     0 : [0xAC, 0xA0, 0x00, 0x00],
                     1 : [0xAC, 0xA8, 0x00, 0x00],
                     2 : [0xAC, 0xA4, 0x00, 0x00]
-                }
+            }
 
             for x in xrange(length):
                 packet = [AtmelSTKV2Defs.commands["PROGRAM_FUSE_ISP"]]

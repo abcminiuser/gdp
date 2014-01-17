@@ -143,7 +143,7 @@ class ToolAtmelJTAGICEMKII(Tool):
     def write(self, data):
         self.sequence += 1
         if (self.sequence == 0xFFFF):
-            self.sequence = 0x0000;
+            self.sequence = 0x0000
 
         packet = []
         packet.append(ToolAtmelJTAGICEMKII.JTAG_ICE_MKII_PACKET_START)

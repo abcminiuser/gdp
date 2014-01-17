@@ -10,8 +10,8 @@ from protocols.protocol_atmel_dfuv1.atmel_dfuv1_defs import *
 
 
 class ProtocolAtmelDFUV1(Protocol):
-    def __init__(self, tool, device, interface):
-        self.tool      = tool
+    def __init__(self, parent, device, interface):
+        self.parent    = parent
         self.device    = device
         self.interface = interface
 
@@ -24,24 +24,24 @@ class ProtocolAtmelDFUV1(Protocol):
 
 
     def _abort(self):
-        self.tool.write(AtmelDFUV1Defs.requests["ABORT"], None)
+        self.write(AtmelDFUV1Defs.requests["ABORT"], None)
 
 
     def _getstate(self):
-        return self.tool.read(AtmelDFUV1Defs.requests["GETSTATE"], 1)[0]
+        return self.read(AtmelDFUV1Defs.requests["GETSTATE"], 1)[0]
 
 
     def _clearstatus(self):
-        self.tool.write(AtmelDFUV1Defs.requests["CLRSTATUS"], None)
+        self.write(AtmelDFUV1Defs.requests["CLRSTATUS"], None)
 
 
     def _getstatus(self):
-        return self.tool.read(AtmelDFUV1Defs.requests["GETSTATUS"], 6)[0]
+        return self.read(AtmelDFUV1Defs.requests["GETSTATUS"], 6)[0]
 
 
     def _download(self, command):
         try:
-            self.tool.write(AtmelDFUV1Defs.requests["DNLOAD"], command)
+            self.write(AtmelDFUV1Defs.requests["DNLOAD"], command)
         except:
             pass
 
@@ -52,14 +52,14 @@ class ProtocolAtmelDFUV1(Protocol):
 
 
     def _upload(self, command, read_length):
-        self.tool.write(AtmelDFUV1Defs.requests["DNLOAD"], command)
+        self.write(AtmelDFUV1Defs.requests["DNLOAD"], command)
 
         status = self._getstatus()
         if status != AtmelDFUV1Defs.status_codes["OK"]:
             raise ProtocolError("DFU read request failed, error code %s." %
                                 AtmelDFUV1Defs.find(AtmelDFUV1Defs.status_codes, status))
 
-        return self.tool.read(AtmelDFUV1Defs.requests["UPLOAD"], read_length)
+        return self.read(AtmelDFUV1Defs.requests["UPLOAD"], read_length)
 
 
     def _select_64kb_bank(self, bank):
@@ -144,3 +144,11 @@ class ProtocolAtmelDFUV1(Protocol):
 
     def close(self):
         pass
+
+
+    def read(self):
+        return self.parent.read()
+
+
+    def write(self, data):
+        self.parent.write(data)

@@ -17,7 +17,7 @@ class ToolAtmelAVRISP(ToolAtmelSTK500):
             baud = 115200
 
         if port is None:
-           raise ToolSupportError("tool", "port", port)
+            raise ToolSupportError("tool", "port", port)
         else:
             self.transport = TransportSerial(port=port, baud=baud)
 

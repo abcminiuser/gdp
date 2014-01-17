@@ -22,8 +22,8 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
         xprog_packet_out = [AtmelSTKV2Defs.commands["XPROG"]]
         xprog_packet_out.extend(packet_out)
 
-        self.tool.write(xprog_packet_out)
-        xprog_packet_in = self.tool.read()
+        self.parent.write(xprog_packet_out)
+        xprog_packet_in = self.parent.read()
 
         if xprog_packet_in[1] != xprog_packet_out[1]:
             raise ProtocolError("Invalid XPROG response received from tool.")
@@ -60,7 +60,6 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
             "application"         : 0x00800000,
             "eeprom"              : 0x008C0000,
             "fuses"               : 0x008F0020,
-            "user_signature"      : 0x008E0400,
             "user_signature"      : 0x008E0400,
 
             "flash"               : 0x00800000,
@@ -118,7 +117,7 @@ class ProtocolAtmelSTKV2_XPROG(ProtocolAtmelSTKV2_Base):
 
         if memory_space == "flash":
             memory_space = "application"
-        elif memory_space == "signature":
+        elif memory_space == "signatures":
             memory_space = "factory_calibration"
 
         try:

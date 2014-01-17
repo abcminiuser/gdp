@@ -74,7 +74,7 @@ class FormatIntelHex(FormatReader, FormatWriter):
     def get_sections(self):
         sections = dict()
 
-        if self.hexinstance.minaddr() != None:
+        if self.hexinstance.minaddr() is not None:
             sections[None] = FormatIntelHex_Section(self.hexinstance)
 
         return sections

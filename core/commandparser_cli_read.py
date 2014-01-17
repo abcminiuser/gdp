@@ -90,7 +90,7 @@ class CommandParserCLIRead(CommandParserCLIProgram):
                                         section_start, section_length)
 
             if not self.format_writer is None:
-               file_data.add_section(section_start, read_data)
+                file_data.add_section(section_start, read_data)
             else:
                 print(", ".join(["%02X" % x for x in read_data]))
 

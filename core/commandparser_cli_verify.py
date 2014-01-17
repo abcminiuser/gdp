@@ -99,4 +99,3 @@ class CommandParserCLIVerify(CommandParserCLIProgram):
                     raise SessionError("Verify failed at address 0x%08x, "
                                        "expected 0x%02x got 0x%02x." %
                                        (x, section_data[x], read_data[x]))
-

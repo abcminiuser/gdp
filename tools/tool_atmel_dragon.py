@@ -69,4 +69,3 @@ class ToolAtmelDragon(ToolAtmelJTAGICEMKII):
 
     def write(self, data):
         super(ToolAtmelDragon, self).write(data)
-

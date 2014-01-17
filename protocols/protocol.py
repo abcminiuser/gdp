@@ -68,3 +68,13 @@ class Protocol(object):
     @abstractmethod
     def close(self):
         pass
+
+
+    @abstractmethod
+    def read(self):
+        pass
+
+
+    @abstractmethod
+    def write(self, data):
+        pass

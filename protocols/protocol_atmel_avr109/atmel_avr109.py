@@ -10,15 +10,15 @@ from protocols.protocol_atmel_avr109.atmel_avr109_defs import *
 
 
 class ProtocolAtmelAVR109(Protocol):
-    def __init__(self, tool, device, interface):
-        self.tool      = tool
+    def __init__(self, parent, device, interface):
+        self.parent    = parent
         self.device    = device
         self.interface = interface
 
 
     def _transcieve(self, packet, has_terminator):
-        self.tool.write(packet)
-        resp = self.tool.read()
+        self.write(packet)
+        resp = self.read()
 
         if has_terminator is True:
             if resp[-1] != AtmelAVR109Defs.RESP_TERMINATOR_CHAR:
@@ -93,7 +93,7 @@ class ProtocolAtmelAVR109(Protocol):
                     0 : AtmelAVR109Defs.commands["READ_FUSES_LOW"],
                     1 : AtmelAVR109Defs.commands["READ_FUSES_HIGH"],
                     2 : AtmelAVR109Defs.commands["READ_FUSES_EXTENDED"]
-                }
+            }
 
             for x in xrange(length):
                 packet = [fuse_commands[offset + x]]
@@ -192,3 +192,11 @@ class ProtocolAtmelAVR109(Protocol):
             self._transcieve(packet, has_terminator=True)
         finally:
             pass
+
+
+    def read(self):
+        return self.parent.read()
+
+
+    def write(self, data):
+        self.parent.write(data)

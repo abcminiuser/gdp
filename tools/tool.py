@@ -65,4 +65,3 @@ class Tool(object):
     @abstractmethod
     def write(self, data):
         pass
-

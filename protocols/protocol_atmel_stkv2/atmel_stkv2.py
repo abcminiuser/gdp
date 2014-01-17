@@ -12,7 +12,7 @@ from protocols.protocol_atmel_stkv2.atmel_stkv2_xprog import *
 
 
 class ProtocolAtmelSTKV2(Protocol):
-    def __init__(self, tool, device, interface):
+    def __init__(self, parent, device, interface):
         interface_implementations = {
             "isp"  : ProtocolAtmelSTKV2_ISP,
             "hvsp" : ProtocolAtmelSTKV2_HVSP,
@@ -25,7 +25,7 @@ class ProtocolAtmelSTKV2(Protocol):
             interface_implementations["jtag"] = ProtocolAtmelSTKV2_XPROG
 
         try:
-            self.handler = interface_implementations[interface](tool, device, interface)
+            self.handler = interface_implementations[interface](parent, device, interface)
         except KeyError:
             raise NotImplementedError
 
@@ -68,3 +68,11 @@ class ProtocolAtmelSTKV2(Protocol):
 
     def close(self):
         self.handler.close()
+
+
+    def read(self):
+        return self.handler.read()
+
+
+    def write(self, data):
+        self.handler.write(data)

@@ -8,15 +8,13 @@ from core import *
 from protocols import *
 from protocols.protocol_atmel_stkv2.atmel_stkv2_defs import *
 
-from abc import ABCMeta, abstractmethod
 
-
-class ProtocolAtmelSTKV2_Base(object):
+class ProtocolAtmelSTKV2_Base(Protocol):
     __metaclass__ = ABCMeta
 
 
-    def __init__(self, tool, device, interface):
-        self.tool      = tool
+    def __init__(self, parent, device, interface):
+        self.parent    = parent
         self.device    = device
         self.interface = interface
 
@@ -24,8 +22,8 @@ class ProtocolAtmelSTKV2_Base(object):
 
 
     def _trancieve(self, packet_out):
-        self.tool.write(packet_out)
-        packet_in = self.tool.read()
+        self.write(packet_out)
+        packet_in = self.read()
 
         if packet_in is None:
             raise ProtocolError("No response received from tool.")
@@ -109,31 +107,9 @@ class ProtocolAtmelSTKV2_Base(object):
         pass
 
 
-    @abstractmethod
-    def set_interface_frequency(self, target_frequency):
-        pass
+    def read(self):
+        return self.parent.read()
 
 
-    @abstractmethod
-    def enter_session(self):
-        pass
-
-
-    @abstractmethod
-    def exit_session(self):
-        pass
-
-
-    @abstractmethod
-    def erase_memory(self, memory_space, offset):
-        pass
-
-
-    @abstractmethod
-    def read_memory(self, memory_space, offset, length):
-        pass
-
-
-    @abstractmethod
-    def write_memory(self, memory_space, offset, data):
-        pass
+    def write(self, data):
+        return self.parent.write(data)

@@ -119,4 +119,3 @@ class AtmelSTKV2Defs(object):
                 break
 
         return ("%s (0x%02x)" % (friendly_name, find_value))
-
