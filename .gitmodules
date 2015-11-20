@@ -1,0 +1,9 @@
+[submodule "vendor/pyserial"]
+	path = vendor/pyserial
+	url = git@github.com:pyserial/pyserial.git
+[submodule "vendor/pyusb"]
+	path = vendor/pyusb
+	url = git@github.com:walac/pyusb.git
+[submodule "vendor/pyelftools"]
+	path = vendor/pyelftools
+	url = git@github.com:eliben/pyelftools.git

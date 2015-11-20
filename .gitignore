@@ -1,5 +1,6 @@
 *.pyc
 *.xml
+*.atdf
 *.spec
 build/build
 build/dist

@@ -6,6 +6,7 @@
    Release under a MIT license; see LICENSE.txt for details.
 '''
 
+import os.path
 import xml.etree.ElementTree as ET
 
 from devices import *
@@ -16,8 +17,19 @@ class DeviceAtmelStudio(Device):
         if part is None:
             raise DeviceError("Device part name must be specified.")
 
+        device_filenames = {
+            "devicefiles/%s.atdf" % part,
+            "devicefiles/%s.xml" % part
+        }
+
+        part_filename = ""
+        for filename in device_filenames:
+            if os.path.isfile(filename):
+                part_filename = filename
+                break
+
         try:
-            self.device_tree = ET.parse("devicefiles/%s.xml" % part)
+            self.device_tree = ET.parse(part_filename)
         except IOError:
             raise DeviceError("Could not open the specified part file.")
 

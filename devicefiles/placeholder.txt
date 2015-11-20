@@ -1,1 +1,1 @@
-Add the device files from Atmel Studio here.
+Add the device files (*.xml or *.atdf) from Atmel Studio here.
